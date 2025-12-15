@@ -130,12 +130,12 @@ if section == "Cardiff LSOAs":
 
     st.markdown(
         """
-        * The Welsh Index of Multiple Deprivation (WIMD) is the official measure
-            of relative deprivation for small areas in Wales. It identifies areas 
-            with the highest concentrations of several different types of 
-            deprivation (according to the domains: income, employment, health,
-            education, access to services, housing, community services, 
-            physical environment).
+        * Cardiff's neighbourhoods show a clear divide, with the greatest number of areas being either among the most deprived or 
+        the least deprived in Wales. This pattern highlights significant local inequality, as fewer neighborhoods fall into 
+        the middle range of deprivation.
+        * While most local areas are expected to see only small financial benefits from climate action, a small number of specific areas
+        are projected to receive exceptionally large gains, showing the value is not evenly spread. We will investigate the association between 
+        net zero co-benefits and levels of social deprivation to assess how the poorest communities are going to be impacted by the net zero changes
         """
     )
     
