@@ -9,11 +9,8 @@ import geopandas as gpd
 df_l3Car_lookup_wimd = pd.read_csv("data/lsoa_cardiff_wimd.csv")
 
 # import grid shape file
-shapefile_path = "data/shapefile/small_areas_british_grid.shp"
-lsoa_gdf = gpd.read_file(shapefile_path, engine='pyogrio')
-lsoa_gdfCar = lsoa_gdf[
-    lsoa_gdf['small_area'].isin(df_l3Car_lookup_wimd['LSOA code']) 
-]
+shapefile_path = "data/cardiff_shapefile/cardiff_lsoa.shp"
+lsoa_gdfCar = gpd.read_file(shapefile_path, engine='pyogrio')
 
 # converts the coordinate reference system (CRS) of your GeoDataFrame to EPSG:4326, which is the 
 # WGS84 geographic coordinate system (latitude/longitude).

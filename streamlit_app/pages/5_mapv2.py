@@ -28,12 +28,8 @@ df_wimd_grouped = (
 # -------------------------
 # Load shapefile and filter to Cardiff using those codes
 # -------------------------
-shapefile_path = "data/shapefile/small_areas_british_grid.shp"
-lsoa_gdf = gpd.read_file(shapefile_path, engine="pyogrio")
-
-lsoa_gdf["small_area"] = lsoa_gdf["small_area"].astype(str).str.strip()
-
-lsoa_gdfCar = lsoa_gdf[lsoa_gdf["small_area"].isin(df_wimd_grouped["LSOA code"])].copy()
+shapefile_path = "data/cardiff_shapefile/cardiff_lsoa.shp"
+lsoa_gdfCar = gpd.read_file(shapefile_path, engine="pyogrio")
 
 # Reproject for web maps
 lsoa_gdfCar = lsoa_gdfCar.to_crs(epsg=4326)
