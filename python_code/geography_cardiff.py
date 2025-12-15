@@ -25,7 +25,7 @@ print(f"Cardiff subset has {len(cardiff_shapefile)} features")
 
 
 # Save the filtered shapefile
-output_path = "data/cardiff_lsoa.shp"
+output_path = "data/cardiff_shapefile/cardiff_lsoa.shp"
 cardiff_shapefile.to_file(output_path, engine="pyogrio")
 
 print(f"\nSubset shapefile saved to: {output_path}")
