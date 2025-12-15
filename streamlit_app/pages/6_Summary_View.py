@@ -56,10 +56,10 @@ def histogram_totals (num_cols, columns_to_plot, x_labels=None, colors=None, col
                     marker=dict(
                         color=value_counts.index,
                         colorscale=colorscales[i],
-                        line=dict(color='white', width=1),
+                        line=dict(color='black', width=1),
                         showscale=False
                     ),
-                    hovertemplate='%{y}<extra></extra>'
+                    hovertemplate='%{x}: %{y}<extra></extra>'
                 ),
                 row=row, 
                 col=col_pos
@@ -73,9 +73,9 @@ def histogram_totals (num_cols, columns_to_plot, x_labels=None, colors=None, col
                     showlegend=False,
                     marker=dict(
                         color=colors[i],
-                        line=dict(color='white', width=1)
+                        line=dict(color='black', width=1)
                     ),
-                    hovertemplate='%{y}<extra></extra>'
+                    hovertemplate='%{x}: %{y}<extra></extra>'
                 ),
                 row=row, 
                 col=col_pos
@@ -104,11 +104,21 @@ if 'section' not in st.session_state:
 
 # Create sidebar buttons
 st.sidebar.header("Navigate to:")
+
 if st.sidebar.button("Cardiff LSOAs", use_container_width=True):
     st.session_state.section = "Cardiff LSOAs"
+
+if st.sidebar.button("Health Co-Benefits", use_container_width=True):
+    st.session_state.section = "Health Co-Benefits"
+
+if st.sidebar.button("Buildings Co-Benefits", use_container_width=True):
+    st.session_state.section = "Buildings Co-Benefits"
+
+if st.sidebar.button("Transport Co-Benefits", use_container_width=True):
+    st.session_state.section = "Transport Co-Benefits"
     
-if st.sidebar.button("Negative Costs", use_container_width=True):
-    st.session_state.section = "Negative Costs"
+if st.sidebar.button("Net-Zero Costs", use_container_width=True):
+    st.session_state.section = "Net-Zero Costs"
 
 # Use session state to determine which section to show
 section = st.session_state.section
@@ -133,22 +143,25 @@ if section == "Cardiff LSOAs":
     columns_to_plot = [
         'WIMD 2025 overall quintile',
         'population', 
-        'households'
+        'households',
+        'sum'
     ]
     
     x_labels = [
         'WIMD 2025 Quintile (1 = most deprived, 5 = least deprived)',
         'Population Size',
-        'Number of Households'
+        'Number of Households',
+        'Total Co-Benefit [£ million]'
     ]
 
-    colors = [None, "#A7A7E7", '#00CC96']  # or any hex colors
+    colors = [None, "#A7A7E7", '#00CC96', "#AFEA24"]  # or any hex colors
 
     colorscales = [
         #'RdYlGn',  # Red-Yellow-Green for WIMD (red=deprived, green=least 
         'viridis',  # Red-Yellow-Green for WIMD (red=deprived, green=least deprived)deprived)
         None,      # No colorscale for population
-        None       # No colorscale for households
+        None,       # No colorscale for households
+        None       # No colorscale for sum of cobenefits
     ]
 
     histogram_totals(
@@ -159,11 +172,74 @@ if section == "Cardiff LSOAs":
         colorscales = colorscales
     )
 
+elif section == "Health Co-Benefits":
+    st.markdown("# Health Co-Benefits")
+    st.sidebar.header("Health Co-Benefits")
+    # Show Cardiff LSOAs content
+    columns_to_plot = [
+        'diet_change',
+        'physical_activity',
+        'air_quality',
+        ]
+    
+    x_labels = [
+        'Total Co-Benefit [£ million]',
+        'Total Co-Benefit [£ million]',
+        'Total Co-Benefit [£ million]'
+        ]
+    histogram_totals(
+        num_cols = 1, 
+        columns_to_plot = columns_to_plot,
+        x_labels = x_labels
+        )
 
-elif section == "Negative Costs":
+
+elif section == "Buildings Co-Benefits":
+    st.markdown("# Buildings Co-Benefits")
+    st.sidebar.header("Buildings Co-Benefits")
+    # Show Cardiff LSOAs content
+    columns_to_plot = [
+        'dampness',
+        'excess_cold',
+        'excess_heat',
+        ]
+    
+    x_labels = [
+        'Total Co-Benefit [£ million]',
+        'Total Co-Benefit [£ million]',
+        'Total Co-Benefit [£ million]'
+        ]
+    histogram_totals(
+        num_cols = 1, 
+        columns_to_plot = columns_to_plot,
+        x_labels = x_labels
+        )
+
+elif section == "Transport Co-Benefits":
+    st.markdown("# Transport Co-Benefits")
+    st.sidebar.header("Transport Co-Benefits")
+    # Show Cardiff LSOAs content
+    columns_to_plot = [
+        'road_repairs',
+        'road_safety',
+        'noise'
+        ]
+    
+    x_labels = [
+        'Total Co-Benefit [£ million]',
+        'Total Co-Benefit [£ million]',
+        'Total Co-Benefit [£ million]'
+        ]
+    histogram_totals(
+        num_cols = 1, 
+        columns_to_plot = columns_to_plot,
+        x_labels = x_labels
+        )
+
+elif section == "Net-Zero Costs":
     # Show Negative co-benefits content
-    st.markdown("# Negative Costs")
-    st.sidebar.header("Negative Costs")
+    st.markdown("# Net-Zero Costs")
+    st.sidebar.header("Net-Zero Costs")
     # Show Cardiff LSOAs content
     columns_to_plot = [
         'congestion',
