@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-from utils import histogram_totals
+from utils import histogram_totals, deprivation_quintiles_boxplots_totals
 
 st.set_page_config(page_title="Social Deprivation", page_icon=":bar_chart:")
 
@@ -18,6 +18,23 @@ st.sidebar.header("Navigate to:")
 
 if st.sidebar.button("Deprivation Quintiles", use_container_width=True):
     st.session_state.section = "Deprivation Quintiles"
+
+if st.sidebar.button("All Co-Benefits", use_container_width=True):
+    st.session_state.section = "All Co-Benefits"
+
+if st.sidebar.button("Health Co-Benefits", use_container_width=True):
+    st.session_state.section = "Health Co-Benefits"
+
+if st.sidebar.button("Buildings Co-Benefits", use_container_width=True):
+    st.session_state.section = "Buildings Co-Benefits"
+
+if st.sidebar.button("Transport Co-Benefits", use_container_width=True):
+    st.session_state.section = "Transport Co-Benefits"
+
+if st.sidebar.button("Net-Zero Costs", use_container_width=True):
+    st.session_state.section = "Net-Zero Costs"
+
+
 
 # Use session state to determine which section to show
 section = st.session_state.section
@@ -55,3 +72,64 @@ if section == "Deprivation Quintiles":
         colorscales = colorscales
     )
 
+elif section == "All Co-Benefits":
+    st.markdown("# Total Co-Benefits by Deprivation Quintile")
+    st.sidebar.header("All Co-Benefits")
+    
+    st.markdown("""
+        Overall distribution of total co-benefits across deprivation quintiles.
+    """)
+
+    deprivation_quintiles_boxplots_totals(
+        value_col = 'sum'
+        )
+
+elif section == "Health Co-Benefits":
+    st.markdown("# Health Co-Benefits by Deprivation Quintile")
+    st.sidebar.header("Health Co-Benefits")
+    
+    st.markdown("""
+        Explore how health-related co-benefits vary across different levels of deprivation.
+    """)
+
+    deprivation_quintiles_boxplots_totals(value_col = 'diet_change')
+    deprivation_quintiles_boxplots_totals(value_col = 'physical_activity')
+    deprivation_quintiles_boxplots_totals(value_col = 'air_quality')
+
+
+elif section == "Buildings Co-Benefits":
+    st.markdown("# Buildings Co-Benefits by Deprivation Quintile")
+    st.sidebar.header("Buildings Co-Benefits")
+    
+    st.markdown("""
+        Analyze how building-related benefits (dampness, excess cold, excess heat) differ by deprivation level.
+    """)
+    
+    deprivation_quintiles_boxplots_totals(value_col = 'dampness')
+    deprivation_quintiles_boxplots_totals(value_col = 'excess_cold')
+    deprivation_quintiles_boxplots_totals(value_col = 'excess_heat')
+
+# empty
+# elif section == "Transport Co-Benefits":
+#     st.markdown("# Transport Co-Benefits by Deprivation Quintile")
+#     st.sidebar.header("Transport Co-Benefits")
+    
+#     st.markdown("""
+#         Compare transport-related benefits across deprivation quintiles.
+#     """)
+    
+#     deprivation_quintiles_boxplots_totals(value_col = 'road_repairs')
+#     deprivation_quintiles_boxplots_totals(value_col = 'road_safety')
+#     deprivation_quintiles_boxplots_totals(value_col = 'noise')
+
+elif section == "Net-Zero Costs":
+    st.markdown("# Net-Zero Costs by Deprivation Quintile")
+    st.sidebar.header("Net-Zero Costs")
+    
+    st.markdown("""
+        Examine how net-zero transition costs vary across deprivation levels.
+    """)
+    
+    deprivation_quintiles_boxplots_totals(value_col = 'congestion') # looks empty
+    deprivation_quintiles_boxplots_totals(value_col = 'hassle_costs')
+    

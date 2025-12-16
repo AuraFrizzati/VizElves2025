@@ -101,3 +101,45 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors
     )
     
     st.plotly_chart(fig, use_container_width=True)
+
+def deprivation_quintiles_boxplots_totals(
+        data_path="data/l2data_totals.csv", 
+        quintile_col = 'WIMD 2025 overall quintile',
+        value_col =None
+        ):
+    
+    # Load data if not provided
+    data = pd.read_csv(data_path)
+
+    if (value_col == 'sum'):
+        value_label = 'Total'
+    else:
+       value_label =  value_col.replace("_", " ").capitalize() 
+
+  
+    fig = go.Figure()
+    
+    colors = px.colors.qualitative.Plotly
+    
+    for quintile in sorted(data[quintile_col].unique()):
+        data_subset = data[data[quintile_col] == quintile]
+        
+        fig.add_trace(
+            go.Box(
+                y=data_subset[value_col],
+                name=f'Quintile {int(quintile)}',
+                marker_color=colors[int(quintile)-1],
+                hovertemplate='Quintile %{fullData.name}<br>Total: %{y:.4f}<extra></extra>'
+            )
+        )
+    
+    fig.update_layout(
+        title=f"{value_label} Co-Benefits Distribution by WIMD Quintile",
+        xaxis_title="WIMD Quintile",
+        yaxis_title=f"{value_label} Co-Benefits [£ million]",
+        height=600,
+        hoverlabel=dict(font_size=14, font_family="Arial"),
+        showlegend=False
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
