@@ -2,3 +2,4 @@ data/shapefile/small_areas_british_grid.shp
 .DS_Store
 settings.json
 .venv/
+streamlit_app/__pycache__/
