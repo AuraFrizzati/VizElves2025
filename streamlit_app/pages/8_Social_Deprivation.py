@@ -28,8 +28,8 @@ if st.sidebar.button("Health Co-Benefits", use_container_width=True):
 if st.sidebar.button("Buildings Co-Benefits", use_container_width=True):
     st.session_state.section = "Buildings Co-Benefits"
 
-if st.sidebar.button("Transport Co-Benefits", use_container_width=True):
-    st.session_state.section = "Transport Co-Benefits"
+# if st.sidebar.button("Transport Co-Benefits", use_container_width=True):
+#     st.session_state.section = "Transport Co-Benefits"
 
 if st.sidebar.button("Net-Zero Costs", use_container_width=True):
     st.session_state.section = "Net-Zero Costs"
