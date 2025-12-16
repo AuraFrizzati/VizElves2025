@@ -133,8 +133,13 @@ def deprivation_quintiles_boxplots_totals(
             )
         )
     
-    fig.update_layout(
-        title=f"{value_label} Co-Benefits Distribution by WIMD Quintile",
+    fig.update_layout(    
+        title=dict(
+            text=f"{value_label} Co-Benefits Distribution by WIMD Quintile",
+            x=0.5,
+            xanchor='center',
+            font=dict(size=24)
+        ),
         xaxis_title="WIMD Quintile",
         yaxis_title=f"{value_label} Co-Benefits [£ million]",
         height=600,
