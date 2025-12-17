@@ -35,6 +35,7 @@ if st.sidebar.button("Net-Zero Costs", use_container_width=True):
     st.session_state.section = "Net-Zero Costs"
 
 # Use session state to determine which section to show
+
 section = st.session_state.section
 
 if section == "Cardiff LSOAs":
@@ -42,14 +43,32 @@ if section == "Cardiff LSOAs":
     st.markdown("# Cardiff LSOAs Overview")
     st.sidebar.header("Cardiff LSOAs Overview")
 
+    # MAP IDEA: https://phw.nhs.wales/services-and-teams/observatory/data-and-analysis/publication-documents/measuring-inequalities-2011/inequalitiesprofilesla-cardiff-v1-pdf/
+
+    cardiff_num_lsoas = l2data_totals['LSOA code'].nunique()
+    cardiff_pop_size = l2data_totals['population'].sum()
+    cardiff_n_households = l2data_totals['households'].sum()
+
     st.markdown(
-        """
-        * While most local areas are expected to see only small financial benefits from climate action, a small number of specific areas
-        are projected to receive exceptionally large gains, showing the value is not evenly spread. We will investigate the association between 
-        net zero co-benefits and levels of social deprivation to assess how the poorest communities are going to be impacted by the net zero changes
+        f"""
+        Cardiff has a population of **{cardiff_pop_size:,} people** and a total of **{cardiff_n_households:,} households** divided into **{cardiff_num_lsoas}** small local areas (LSOAs).
+
+        While most local areas are expected to see overall only modest financial benefits from climate action, 
+        a restricted number of specific areas are projected to receive exceptionally large gains, showing the value 
+        derived from Net-Zero policies is not evenly spread across Cardiff communities. 
+        
+        We will investigate the association between net zero co-benefits and levels 
+        of social deprivation to assess how the poorest communities are going to be impacted by the net zero changes
         """
     )
     
+    histogram_totals(
+        num_cols = 1, 
+        columns_to_plot = ['sum'],
+        x_labels = ['Total Co-Benefit [£ million]'],
+        colors = ["#AFEA24"]
+    )
+
     # Show Cardiff LSOAs content
     columns_to_plot = [
         'population', 
