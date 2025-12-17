@@ -20,20 +20,18 @@ df_wimd_grouped = (
     .groupby("LSOA code", as_index=False)
     .agg({
         "WIMD 2025 overall quintile": "first",
-        # only include name if it exists
         **({"LSOA name (Eng)": "first"} if "LSOA name (Eng)" in df_wimd.columns else {})
     })
 )
 
 # -------------------------
-# Load shapefile and filter to Cardiff using those codes
+# Load Cardiff shapefile (already filtered to Cardiff)
 # -------------------------
-shapefile_path = "data/shapefile/small_areas_british_grid.shp"
-lsoa_gdf = gpd.read_file(shapefile_path, engine="pyogrio")
+shapefile_path = "data/cardiff_shapefile/cardiff_lsoa.shp"
+lsoa_gdfCar = gpd.read_file(shapefile_path, engine="pyogrio")
 
-lsoa_gdf["small_area"] = lsoa_gdf["small_area"].astype(str).str.strip()
-
-lsoa_gdfCar = lsoa_gdf[lsoa_gdf["small_area"].isin(df_wimd_grouped["LSOA code"])].copy()
+# Ensure join key matches type/format
+lsoa_gdfCar["small_area"] = lsoa_gdfCar["small_area"].astype(str).str.strip()
 
 # Reproject for web maps
 lsoa_gdfCar = lsoa_gdfCar.to_crs(epsg=4326)
@@ -41,7 +39,10 @@ lsoa_gdfCar = lsoa_gdfCar.to_crs(epsg=4326)
 # -------------------------
 # Merge WIMD onto geometry
 # -------------------------
-merge_cols = ["LSOA code", "WIMD 2025 overall quintile"] + (["LSOA name (Eng)"] if "LSOA name (Eng)" in df_wimd_grouped.columns else [])
+merge_cols = ["LSOA code", "WIMD 2025 overall quintile"] + (
+    ["LSOA name (Eng)"] if "LSOA name (Eng)" in df_wimd_grouped.columns else []
+)
+
 lsoa_cardiff_wimd = lsoa_gdfCar.merge(
     df_wimd_grouped[merge_cols].rename(columns={"LSOA code": "small_area"}),
     on="small_area",
@@ -71,14 +72,16 @@ lsoa_cardiff_wimd["area_group"] = (
 )
 
 # -------------------------
-# Colour mapping (least light -> most dark) + transparency
+# Colour mapping (WIMD semantics!)
+# WIMD: 1 = MOST deprived, 5 = LEAST deprived
+# Dark = most deprived, Light = least deprived
 # -------------------------
 quintile_colors = {
-    1: [253, 231, 37, 110],  # light yellow (least deprived)
-    2: [122, 209, 81, 110],
+    1: [68, 1, 84, 110],      # dark purple (MOST deprived)
+    2: [65, 68, 135, 110],
     3: [34, 168, 132, 110],
-    4: [65, 68, 135, 110],
-    5: [68, 1, 84, 110],     # dark purple (most deprived)
+    4: [122, 209, 81, 110],
+    5: [253, 231, 37, 110],   # light yellow (LEAST deprived)
 }
 
 lsoa_cardiff_wimd["fill_rgba"] = lsoa_cardiff_wimd["WIMD 2025 overall quintile"].map(quintile_colors)
@@ -115,7 +118,7 @@ lsoa_layer = pdk.Layer(
     stroked=True,
     filled=True,
     get_fill_color="properties.fill_rgba",
-    get_line_color=[40, 40, 40, 90],     # softer LSOA boundary
+    get_line_color=[40, 40, 40, 70],   # softer boundaries
     get_line_width=6,
     line_width_min_pixels=1,
     pickable=True,
@@ -126,8 +129,8 @@ group_layer = pdk.Layer(
     geo_group,
     stroked=True,
     filled=False,
-    get_line_color=[0, 0, 0, 220],
-    get_line_width=60,                   # thicker outline
+    get_line_color=[0, 0, 0, 200],
+    get_line_width=60,
     line_width_min_pixels=3,
     pickable=False,
 )
