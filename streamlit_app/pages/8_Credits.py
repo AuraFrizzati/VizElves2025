@@ -1,9 +1,9 @@
 import streamlit as st
 
-st.set_page_config(page_title="About", page_icon="📈")
+st.set_page_config(page_title="Credits", page_icon="📈")
 
-st.markdown("# About")
-st.sidebar.header("About")
+st.markdown("# Credits")
+st.sidebar.header("Credits")
 
 ## The Challenge
 st.markdown("## Challenge")

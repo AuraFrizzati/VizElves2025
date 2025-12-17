@@ -2,12 +2,26 @@ import streamlit as st
 import time
 import numpy as np
 
-st.set_page_config(page_title="Plotting Demo", page_icon="📈")
+st.set_page_config(page_title="Introduction", page_icon="📈")
 
-st.markdown("# Plotting Demo")
-st.sidebar.header("Plotting Demo")
+st.markdown("# Introduction")
+st.sidebar.header("Introduction")
 st.write(
-    """This demo illustrates a combination of plotting and animation with
-Streamlit. We're generating a bunch of random numbers in a loop for around
-5 seconds. Enjoy!"""
+    """This dashboard illustrates a combination of interactive plotting with
+Streamlit. Enjoy!"""
+)
+
+st.markdown("## Index")
+st.markdown(
+    """
+- [Summary View](./Summary_View)
+- [Time Lines](./Timelines)
+- [Social Deprivation](./Social_Deprivation)
+- [Maps](./4_map)
+- [Map v2](./mapv2)
+- [Conclusions](./Conclusions)
+- [Data Quality](./Data_Quality)
+- [Definitions](./Definitions)
+- [Credits](./Credits)
+    """
 )
