@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-from utils import histogram_totals
+from utils import histogram_totals, Top3_Bottom3_LSOAs
 
 # st.text(os.getcwd())
 
@@ -68,6 +68,10 @@ if section == "Cardiff LSOAs":
         x_labels = ['Total Co-Benefit [£ million]'],
         colors = ["#AFEA24"]
     )
+
+    st.dataframe(
+        Top3_Bottom3_LSOAs(value_col='sum'), 
+        hide_index=True)
 
     # Show Cardiff LSOAs content
     columns_to_plot = [

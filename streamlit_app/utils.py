@@ -6,6 +6,39 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
+def highlight_top_bottom(row):
+    if 'top' in str(row['Rank']):
+        return ['background-color: rgba(175, 234, 36, 0.3)'] * len(row)  # greenish transparent
+    elif 'bottom' in str(row['Rank']):
+        return ['background-color: rgba(255, 0, 0, 0.2)'] * len(row)  # reddish transparent
+    else:
+        return [''] * len(row)
+
+def Top3_Bottom3_LSOAs(data=None, value_col=None):
+    if data is None:
+        data = pd.read_csv("data/l2data_totals.csv")
+
+    # Sort the entire dataset and add rank
+    data_sorted = data.sort_values(value_col, ascending=False).reset_index(drop=True)
+    data_sorted['position'] = data_sorted.index + 1  # 1-indexed position
+    
+    # Get top 3
+    top3_LSOAs = data_sorted.head(3)[['LSOA code', 'LSOA name (Eng)', value_col, 'position']].copy()
+    top3_LSOAs['Rank'] = [f'top{pos}' for pos in top3_LSOAs['position']]
+    
+    # Get bottom 3
+    bottom3_LSOAs = data_sorted.tail(3)[['LSOA code', 'LSOA name (Eng)', value_col, 'position']].copy()
+    bottom3_LSOAs['Rank'] = [f'bottom{pos}' for pos in bottom3_LSOAs['position']]
+    
+    # Drop position column and concat
+    top3_LSOAs = top3_LSOAs.drop('position', axis=1)
+    bottom3_LSOAs = bottom3_LSOAs.drop('position', axis=1)
+    
+    NetZeroSum_TopBottom = pd.concat([top3_LSOAs, bottom3_LSOAs])
+    styled_df = NetZeroSum_TopBottom.style.apply(highlight_top_bottom, axis=1)
+    return(styled_df)
+
+
 def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors=None, colorscales=None):
     """
     Create histogram subplots for given columns.
