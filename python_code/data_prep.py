@@ -46,7 +46,20 @@ df_l2Car_lookup_wimd.to_csv(
     "data/lsoa_cardiff_wimd.csv"
     , index=False)
 
+l2data = pd.read_csv("../data/lsoa_cardiff_wimd.csv")
+l2data_totals = l2data.pivot(
+    index = ['LSOA code', 'LSOA name (Eng)', 'WIMD 2025 overall quintile',
+             'population', 'households'],
+    columns = 'co-benefit_type',
+    values = 'sum'
+    ).reset_index()
 
+l2data_totals.head()
+
+# save it for further processing
+l2data_totals.to_csv("../data/l2data_totals.csv")
+
+# L3 OLD CODE
 # # import main data table
 # print("L3 data is getting imported ...")
 # df_l3 = pd.read_excel("data/Level_3.xlsx")
