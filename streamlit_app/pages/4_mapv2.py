@@ -84,6 +84,59 @@ quintile_colors = {
     5: [253, 231, 37, 110],   # light yellow (LEAST deprived)
 }
 
+import streamlit.components.v1 as components
+
+legend_items = [
+    (1, "1 – Most deprived"),
+    (2, "2"),
+    (3, "3"),
+    (4, "4"),
+    (5, "5 – Least deprived"),
+]
+
+def rgba_to_css(rgba):
+    r, g, b, a = rgba
+    return f"rgba({r},{g},{b},{a/255:.3f})"
+
+legend_html = """
+<div style="
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.25;
+  display: inline-block;
+">
+  <div style="font-weight: 700; margin-bottom: 8px;">
+    WIMD 2025 – Overall Quintile
+  </div>
+"""
+
+for q, label in legend_items:
+    legend_html += f"""
+  <div style="display:flex; align-items:center; gap:10px; margin:4px 0;">
+    <span style="
+      width:18px; height:18px; border-radius:4px;
+      background:{rgba_to_css(quintile_colors[q])};
+      border:1px solid rgba(0,0,0,0.25);
+      display:inline-block;
+    "></span>
+    <span>{label}</span>
+  </div>
+"""
+
+legend_html += """
+  <div style="margin-top:8px; font-size:12px; color: rgba(0,0,0,0.65);">
+    Darker = more deprived
+  </div>
+</div>
+"""
+
+components.html(legend_html, height=170)
+
 lsoa_cardiff_wimd["fill_rgba"] = lsoa_cardiff_wimd["WIMD 2025 overall quintile"].map(quintile_colors)
 
 # If any missing quintiles, set a default semi-transparent grey
