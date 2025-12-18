@@ -271,9 +271,6 @@ if section == "Cardiff Overview":
         in the top benefit tier, indicating that current Net Zero pathways may not yet be optimised for large, 
         urban households.
 
-        * The "Distribution of Sum" chart shows a heavy concentration of neighborhoods with near-zero co-benefits. 
-        The largest net-zero co-benefits are an outlier rather than the norm.
-
          """
     )
     
