@@ -69,20 +69,23 @@ if section == "Cardiff Overview":
     ]
     
     x_labels = [
-        'Population Size',
+        'Number of Persons',
         'Number of Households',
         'Average Household Size'
-        ,'Total Net-Zero Co-Benefits'
+        ,'Total Net-Zero Co-Benefits [million £]'
     ]
 
     colors = [ "#A7A7E7", '#00CC96', '#00CC96', '#00CC96']  # or any hex colors
+    titles = ['Population Size', 'Number of Households', 'Average Household Size', 'Total Net-Zero Co-Benefits']
 
     histogram_totals(
         num_cols = 2, 
         columns_to_plot = columns_to_plot,
         x_labels = x_labels,
         colors = colors
+        ,titles = titles
     )
+    
 
     st.markdown("### Small Areas ranked by Population Size (Highest 3 and Lowest 3 values)")
     st.dataframe(

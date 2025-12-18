@@ -39,7 +39,7 @@ def Top3_Bottom3_LSOAs(data=None, value_col=None):
     return(styled_df)
 
 
-def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors=None, colorscales=None):
+def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors=None, colorscales=None, titles = None):
     """
     Create histogram subplots for given columns.
     
@@ -59,10 +59,10 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors
     num_rows = (len(columns_to_plot) + num_cols - 1) // num_cols
 
     # Create titles for each column
-    titles = []
-    for col in columns_to_plot:
-        col_name = col.replace("_", " ").capitalize()
-        titles.append(f'Distribution of {col_name}')
+    # titles = []
+    # for col in columns_to_plot:
+    #     col_name = col.replace("_", " ").capitalize()
+    #     titles.append(f'Distribution of {col_name}')
 
     # Default x-axis labels if not provided
     if x_labels is None:
