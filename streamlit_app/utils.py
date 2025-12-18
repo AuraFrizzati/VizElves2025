@@ -55,6 +55,7 @@ def Top3_Bottom3_LSOAs(data=None, value_col=None):
     # Get top 3
     top3_LSOAs = data_sorted.head(3)[['LSOA name (Eng)', value_col, 'position']].copy()
     top3_LSOAs['Rank'] = [f'Highest: rank {pos}' for pos in top3_LSOAs['position']]
+
     
     # Get bottom 3
     bottom3_LSOAs = data_sorted.tail(3)[['LSOA name (Eng)', value_col, 'position']].copy()
@@ -65,6 +66,7 @@ def Top3_Bottom3_LSOAs(data=None, value_col=None):
     bottom3_LSOAs = bottom3_LSOAs.drop('position', axis=1)
     
     NetZeroSum_TopBottom = pd.concat([top3_LSOAs, bottom3_LSOAs])
+    NetZeroSum_TopBottom.rename(columns={'LSOA name (Eng)': 'Neighbourhood'},inplace=True)
     styled_df = NetZeroSum_TopBottom.style.apply(highlight_top_bottom, axis=1)
     return(styled_df)
 

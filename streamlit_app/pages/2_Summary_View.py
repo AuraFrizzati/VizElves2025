@@ -243,40 +243,19 @@ if section == "Cardiff Overview":
 
     # Example with different colors
     bottom_line_message(
-        "Your message here",
+        "Currently, the projected Total Net-Zero Co-Benefits is unevenly distributed. Suburban areas like " \
+        "Cyncoed and Lisvane are positioned to capture the highest co-benefits. Densely populated urban centers " \
+        "like 'Cathays 12', instead, despite being the third most populated area, rank last (218th) for " \
+        "projected benefits. We must ensure that our most populated neighborhoods, from the students in Cathays " \
+        "to the families in 'Adamsdown 2' (which supports nearly 5,000 residents) are not left behind in the race" \
+        " to a healthier, greener future. The extreme disconnect between  population density and benefit suggests " \
+        "current green models may inadvertently favor low-density, affluent suburbs over high-density urban areas. " \
+        "'Adamsdown 2' (highest population/household size) fails to appear in the top benefit tier, indicating that " \
+        "current Net Zero pathways may not yet be optimised for large, urban households.",
         bg_color="#fff3cd",      # Light yellow
         border_color="#ffc107",  # Gold
         text_color="#856404"     # Dark yellow/brown
     )
-
-
-
-    st.markdown(
-        f"""
-
-        * The data reveals a city of stark demographic contrasts. Adamsdown 2 supports nearly 5,000 residents 
-        with an average household size of six, whereas Grangetown 13 averages fewer than two. 
-        Because energy needs and living patterns vary so significantly, a uniform green strategy will fail. 
-        We must tailor our transition to support both high-density family units and smaller urban households.
-
-        * Currently, the projected Total Net-Zero Co-Benefits is unevenly distributed. Suburban areas like 
-        Cyncoed and Lisvane are positioned to capture the highest co-benefits. Densely populated urban centers 
-        like Cathays 12, instead, despite being the third most populated area, rank last (218th) for 
-        projected benefits.
-
-        * We must ensure that our most populated neighborhoods, from the students in Cathays to the families in 
-        Adamsdown, are not left behind in the race to a healthier, greener future. The extreme disconnect between 
-        population density and benefit suggests current green models may inadvertently favor low-density, 
-        affluent suburbs over high-density urban areas. Adamsdown 2 (highest population/household size) fails to appear 
-        in the top benefit tier, indicating that current Net Zero pathways may not yet be optimised for large, 
-        urban households.
-
-         """
-    )
-    
-
-
-    
 
 
 
