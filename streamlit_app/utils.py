@@ -87,12 +87,20 @@ def choropleth_map(gdf, column_colour='population',
         pitch=0
     )
 
+    # Round the sum and sum_std values for tooltip display
+    if 'sum' in gdf.columns:
+        gdf['sum_rounded'] = gdf['sum'].round(2)
+    if 'sum_std' in gdf.columns:
+        gdf['sum_std_rounded'] = gdf['sum_std'].round(2)
+
+
     # Build tooltip HTML dynamically based on available columns
     tooltip_html = "Neighbourhood: <b>{LSOA name (Eng)}</b><br/>"
     tooltip_html += "Population: {population}<br/>"
     tooltip_html += "Households: {households}<br/>"
     tooltip_html += "Average household size: {average_household_size}<br/>"
-    tooltip_html += "Tot net-zero co-benefits [mil £]: {sum}"
+    tooltip_html += "Tot net-zero co-benefits [mil £]: {sum_rounded}<br/>"
+    tooltip_html += "Normalised tot net-zero co-benefits [£/person]: {sum_std_rounded}"
 
     # Create the deck
     deck = pdk.Deck(

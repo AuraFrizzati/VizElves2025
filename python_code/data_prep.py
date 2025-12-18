@@ -57,7 +57,7 @@ l2data_totals = l2data.pivot(
     values = 'sum'
     ).reset_index()
 
-l2data_totals['sum_std1000']= 1000*l2data_totals['sum']/l2data_totals['population']
+l2data_totals['sum_std']= 1000000*l2data_totals['sum']/l2data_totals['population']
 
 # save it for further processing
 l2data_totals.to_csv("data/l2data_totals.csv")

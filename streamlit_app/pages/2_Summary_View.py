@@ -127,13 +127,15 @@ if section == "Cardiff Overview":
             )
 
     with col2:
-                # Show map
+
         metric_options = {
             "Tot Co-Benefits": "sum"
+            ,"Tot Co-Benefits Normalised": "sum_std"
         }
 
         metric_titles = {
-            "Tot Co-Benefits": "Tot Net-Zero Co-benefits [million £]"
+            "Tot Co-Benefits": "Tot net-zero co-benefits [million £]",
+            "Tot Co-Benefits Normalised": "Normalised tot net-zero co-benefits [£ per person]"
         }
 
         metric_display = st.selectbox(
