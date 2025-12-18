@@ -39,7 +39,7 @@ def choropleth_map(gdf, column_colour='population',
                    colour_low=None, colour_high= None,
                    legend_title=None, height=400
                    ,zoom=10.5, lon_correction = 0, lat_correction = 0
-                   ,legend_bins=5):
+                   ,legend_bins=5, tooltip_font_size=11):
     
     # Set default colors if not provided
     if colour_low is None:
@@ -101,8 +101,16 @@ def choropleth_map(gdf, column_colour='population',
         map_style="light",
         tooltip={
             "html": tooltip_html,
-            "style": {"backgroundColor": "white", "color": "black"}
-        },
+            "style": {
+                "backgroundColor": "white",
+                "color": "black",
+                "fontSize": f"{tooltip_font_size}px",  # <-- use parameter
+                "fontFamily": "Arial, sans-serif",
+                "padding": "8px",
+                "borderRadius": "4px",
+                "boxShadow": "0 2px 4px rgba(0,0,0,0.2)"
+            }
+        }
     )
 
 
