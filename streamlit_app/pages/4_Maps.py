@@ -55,18 +55,29 @@ groups = sorted(gdf["area_group"].dropna().unique().tolist())
 selected_group = st.selectbox("Highlight area group", groups, index=0)
 
 normalize = st.toggle("Normalise co-benefit per 1,000 population (recommended)", value=True)
+with st.expander("What does normalisation mean?"):
+    st.markdown(
+        """
+        **Normalising co-benefits per 1,000 people** adjusts the results so areas with different
+        population sizes can be compared fairly.
+
+        Larger areas naturally generate higher total benefits simply because more people live there.
+        By scaling values to a standard population of 1,000 residents, we show how strong the
+        co-benefit is *relative to population*, not size.
+        """
+    )
+
+
 show_mismatch = st.toggle("Highlight mismatch areas (high deprivation + low co-benefit)", value=False)
 
-# -------------------------
-# WIMD colour mapping (Wales semantics!)
-# 1 = MOST deprived (dark), 5 = LEAST deprived (light)
-# -------------------------
+# --- WIMD: white (least deprived) -> dark red (most deprived)
+# WIMD: 1 = most deprived, 5 = least deprived
 wimd_colors = {
-    1: [68, 1, 84, 140],
-    2: [65, 68, 135, 140],
-    3: [34, 168, 132, 140],
-    4: [122, 209, 81, 140],
-    5: [253, 231, 37, 140],
+    1: [139, 0, 0, 160],     # dark red
+    2: [178, 34, 34, 160],
+    3: [220, 80, 80, 160],
+    4: [245, 160, 160, 160],
+    5: [255, 255, 255, 160], # white (least deprived)
 }
 
 gdf["WIMD 2025 overall quintile"] = pd.to_numeric(gdf["WIMD 2025 overall quintile"], errors="coerce").astype("Int64")
@@ -92,7 +103,7 @@ else:
 # -------------------------
 # Continuous colour ramp for co-benefits (viridis-ish)
 # -------------------------
-def to_rgba_continuous(values: pd.Series, alpha: int = 140):
+def to_white_blue(values: pd.Series, alpha: int = 160):
     vals = pd.to_numeric(values, errors="coerce")
     if vals.notna().sum() == 0:
         return [[200, 200, 200, 80]] * len(vals)
@@ -104,27 +115,17 @@ def to_rgba_continuous(values: pd.Series, alpha: int = 140):
 
     t = ((vals - vmin) / (vmax - vmin)).clip(0, 1)
 
-    # 5-stop ramp (dark -> light)
-    stops = [
-        (0.00, (68, 1, 84)),
-        (0.25, (59, 82, 139)),
-        (0.50, (33, 145, 140)),
-        (0.75, (94, 201, 98)),
-        (1.00, (253, 231, 37)),
-    ]
-
-    def lerp(a, b, x): return int(a + (b - a) * x)
-
+    # White -> Dark Blue
+    # white: (255,255,255), dark blue: (0,50,120)
     def interp(x):
-        for (t0, c0), (t1, c1) in zip(stops, stops[1:]):
-            if x <= t1:
-                u = 0 if t1 == t0 else (x - t0) / (t1 - t0)
-                return [lerp(c0[0], c1[0], u), lerp(c0[1], c1[1], u), lerp(c0[2], c1[2], u), alpha]
-        return [*stops[-1][1], alpha]
+        r = int(255 + (0   - 255) * x)
+        g = int(255 + (50  - 255) * x)
+        b = int(255 + (120 - 255) * x)
+        return [r, g, b, alpha]
 
     return [interp(x) if pd.notna(x) else [200, 200, 200, 80] for x in t]
 
-gdf["metric_rgba"] = to_rgba_continuous(gdf["metric_value"], alpha=140)
+gdf["metric_rgba"] = to_white_blue(gdf["metric_value"], alpha=160)
 
 # -------------------------
 # Area outline (dissolve selected group)
@@ -195,13 +196,13 @@ def legend_box(title, items):
 
 # WIMD legend
 wimd_items = [
-    (rgba_to_css(wimd_colors[1]), "1 – Most deprived"),
-    (rgba_to_css(wimd_colors[2]), "2"),
-    (rgba_to_css(wimd_colors[3]), "3"),
-    (rgba_to_css(wimd_colors[4]), "4"),
-    (rgba_to_css(wimd_colors[5]), "5 – Least deprived"),
+    ("rgba(139,0,0,0.63)", "1 – Most deprived"),
+    ("rgba(178,34,34,0.63)", "2"),
+    ("rgba(220,80,80,0.63)", "3"),
+    ("rgba(245,160,160,0.63)", "4"),
+    ("rgba(255,255,255,0.63)", "5 – Least deprived"),
 ]
-wimd_legend_html = legend_box("WIMD 2025 – Overall Quintile", wimd_items)
+wimd_legend_html = legend_box("WIMD 2025 — Overall Quintile", wimd_items)
 
 # Co-benefit legend (5 quantile bins)
 vals = pd.to_numeric(gdf["metric_value"], errors="coerce")
@@ -212,11 +213,11 @@ else:
 
 # Use representative colours sampled from our ramp
 cb_colors = [
-    rgba_to_css([68, 1, 84, 140]),
-    rgba_to_css([59, 82, 139, 140]),
-    rgba_to_css([33, 145, 140, 140]),
-    rgba_to_css([94, 201, 98, 140]),
-    rgba_to_css([253, 231, 37, 140]),
+    "rgba(255,255,255,0.63)",  # low
+    "rgba(191,210,232,0.63)",
+    "rgba(127,165,209,0.63)",
+    "rgba(63,110,170,0.63)",
+    "rgba(0,50,120,0.63)",     # high
 ]
 
 cb_labels = [
