@@ -9,7 +9,7 @@ import json
 
 ##### MAPS
 # Create color gradient: white (low) -> red (high) based on population
-def population_to_color(colour_value, min_pop, max_pop
+def value_to_color(colour_value, min_pop, max_pop
                     ,colour_low, 
                     colour_high):
     """
@@ -25,13 +25,6 @@ def population_to_color(colour_value, min_pop, max_pop
     if pd.isna(colour_value):
         return [200, 200, 200, 180]
     
-    if colour_low == None:
-        colour_low = (255, 255, 255)
-    
-    if colour_high == None:
-        colour_high = (220, 20, 20)
-
-    
     # Normalize between 0 and 1
     normalized = (colour_value - min_pop) / (max_pop - min_pop) if max_pop != min_pop else 0
     
@@ -42,12 +35,25 @@ def population_to_color(colour_value, min_pop, max_pop
     
     return [r, g, b, 180]
 
-def choropleth_map(gdf, column_colour='population', colour_low=None, colour_high= None):
+def choropleth_map(gdf, column_colour='population', 
+                   colour_low=None, colour_high= None,
+                   legend_title=None, height=400
+                   ,zoom=10.5, lon_correction = 0, lat_correction = 0
+                   ,legend_bins=5):
+    
+    # Set default colors if not provided
+    if colour_low is None:
+        colour_low = (255, 255, 255)
+    if colour_high is None:
+        colour_high = (220, 20, 20)
+    
     min_pop = gdf[column_colour].min()
     max_pop = gdf[column_colour].max()
+    rng = (max_pop - min_pop) if pd.notna(max_pop) and pd.notna(min_pop) else 0.0
 
     gdf['fill_color'] = gdf[column_colour].apply(
-        lambda x: population_to_color(x, min_pop, max_pop, colour_low=colour_low, colour_high = colour_high)
+        lambda x: value_to_color(x, min_pop, max_pop, 
+                                      colour_low, colour_high)
     )
 
     # Convert to GeoJSON
@@ -57,6 +63,8 @@ def choropleth_map(gdf, column_colour='population', colour_low=None, colour_high
     minx, miny, maxx, maxy = gdf.total_bounds
     center_lon = (minx + maxx) / 2
     center_lat = (miny + maxy) / 2
+    center_lon = center_lon + lon_correction
+    center_lat= center_lat + lat_correction
 
     # Create the PyDeck layer
     layer = pdk.Layer(
@@ -75,8 +83,8 @@ def choropleth_map(gdf, column_colour='population', colour_low=None, colour_high
     view_state = pdk.ViewState(
         latitude=center_lat,
         longitude=center_lon,
-        zoom=10.5,
-        pitch=0,
+        zoom=zoom,
+        pitch=0
     )
 
     # Build tooltip HTML dynamically based on available columns
@@ -97,9 +105,66 @@ def choropleth_map(gdf, column_colour='population', colour_low=None, colour_high
         },
     )
 
-    # Display the map
-    st.pydeck_chart(deck, use_container_width=True)
 
+    # Create legend title
+    if legend_title is None:
+        legend_title = column_colour.replace('_', ' ').title()
+    
+       # Helper to format values consistently
+    def fmt_val(v):
+        if pd.isna(v):
+            return "-"
+        if (min_pop >= 1000) or (max_pop >= 1000):
+            return f"{v:,.0f}"
+        return f"{v:.2f}"
+
+    # Build equal-width bins and swatch colours (midpoint colour per bin)
+    def color_at_t(t):
+        r = int(colour_low[0] + (colour_high[0] - colour_low[0]) * t)
+        g = int(colour_low[1] + (colour_high[1] - colour_low[1]) * t)
+        b = int(colour_low[2] + (colour_high[2] - colour_low[2]) * t)
+        return f"rgb({r},{g},{b})"
+
+    if rng <= 0 or legend_bins <= 0:
+        edges = [min_pop, max_pop]
+        swatches = [color_at_t(0.5)]
+        labels = [f"{fmt_val(min_pop)}–{fmt_val(max_pop)}"]
+    else:
+        edges = [min_pop + (rng * i / legend_bins) for i in range(legend_bins + 1)]
+        # Midpoint t for each bin across 0..1
+        swatches = [color_at_t((i + 0.5) / legend_bins) for i in range(legend_bins)]
+        labels = [f"{fmt_val(edges[i])}–{fmt_val(edges[i + 1])}" for i in range(legend_bins)]
+
+
+    # Build the swatch divs WITHOUT f-string nesting
+    swatch_html_parts = []
+    for i in range(len(swatches)):
+        swatch_html_parts.append(
+            '<div style="flex: 1; min-width: 60px;">'
+            f'<div style="height: 12px; background: {swatches[i]}; border: 1px solid #999; border-radius: 2px;"></div>'
+            f'<div style="font-size: 9px; color: #666; text-align: center; margin-top: 2px; line-height: 1.1;">{labels[i]}</div>'
+            '</div>'
+        )
+
+    swatch_divs = ''.join(swatch_html_parts)
+
+    # Discrete legend HTML with responsive sizing
+    legend_html = (
+        '<div style="background-color: white; border: 1px solid #ddd; border-radius: 5px; '
+        'padding: 8px; margin-bottom: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); '
+        'width: 100%; max-width: 100%; box-sizing: border-box;">'
+        f'<div style="font-weight: 600; margin-bottom: 6px; font-size: 11px; color: #333;">{legend_title}</div>'
+        '<div style="display: flex; gap: 4px; flex-wrap: nowrap;">'
+        f'{swatch_divs}'
+        '</div>'
+        '</div>'
+    )
+      
+    st.markdown(legend_html, unsafe_allow_html=True)
+    st.markdown(" ")
+    st.markdown(" ")
+    # Display the map
+    st.pydeck_chart(deck, use_container_width=True, height=height)
 
 #####
 
@@ -312,252 +377,3 @@ def deprivation_quintiles_boxplots_totals(
     )
     
     st.plotly_chart(fig, use_container_width=True)
-    
-    
-# '# Additional utility functions can be added here as needed'
-
-
-
-# from pathlib import Path
-# import json
-# import numpy as np
-# import pandas as pd
-# import geopandas as gpd
-# import pydeck as pdk
-# import streamlit as st
-
-
-# # -------------------------
-# # Helpers
-# # -------------------------
-# def _pick_year_col(df: pd.DataFrame, year: int) -> str:
-#     """Return the column name for the chosen year, handling int vs string columns."""
-#     if year in df.columns:
-#         return year
-#     if str(year) in df.columns:
-#         return str(year)
-#     raise KeyError(f"Year column {year} not found. Available columns include: {list(df.columns)[:20]}...")
-
-
-# def _ensure_str(series: pd.Series) -> pd.Series:
-#     return series.astype(str).str.strip()
-
-
-# def _value_to_rgba_continuous(values: pd.Series, alpha: int = 120):
-#     """
-#     Map numeric values to a continuous viridis-like ramp.
-#     Output is a list-of-4 ints per row for PyDeck (RGBA 0-255).
-#     """
-#     vals = pd.to_numeric(values, errors="coerce")
-#     # Avoid all-null / constant cases
-#     vmin = np.nanmin(vals) if np.isfinite(np.nanmin(vals)) else 0.0
-#     vmax = np.nanmax(vals) if np.isfinite(np.nanmax(vals)) else 1.0
-#     if vmin == vmax:
-#         vmax = vmin + 1.0
-
-#     # Normalize 0..1
-#     t = (vals - vmin) / (vmax - vmin)
-#     t = t.clip(0, 1)
-
-#     # A lightweight viridis-ish ramp (no matplotlib dependency in utils)
-#     # Dark purple -> blue -> teal -> green -> yellow
-#     stops = [
-#         (0.00, (68, 1, 84)),
-#         (0.25, (59, 82, 139)),
-#         (0.50, (33, 145, 140)),
-#         (0.75, (94, 201, 98)),
-#         (1.00, (253, 231, 37)),
-#     ]
-
-#     def lerp(a, b, x):
-#         return int(a + (b - a) * x)
-
-#     def interp_color(x):
-#         for (t0, c0), (t1, c1) in zip(stops, stops[1:]):
-#             if x <= t1:
-#                 if t1 == t0:
-#                     return (*c1, alpha)
-#                 u = (x - t0) / (t1 - t0)
-#                 return (lerp(c0[0], c1[0], u), lerp(c0[1], c1[1], u), lerp(c0[2], c1[2], u), alpha)
-#         return (*stops[-1][1], alpha)
-
-#     return [list(interp_color(x)) if pd.notna(x) else [200, 200, 200, 70] for x in t]
-
-
-# # -------------------------
-# # Cached loaders
-# # -------------------------
-# @st.cache_data(show_spinner=False)
-# def load_cardiff_gdf(shapefile_path: str = "data/cardiff_shapefile/cardiff_lsoa.shp") -> gpd.GeoDataFrame:
-#     p = Path(shapefile_path)
-#     if not p.exists():
-#         raise FileNotFoundError(f"Shapefile not found: {shapefile_path}")
-
-#     gdf = gpd.read_file(str(p), engine="pyogrio")
-#     if "small_area" not in gdf.columns:
-#         raise KeyError("Expected column 'small_area' in shapefile.")
-#     gdf["small_area"] = _ensure_str(gdf["small_area"])
-#     return gdf.to_crs(epsg=4326)
-
-
-# @st.cache_data(show_spinner=False)
-# def load_wimd_csv(path: str = "data/lsoa_cardiff_wimd.csv") -> pd.DataFrame:
-#     df = pd.read_csv(path)
-#     if "LSOA code" not in df.columns:
-#         raise KeyError("Expected 'LSOA code' in lsoa_cardiff_wimd.csv")
-#     df["LSOA code"] = _ensure_str(df["LSOA code"])
-#     return df
-
-
-# @st.cache_data(show_spinner=False)
-# def load_cobenefits_csv(path: str = "data/l2data_totals.csv") -> pd.DataFrame:
-#     df = pd.read_csv(path)
-#     # Try to be tolerant: accept small_area or LSOA code
-#     if "small_area" in df.columns:
-#         df["small_area"] = _ensure_str(df["small_area"])
-#     elif "LSOA code" in df.columns:
-#         df["small_area"] = _ensure_str(df["LSOA code"])
-#     else:
-#         raise KeyError("Expected 'small_area' or 'LSOA code' in l2data_totals.csv")
-#     return df
-
-
-# # -------------------------
-# # Build layers/decks
-# # -------------------------
-# def build_wimd_gdf(cardiff_gdf: gpd.GeoDataFrame, wimd_df: pd.DataFrame) -> gpd.GeoDataFrame:
-#     # Keep one quintile per LSOA
-#     keep = ["LSOA code", "WIMD 2025 overall quintile"] + (["LSOA name (Eng)"] if "LSOA name (Eng)" in wimd_df.columns else [])
-#     w = (
-#         wimd_df[keep]
-#         .groupby("LSOA code", as_index=False)
-#         .agg({c: "first" for c in keep if c != "LSOA code"})
-#         .rename(columns={"LSOA code": "small_area"})
-#     )
-#     gdf = cardiff_gdf.merge(w, on="small_area", how="left")
-#     gdf["WIMD 2025 overall quintile"] = pd.to_numeric(gdf["WIMD 2025 overall quintile"], errors="coerce").astype("Int64")
-
-#     # WIMD semantics: 1=most deprived (dark), 5=least deprived (light)
-#     quintile_colors = {
-#         1: [68, 1, 84, 120],
-#         2: [65, 68, 135, 120],
-#         3: [34, 168, 132, 120],
-#         4: [122, 209, 81, 120],
-#         5: [253, 231, 37, 120],
-#     }
-#     gdf["fill_rgba"] = gdf["WIMD 2025 overall quintile"].map(quintile_colors)
-#     gdf["fill_rgba"] = gdf["fill_rgba"].apply(lambda x: x if isinstance(x, list) else [200, 200, 200, 70])
-#     return gdf
-
-
-# def build_cobenefit_gdf(
-#     cardiff_gdf: gpd.GeoDataFrame,
-#     cob_df: pd.DataFrame,
-#     cobenefit_type: str,
-#     year: int = 2025,
-#     agg: str = "sum",
-# ) -> gpd.GeoDataFrame:
-#     """
-#     Build a Cardiff GeoDataFrame containing ONE value per LSOA for the chosen cobenefit_type + year.
-#     """
-#     df = cob_df.copy()
-
-#     if "co_benefit_type" not in df.columns:
-#         raise KeyError("Expected 'co_benefit_type' column in l2data_totals.csv")
-
-#     year_col = _pick_year_col(df, year)
-
-#     # Filter to the requested type
-#     dft = df[df["co_benefit_type"] == cobenefit_type].copy()
-
-#     # Aggregate to one value per LSOA
-#     dft[year_col] = pd.to_numeric(dft[year_col], errors="coerce")
-#     if agg == "mean":
-#         agg_df = dft.groupby("small_area", as_index=False)[year_col].mean()
-#     else:
-#         agg_df = dft.groupby("small_area", as_index=False)[year_col].sum()
-
-#     val_name = f"cobenefit_{cobenefit_type}_{year}"
-#     agg_df = agg_df.rename(columns={year_col: val_name})
-
-#     gdf = cardiff_gdf.merge(agg_df, on="small_area", how="left")
-
-#     # Continuous colour ramp for co-benefits
-#     gdf["fill_rgba"] = _value_to_rgba_continuous(gdf[val_name], alpha=120)
-
-#     return gdf
-
-
-# def make_deck(fill_prop: str, tooltip_value_prop: str, title: str):
-#     base_layer = pdk.Layer(
-#         "GeoJsonLayer",
-#         geo_all,
-#         stroked=True,
-#         filled=True,
-#         get_fill_color=f"properties.{fill_prop}",
-#         get_line_color=[40, 40, 40, 55],
-#         get_line_width=5,
-#         line_width_min_pixels=1,
-#         pickable=True,
-#     )
-
-#     outline_layer = pdk.Layer(
-#         "GeoJsonLayer",
-#         geo_outline,
-#         stroked=True,
-#         filled=False,
-#         get_line_color=[0, 0, 0, 230],
-#         get_line_width=80,
-#         line_width_min_pixels=3,
-#         pickable=False,
-#     )
-
-#     layers = [base_layer, outline_layer]
-
-#     if geo_mismatch is not None:
-#         mismatch_layer = pdk.Layer(
-#             "GeoJsonLayer",
-#             geo_mismatch,
-#             stroked=True,
-#             filled=False,
-#             get_line_color=[220, 30, 30, 230],
-#             get_line_width=55,
-#             line_width_min_pixels=2,
-#             pickable=False,
-#         )
-#         layers.append(mismatch_layer)
-
-#     view_state = pdk.ViewState(
-#         latitude=center_lat,
-#         longitude=center_lon,
-#         zoom=zoom,
-#         min_zoom=9,
-#         max_zoom=13,
-#     )
-
-#     # ✅ Put interaction settings on the MapView controller (works across older pydeck)
-#     view = pdk.View(
-#         type="MapView",
-#         controller={
-#             "dragPan": True,
-#             "scrollZoom": False,      # ✅ disables scroll-zoom
-#             "doubleClickZoom": True,
-#             "dragRotate": False,
-#             "touchRotate": False,
-#         },
-#     )
-
-#     return pdk.Deck(
-#         layers=layers,
-#         initial_view_state=view_state,
-#         map_style="light",
-#         tooltip={
-#             "html": f"""
-#                 <b>{{{name_col}}}</b><br/>
-#                 {title}: <b>{{{tooltip_value_prop}}}</b><br/>
-#                 Area: <b>{{area_group}}</b><br/>
-#                 LSOA Code: <b>{{small_area}}</b>
-#             """,
-#             "style": {"backgroundColor": "white", "color": "black"},
-#         },
-#     )

@@ -91,19 +91,33 @@ if section == "Cardiff Overview":
             """
             )
     
-    col1, col2 = st.columns([1, 2])
+    col1, col2 = st.columns([1, 1])
 
     with col1:
         # Show map
-        metric = st.selectbox(
+        metric_options = {
+            "Population": "population",
+            "Households": "households",
+            "Average Household Size": "average_household_size",
+            "Total Net-Zero Co-benefits": "sum"
+        }
+
+        metric_display = st.selectbox(
             "Co-benefit metric",
-            ['population', 'households', 'average_household_size', 'sum' ]
+            list(metric_options.keys())
         )
+
+        metric = metric_options[metric_display]
+
     with col2:
         choropleth_map(
             gdf = cardiff_gdf, 
             column_colour=metric
-            ,colour_high= (84, 0, 100)
+            ,height = 300
+            ,zoom = 9.75
+            ,lon_correction=0.001
+            ,lat_correction=0.03
+            #,colour_high= (84, 0, 100)
             )
   
     # Cardiff population/LSOA distribution
