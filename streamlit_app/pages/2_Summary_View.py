@@ -52,7 +52,7 @@ if section == "Cardiff Overview":
     st.markdown(
         f"""
 
-        Cardiff comprises **{cardiff_num_lsoas} distinct neighborhoods** (LSOAs), home to **{cardiff_pop_size:,} residents** and **{cardiff_n_households:,} households**. 
+        Cardiff comprises **{cardiff_num_lsoas} distinct neighbourhoods** (LSOAs), home to **{cardiff_pop_size:,} residents** and **{cardiff_n_households:,} households**. 
         
         Achieving Net Zero by 2050 isn't just a carbon target, but an opportunity to unlock "co-benefits", 
         tangible improvements in air quality, public health, and energy affordability.
@@ -105,18 +105,18 @@ if section == "Cardiff Overview":
         hide_index=True)
 
 
-    st.markdown(
-        f"""
-        Cardiff is expected to benefit from Net Zero policies by ...
+    # st.markdown(
+    #     f"""
+    #     Cardiff is expected to benefit from Net Zero policies by ...
 
-        While most local areas are expected to see overall only modest financial benefits from climate action, 
-        a restricted number of specific areas are projected to receive exceptionally large gains, showing the value 
-        derived from Net-Zero policies is not evenly spread across Cardiff communities. 
+    #     While most local areas are expected to see overall only modest financial benefits from climate action, 
+    #     a restricted number of specific areas are projected to receive exceptionally large gains, showing the value 
+    #     derived from Net-Zero policies is not evenly spread across Cardiff communities. 
         
-        We will investigate the association between net zero co-benefits and levels 
-        of social deprivation to assess how the poorest communities are going to be impacted by the net zero changes
-        """
-    )
+    #     We will investigate the association between net zero co-benefits and levels 
+    #     of social deprivation to assess how the poorest communities are going to be impacted by the net zero changes
+    #     """
+    # )
 
     st.markdown(
         f"""
