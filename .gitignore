@@ -3,3 +3,4 @@ data/shapefile/small_areas_british_grid.shp
 settings.json
 .venv/
 streamlit_app/__pycache__/
+data/Level_2.xlsx

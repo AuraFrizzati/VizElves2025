@@ -6,7 +6,40 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors=None, colorscales=None):
+def highlight_top_bottom(row):
+    if 'Highest' in str(row['Rank']):
+        return ['background-color: rgba(175, 234, 36, 0.3)'] * len(row)  # greenish transparent
+    elif 'Lowest' in str(row['Rank']):
+        return ['background-color: rgba(255, 0, 0, 0.2)'] * len(row)  # reddish transparent
+    else:
+        return [''] * len(row)
+
+def Top3_Bottom3_LSOAs(data=None, value_col=None):
+    if data is None:
+        data = pd.read_csv("data/l2data_totals.csv")
+
+    # Sort the entire dataset and add rank
+    data_sorted = data.sort_values(value_col, ascending=False).reset_index(drop=True)
+    data_sorted['position'] = data_sorted.index + 1  # 1-indexed position
+    
+    # Get top 3
+    top3_LSOAs = data_sorted.head(3)[['LSOA code', 'LSOA name (Eng)', value_col, 'position']].copy()
+    top3_LSOAs['Rank'] = [f'Highest: rank {pos}' for pos in top3_LSOAs['position']]
+    
+    # Get bottom 3
+    bottom3_LSOAs = data_sorted.tail(3)[['LSOA code', 'LSOA name (Eng)', value_col, 'position']].copy()
+    bottom3_LSOAs['Rank'] = [f'Lowest: rank {pos}' for pos in bottom3_LSOAs['position']]
+    
+    # Drop position column and concat
+    top3_LSOAs = top3_LSOAs.drop('position', axis=1)
+    bottom3_LSOAs = bottom3_LSOAs.drop('position', axis=1)
+    
+    NetZeroSum_TopBottom = pd.concat([top3_LSOAs, bottom3_LSOAs])
+    styled_df = NetZeroSum_TopBottom.style.apply(highlight_top_bottom, axis=1)
+    return(styled_df)
+
+
+def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors=None, colorscales=None, titles = None):
     """
     Create histogram subplots for given columns.
     
@@ -26,10 +59,10 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors
     num_rows = (len(columns_to_plot) + num_cols - 1) // num_cols
 
     # Create titles for each column
-    titles = []
-    for col in columns_to_plot:
-        col_name = col.replace("_", " ").capitalize()
-        titles.append(f'Distribution of {col_name}')
+    # titles = []
+    # for col in columns_to_plot:
+    #     col_name = col.replace("_", " ").capitalize()
+    #     titles.append(f'Distribution of {col_name}')
 
     # Default x-axis labels if not provided
     if x_labels is None:
@@ -90,7 +123,7 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors
         # Set x-axis label for this specific subplot
         fig.update_xaxes(title_text=x_labels[i], row=row, col=col_pos)
     
-    fig.update_annotations(font_size=30)  
+    fig.update_annotations(font_size=24)  
     fig.update_yaxes(title_text="Number of LSOAs")
 
     fig.update_layout(
