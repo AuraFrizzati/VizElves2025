@@ -5,8 +5,6 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from utils import histogram_totals, Top3_Bottom3_LSOAs
 
-# st.text(os.getcwd())
-
 st.set_page_config(page_title="Summary View", page_icon=":bar_chart:")
 
 l2data_totals = pd.read_csv("data/l2data_totals.csv")
@@ -43,8 +41,6 @@ if section == "Cardiff Overview":
     st.markdown("# Cardiff Overview")
     st.sidebar.header("Cardiff Overview")
 
-    # MAP IDEA: https://phw.nhs.wales/services-and-teams/observatory/data-and-analysis/publication-documents/measuring-inequalities-2011/inequalitiesprofilesla-cardiff-v1-pdf/
-
     cardiff_num_lsoas = l2data_totals['LSOA code'].nunique()
     cardiff_pop_size = l2data_totals['population'].sum()
     cardiff_n_households = l2data_totals['households'].sum()
@@ -55,8 +51,7 @@ if section == "Cardiff Overview":
         f"""
 
         Cardiff comprises **{cardiff_num_lsoas} distinct neighbourhoods** (LSOAs), home to **{cardiff_pop_size:,} residents** 
-        and **{cardiff_n_households:,} households** (with the average household size ranging 
-        from **{min_average_household_size:,} persons/household** to **{max_average_household_size:,} persons/household**). 
+        and **{cardiff_n_households:,} households** (with . 
         
         Achieving Net Zero by 2050 isn't just a carbon target, but an opportunity to unlock "co-benefits", 
         tangible improvements in air quality, public health, and energy affordability.
@@ -72,42 +67,142 @@ if section == "Cardiff Overview":
         
         * **Population** & **Households**: LSOA subdivisions have been designed by the Office of National Statistics (ONS)
         to be of similar scale, typically housing 1,000-3,000 residents or 400-1,200 households.
-        * **Average Household Size**: Most Cardiff homes have 2 to 3 residents, though a small number of 
-        neighbourhoods stand out with much larger households.
-        * **Total Net-Zero Co-Benefits**: This measures the financial value of the "Green Dividend",
-        the extra perks like health improvements and energy savings. The data shows these rewards 
-        are currently concentrated; the vast majority of neighborhoods see very little benefit, 
-        while a tiny few see gains of up to £17 million.
 
         """
     )
 
+    # Cardiff population/LSOA distribution
+    col1, col2 = st.columns([1, 1])
+
+    with col1:
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown("### Population/LSOA")
+        st.markdown("""
+        This chart shows the distribution of population across Cardiff's 218 LSOAs. 
+        - Most LSOAs cluster around 1,400-1,800 residents
+        - Some outliers have significantly higher populations
+        - This variation reflects Cardiff's diverse urban landscape
+        """)
+
+    with col2:
+        columns_to_plot = [
+            'population'
+        ]
+        
+        x_labels = [
+            'Number of People'
+        ]
+
+        colors = [ '#00CC96']  # or any hex colors
+        titles = ['Population Size']
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = columns_to_plot,
+            x_labels = x_labels,
+            colors = colors
+        )
  
-    # Show Cardiff LSOAs content
-    columns_to_plot = [
-        'population', 
-        'households',
-        'average_household_size'
-        ,'sum'
-    ]
+    # Cardiff households/LSOA distribution
+    col1, col2 = st.columns([1, 1])
+
+    with col1:
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown("### Households/LSOA")
+        st.markdown("""
+        This chart shows the distribution of households across Cardiff's 218 LSOAs. 
+        
+
+        """)
+
+    with col2:
+        columns_to_plot = [
+            'households'
+        ]
+        
+        x_labels = [
+            'Number of Households'
+        ]
+
+        colors = [ '#00CC96']  # or any hex colors
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = columns_to_plot,
+            x_labels = x_labels,
+            colors = colors
+        )
+
     
-    x_labels = [
-        'Number of Persons',
-        'Number of Households',
-        'Average Household Size'
-        ,'Total Net-Zero Co-Benefits [million £]'
-    ]
+    # Cardiff average household size/LSOA distribution
+    col1, col2 = st.columns([1, 1])
 
-    colors = [ "#A7A7E7", '#00CC96', '#00CC96', '#00CC96']  # or any hex colors
-    titles = ['Population Size', 'Number of Households', 'Average Household Size', 'Total Net-Zero Co-Benefits']
+    with col1:
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown("### Average Household's Size")
+        st.markdown(f"""
+        This chart shows the distribution of average household size across LSOAs.
+        - Most Cardiff homes have 2 to 3 residents, though a small number of 
+        neighbourhoods stand out with much larger households. 
+        - The average home size ranges from {min_average_household_size:,} residents/household 
+        to {max_average_household_size:,} residents/household)
 
-    histogram_totals(
-        num_cols = 2, 
-        columns_to_plot = columns_to_plot,
-        x_labels = x_labels,
-        colors = colors
-        ,titles = titles
-    )
+        """)
+
+    with col2:
+        columns_to_plot = [
+            'average_household_size'
+        ]
+        
+        x_labels = [
+            'Average Household Size'
+        ]
+
+        colors = [ '#00CC96']  # or any hex colors
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = columns_to_plot,
+            x_labels = x_labels,
+            colors = colors
+        )
+
+    # Cardiff Total Net-Zero Co-Benefits/LSOA distribution
+    col1, col2 = st.columns([1, 1])
+
+    with col1:
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown(" ")
+        st.markdown("### Total Net-Zero Co-Benefits/LSOA")
+        st.markdown("""
+        This chart shows the distribution of overall Total Net-Zero Co-Benefits across LSOAs. 
+        It is a measure of the financial value of the "Green Dividend", the extra perks like health improvements and energy savings. The data shows these rewards 
+        are currently concentrated; the vast majority of neighborhoods see very little benefit, 
+        while a tiny few see gains of up to £17 million.
+
+        """)
+
+    with col2:
+        columns_to_plot = [
+            'sum'
+        ]
+        
+        x_labels = [
+            'Total Net-Zero Co-Benefits [million £]'
+        ]
+
+        colors = [ '#00CC96']  # or any hex colors
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = columns_to_plot,
+            x_labels = x_labels,
+            colors = colors
+        )
+
     
 
     st.markdown("### Small Areas ranked by Population Size (Highest 3 and Lowest 3 values)")
