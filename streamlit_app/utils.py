@@ -7,9 +7,9 @@ import plotly.graph_objects as go
 import streamlit as st
 
 def highlight_top_bottom(row):
-    if 'top' in str(row['Rank']):
+    if 'Highest' in str(row['Rank']):
         return ['background-color: rgba(175, 234, 36, 0.3)'] * len(row)  # greenish transparent
-    elif 'bottom' in str(row['Rank']):
+    elif 'Lowest' in str(row['Rank']):
         return ['background-color: rgba(255, 0, 0, 0.2)'] * len(row)  # reddish transparent
     else:
         return [''] * len(row)
@@ -24,11 +24,11 @@ def Top3_Bottom3_LSOAs(data=None, value_col=None):
     
     # Get top 3
     top3_LSOAs = data_sorted.head(3)[['LSOA code', 'LSOA name (Eng)', value_col, 'position']].copy()
-    top3_LSOAs['Rank'] = [f'top{pos}' for pos in top3_LSOAs['position']]
+    top3_LSOAs['Rank'] = [f'Highest: rank {pos}' for pos in top3_LSOAs['position']]
     
     # Get bottom 3
     bottom3_LSOAs = data_sorted.tail(3)[['LSOA code', 'LSOA name (Eng)', value_col, 'position']].copy()
-    bottom3_LSOAs['Rank'] = [f'bottom{pos}' for pos in bottom3_LSOAs['position']]
+    bottom3_LSOAs['Rank'] = [f'Lowest: rank {pos}' for pos in bottom3_LSOAs['position']]
     
     # Drop position column and concat
     top3_LSOAs = top3_LSOAs.drop('position', axis=1)
@@ -123,7 +123,7 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors
         # Set x-axis label for this specific subplot
         fig.update_xaxes(title_text=x_labels[i], row=row, col=col_pos)
     
-    fig.update_annotations(font_size=30)  
+    fig.update_annotations(font_size=24)  
     fig.update_yaxes(title_text="Number of LSOAs")
 
     fig.update_layout(

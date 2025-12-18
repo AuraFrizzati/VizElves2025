@@ -14,13 +14,13 @@ l2data_totals = pd.read_csv("data/l2data_totals.csv")
     
 # Initialize session state for navigation
 if 'section' not in st.session_state:
-    st.session_state.section = "Cardiff LSOAs"
+    st.session_state.section = "Cardiff Overview"
 
 # Create sidebar buttons
 st.sidebar.header("Navigate to:")
 
-if st.sidebar.button("Cardiff LSOAs", use_container_width=True):
-    st.session_state.section = "Cardiff LSOAs"
+if st.sidebar.button("Cardiff Overview", use_container_width=True):
+    st.session_state.section = "Cardiff Overview"
 
 if st.sidebar.button("Health Co-Benefits", use_container_width=True):
     st.session_state.section = "Health Co-Benefits"
@@ -38,10 +38,10 @@ if st.sidebar.button("Net-Zero Costs", use_container_width=True):
 
 section = st.session_state.section
 
-if section == "Cardiff LSOAs":
+if section == "Cardiff Overview":
 
-    st.markdown("# Cardiff LSOAs Overview")
-    st.sidebar.header("Cardiff LSOAs Overview")
+    st.markdown("# Cardiff Overview")
+    st.sidebar.header("Cardiff Overview")
 
     # MAP IDEA: https://phw.nhs.wales/services-and-teams/observatory/data-and-analysis/publication-documents/measuring-inequalities-2011/inequalitiesprofilesla-cardiff-v1-pdf/
 
@@ -51,7 +51,63 @@ if section == "Cardiff LSOAs":
 
     st.markdown(
         f"""
-        Cardiff has a population of **{cardiff_pop_size:,} people** and a total of **{cardiff_n_households:,} households** divided into **{cardiff_num_lsoas}** small local areas (LSOAs).
+
+        Cardiff comprises **{cardiff_num_lsoas} distinct neighborhoods** (LSOAs), home to **{cardiff_pop_size:,} residents** and **{cardiff_n_households:,} households**. 
+        
+        Achieving Net Zero by 2050 isn't just a carbon target, but an opportunity to unlock "co-benefits", 
+        tangible improvements in air quality, public health, and energy affordability.
+
+        """
+    )
+
+    # Show Cardiff LSOAs content
+    columns_to_plot = [
+        'population', 
+        'households',
+        'average_household_size'
+        ,'sum'
+    ]
+    
+    x_labels = [
+        'Population Size',
+        'Number of Households',
+        'Average Household Size'
+        ,'Total Net-Zero Co-Benefits'
+    ]
+
+    colors = [ "#A7A7E7", '#00CC96', '#00CC96', '#00CC96']  # or any hex colors
+
+    histogram_totals(
+        num_cols = 2, 
+        columns_to_plot = columns_to_plot,
+        x_labels = x_labels,
+        colors = colors
+    )
+
+    st.markdown("### Small Areas ranked by Population Size (Highest 3 and Lowest 3 values)")
+    st.dataframe(
+        Top3_Bottom3_LSOAs(value_col='population'), 
+        hide_index=True)
+    
+    st.markdown("### Small Areas ranked by Number of Households (Highest 3 and Lowest 3 values)")
+    st.dataframe(
+        Top3_Bottom3_LSOAs(value_col='households'), 
+        hide_index=True)
+    
+    st.markdown("#### Small Areas ranked by Average Household Size (Highest 3 and Lowest 3 values)")
+    st.dataframe(
+        Top3_Bottom3_LSOAs(value_col='average_household_size'), 
+        hide_index=True)
+    
+    st.markdown("## Small Areas ranked by Total Net-Zero Cobenefits value (Highest 3 and Lowest 3 values)")
+    st.dataframe(
+        Top3_Bottom3_LSOAs(value_col='sum'), 
+        hide_index=True)
+
+
+    st.markdown(
+        f"""
+        Cardiff is expected to benefit from Net Zero policies by ...
 
         While most local areas are expected to see overall only modest financial benefits from climate action, 
         a restricted number of specific areas are projected to receive exceptionally large gains, showing the value 
@@ -61,39 +117,44 @@ if section == "Cardiff LSOAs":
         of social deprivation to assess how the poorest communities are going to be impacted by the net zero changes
         """
     )
-    
-    histogram_totals(
-        num_cols = 1, 
-        columns_to_plot = ['sum'],
-        x_labels = ['Total Co-Benefit [£ million]'],
-        colors = ["#AFEA24"]
+
+    st.markdown(
+        f"""
+
+        * The data reveals a city of stark demographic contrasts. Adamsdown 2 supports nearly 5,000 residents 
+        with an average household size of six, whereas Grangetown 13 averages fewer than two. 
+        Because energy needs and living patterns vary so significantly, a uniform green strategy will fail. 
+        We must tailor our transition to support both high-density family units and smaller urban households.
+
+        * Currently, the projected Total Net-Zero Co-Benefits is unevenly distributed. Suburban areas like 
+        Cyncoed and Lisvane are positioned to capture the highest co-benefits. Densely populated urban centers 
+        like Cathays 12, instead, despite being the third most populated area, rank last (218th) for 
+        projected benefits.
+
+        * We must ensure that our most populated neighborhoods, from the students in Cathays to the families in 
+        Adamsdown, are not left behind in the race to a healthier, greener future. The extreme disconnect between 
+        population density and benefit suggests current green models may inadvertently favor low-density, 
+        affluent suburbs over high-density urban areas. Adamsdown 2 (highest population/household size) fails to appear 
+        in the top benefit tier, indicating that current Net Zero pathways may not yet be optimised for large, 
+        urban households.
+
+        * The "Distribution of Sum" chart shows a heavy concentration of neighborhoods with near-zero co-benefits. 
+        The largest net-zero co-benefits are an outlier rather than the norm.
+
+         """
     )
-
-    st.dataframe(
-        Top3_Bottom3_LSOAs(value_col='sum'), 
-        hide_index=True)
-
-    # Show Cardiff LSOAs content
-    columns_to_plot = [
-        'population', 
-        'households',
-        'sum'
-    ]
     
-    x_labels = [
-        'Population Size',
-        'Number of Households',
-        'Total Co-Benefit [£ million]'
-    ]
+    # histogram_totals(
+    #     num_cols = 1, 
+    #     columns_to_plot = ['sum'],
+    #     x_labels = ['Total Co-Benefit [£ million]'],
+    #     colors = ["#AFEA24"]
+    # )
 
-    colors = [ "#A7A7E7", '#00CC96', "#AFEA24"]  # or any hex colors
 
-    histogram_totals(
-        num_cols = 1, 
-        columns_to_plot = columns_to_plot,
-        x_labels = x_labels,
-        colors = colors
-    )
+    
+
+
 
 elif section == "Health Co-Benefits":
     st.markdown("# Health Co-Benefits")
