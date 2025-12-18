@@ -285,38 +285,64 @@ if section == "Cardiff Overview":
         st.markdown(" ")
         st.markdown(" ")
         st.markdown("### Total Net-Zero Co-Benefits")
-        st.markdown(f"""
-        This chart shows the distribution of overall Total Net-Zero Co-Benefits across neighbourhoods. 
         
-        - It is a measure of the financial value of the "Green Dividend", the extra perks like health improvements and energy savings.
-        - The Total Net-Zero Co-Benefits value ranges from a loss of {min_tot_cobenefit:,} million £ (Cyncoed 1)
-        to a gain of {max_tot_cobenefit:,} million £ (Cathays 12)
-        - **The data shows these rewards are currently concentrated; the vast majority of neighbourhoods see very little benefit, 
-        while a tiny few see gains of up to £17 million**.
+        # Add toggle for normalized vs absolute
+        histogram_metric = st.radio(
+            "Select metric:",
+            ["Absolute (million £)", "Normalized (£/person)"],
+            horizontal=True
+        )
         
-        """)
+        if histogram_metric == "Absolute (million £)":
+            histogram_column = 'sum'
+            histogram_label = 'Total Net-Zero Co-Benefits [million £]'
+            min_val = min_tot_cobenefit
+            max_val = max_tot_cobenefit
+            
+            st.markdown(f"""
+            This chart shows the distribution of overall Total Net-Zero Co-Benefits across neighbourhoods. 
+            
+            - It is a measure of the financial value of the "Green Dividend", the extra perks like health improvements and energy savings.
+            - The Total Net-Zero Co-Benefits value ranges from a loss of {min_val:,} million £ (Cyncoed 1)
+            to a gain of {max_val:,} million £ (Cathays 12)
+            - **The data shows these rewards are currently concentrated; the vast majority of neighbourhoods see very little benefit, 
+            while a tiny few see gains of up to £17 million**.
+            """)
+        else:
+            histogram_column = 'sum_std'
+            histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+            min_val = round(min(l2data_totals['sum_std']), 2)
+            max_val = round(max(l2data_totals['sum_std']), 2)
+            
+            st.markdown(f"""
+            This chart shows the distribution of **normalized** Net-Zero Co-Benefits per person across neighbourhoods.
+            
+            - This metric accounts for population size, showing the benefit per resident.
+            - The normalized co-benefits range from {min_val:,} £/person to {max_val:,} £/person.
+            - **This view reveals how benefits are distributed on a per-capita basis, independent of neighbourhood size**.
+            """)
 
     with col2:
-        columns_to_plot = [
-            'sum'
-        ]
+        columns_to_plot = [histogram_column]
+        x_labels = [histogram_label]
+        colors = ['#009933']
         
-        x_labels = [
-            'Total Net-Zero Co-Benefits [million £]'
-        ]
-
-        colors = [ '#009933']  # or any hex colors
         histogram_totals(
-            num_cols = 1, 
-            columns_to_plot = columns_to_plot,
-            x_labels = x_labels,
-            colors = colors
+            num_cols=1, 
+            columns_to_plot=columns_to_plot,
+            x_labels=x_labels,
+            colors=colors
         )
 
     
     with st.expander('Expand to explore the neighbourhoods with the largest and smallest Net-Zero Co-benefits'):
         st.dataframe(
             Top3_Bottom3_LSOAs(value_col='sum'), 
+            hide_index=True)
+        
+    with st.expander('Expand to explore the neighbourhoods with the largest and smallest Normalised Net-Zero Co-benefits'):
+        st.dataframe(
+            Top3_Bottom3_LSOAs(value_col='sum_std'), 
             hide_index=True)
 
 
