@@ -6,6 +6,36 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
+# Add this CSS styling to create a styled bottom line message box
+def bottom_line_message(message, bg_color="#e8f4f8", border_color="#0066cc", text_color="#003366"):
+    """
+    Create a styled bottom line message with custom background and border.
+    
+    Parameters:
+    - message: Text to display
+    - bg_color: Background color (default: light blue)
+    - border_color: Border color (default: dark blue)
+    - text_color: Text color (default: navy)
+    """
+    st.markdown(f"""
+    <div style="
+        background-color: {bg_color};
+        border: 2px solid {border_color};
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    ">
+        <p style="
+            color: {text_color};
+            font-size: 16px;
+            font-weight: 500;
+            margin: 0;
+            line-height: 1.6;
+        ">{message}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
 def highlight_top_bottom(row):
     if 'Highest' in str(row['Rank']):
         return ['background-color: rgba(175, 234, 36, 0.3)'] * len(row)  # greenish transparent
@@ -23,11 +53,11 @@ def Top3_Bottom3_LSOAs(data=None, value_col=None):
     data_sorted['position'] = data_sorted.index + 1  # 1-indexed position
     
     # Get top 3
-    top3_LSOAs = data_sorted.head(3)[['LSOA code', 'LSOA name (Eng)', value_col, 'position']].copy()
+    top3_LSOAs = data_sorted.head(3)[['LSOA name (Eng)', value_col, 'position']].copy()
     top3_LSOAs['Rank'] = [f'Highest: rank {pos}' for pos in top3_LSOAs['position']]
     
     # Get bottom 3
-    bottom3_LSOAs = data_sorted.tail(3)[['LSOA code', 'LSOA name (Eng)', value_col, 'position']].copy()
+    bottom3_LSOAs = data_sorted.tail(3)[['LSOA name (Eng)', value_col, 'position']].copy()
     bottom3_LSOAs['Rank'] = [f'Lowest: rank {pos}' for pos in bottom3_LSOAs['position']]
     
     # Drop position column and concat
@@ -124,7 +154,7 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors
         fig.update_xaxes(title_text=x_labels[i], row=row, col=col_pos)
     
     fig.update_annotations(font_size=24)  
-    fig.update_yaxes(title_text="Number of LSOAs")
+    fig.update_yaxes(title_text="Number of Neighbourhoods")
 
     fig.update_layout(
         height=400*num_rows, 

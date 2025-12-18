@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-from utils import histogram_totals, Top3_Bottom3_LSOAs
+from utils import histogram_totals, Top3_Bottom3_LSOAs, bottom_line_message
 
 st.set_page_config(page_title="Summary View", page_icon=":bar_chart:")
 
@@ -46,30 +46,34 @@ if section == "Cardiff Overview":
     cardiff_n_households = l2data_totals['households'].sum()
     max_average_household_size = max(l2data_totals['average_household_size'])
     min_average_household_size = min(l2data_totals['average_household_size'])
+    max_pop_size = max(l2data_totals['population'])
+    min_pop_size = min(l2data_totals['population'])
+    max_tot_cobenefit = round(max(l2data_totals['sum']),2)
+    min_tot_cobenefit = round(min(l2data_totals['sum']),2)
 
     st.markdown(
         f"""
 
-        Cardiff comprises **{cardiff_num_lsoas} distinct neighbourhoods** (LSOAs), home to **{cardiff_pop_size:,} residents** 
-        and **{cardiff_n_households:,} households** (with . 
-        
-        Achieving Net Zero by 2050 isn't just a carbon target, but an opportunity to unlock "co-benefits", 
-        tangible improvements in air quality, public health, and energy affordability.
+        Cardiff comprises {cardiff_num_lsoas} distinct neighbourhoods (LSOAs), home to {cardiff_pop_size:,} residents 
+        and {cardiff_n_households:,} households. LWe will use the term 'Neighbourhood' 
+        to refer to LSOAs.
 
-        """
-    )
-
-    st.markdown(
-        f"""
-
-        These four charts provide a snapshot of Cardiff's 218 LSOAs, illustrating the diversity in how residents 
+        This page provides a snapshot of Cardiff's 218 LSOAs, illustrating the diversity in how residents 
         live and the potential "green rewards" available to different areas.
-        
-        * **Population** & **Households**: LSOA subdivisions have been designed by the Office of National Statistics (ONS)
-        to be of similar scale, typically housing 1,000-3,000 residents or 400-1,200 households.
 
         """
     )
+
+    with st.expander('Note on the use of the term "Neighbourhood" in this dashboard'):
+        st.markdown(
+            """
+            In the text and visuals of this dashbaord we used the term "neighbourhood" in place of the 
+            more technical term Lower-layer Super Output Area (LSOA), the geographical .... because...
+            LSOA subdivisions have been designed by the Office of National Statistics (ONS)
+            to be of similar scale, typically housing 1,000-3,000 residents or 400-1,200 households. 
+
+            """
+            )
 
     # Cardiff population/LSOA distribution
     col1, col2 = st.columns([1, 1])
@@ -78,12 +82,13 @@ if section == "Cardiff Overview":
         st.markdown(" ")
         st.markdown(" ")
         st.markdown(" ")
-        st.markdown("### Population/LSOA")
-        st.markdown("""
-        This chart shows the distribution of population across Cardiff's 218 LSOAs. 
-        - Most LSOAs cluster around 1,400-1,800 residents
-        - Some outliers have significantly higher populations
-        - This variation reflects Cardiff's diverse urban landscape
+        st.markdown("### Population distribution")
+        st.markdown(f"""
+        This chart shows the distribution of population across Cardiff's neighbourhoods. 
+        - Most neighbourhoods cluster around 1,400-1,800 residents
+        - The number of people per neighbourhood ranges from {min_pop_size:,} residents (Grangetown 13) to {max_pop_size:,} residents (Adamsdown 2). 
+        This variation reflects Cardiff's diverse urban landscape
+        - Expand the table below to discover the neighbourhoods with the highest and lowest population size.
         """)
 
     with col2:
@@ -103,7 +108,14 @@ if section == "Cardiff Overview":
             x_labels = x_labels,
             colors = colors
         )
+
+    with st.expander('Expand to explore the neighbourhoods with the highest and lowest Population Size'):
+        st.dataframe(
+            Top3_Bottom3_LSOAs(value_col='population'), 
+            hide_index=True)
  
+
+    ########################################    
     # Cardiff households/LSOA distribution
     col1, col2 = st.columns([1, 1])
 
@@ -111,10 +123,14 @@ if section == "Cardiff Overview":
         st.markdown(" ")
         st.markdown(" ")
         st.markdown(" ")
-        st.markdown("### Households/LSOA")
+        st.markdown("### Households distribution")
         st.markdown("""
-        This chart shows the distribution of households across Cardiff's 218 LSOAs. 
+        This chart shows the distribution of households across Cardiff's neighbourhoods. 
         
+        - Most neighbourhoods cluster around 600 to 700 households.
+        - The number of households per neighburhood ranges from 407 (Cathays 9) to 1,169 (Pentyrch and St Fagans 3). This range highlights 
+        the difference between high-density urban areas and more sprawling residential pockets across the city.
+        - Expand the table below to discover the neighbourhoods with the highest and lowest number of households.
 
         """)
 
@@ -135,7 +151,13 @@ if section == "Cardiff Overview":
             colors = colors
         )
 
+    with st.expander('Expand to explore the neighbourhoods with the largest and smallest Numbers of Households'):
+        st.dataframe(
+            Top3_Bottom3_LSOAs(value_col='households'), 
+            hide_index=True)
+
     
+    ########################################  
     # Cardiff average household size/LSOA distribution
     col1, col2 = st.columns([1, 1])
 
@@ -145,11 +167,11 @@ if section == "Cardiff Overview":
         st.markdown(" ")
         st.markdown("### Average Household's Size")
         st.markdown(f"""
-        This chart shows the distribution of average household size across LSOAs.
+        This chart shows the distribution of average household size across neighbourhoods.
         - Most Cardiff homes have 2 to 3 residents, though a small number of 
         neighbourhoods stand out with much larger households. 
-        - The average home size ranges from {min_average_household_size:,} residents/household 
-        to {max_average_household_size:,} residents/household)
+        - The average home size ranges from {min_average_household_size:,} residents/household (Adamsdown 2)
+        to {max_average_household_size:,} residents/household (Grangetown 13)
 
         """)
 
@@ -169,7 +191,13 @@ if section == "Cardiff Overview":
             x_labels = x_labels,
             colors = colors
         )
+    
+    with st.expander('Expand to explore the neighbourhoods with the largest and smallest Average Household Size'):
+        st.dataframe(
+            Top3_Bottom3_LSOAs(value_col='average_household_size'), 
+            hide_index=True)
 
+    ########################################  
     # Cardiff Total Net-Zero Co-Benefits/LSOA distribution
     col1, col2 = st.columns([1, 1])
 
@@ -177,13 +205,16 @@ if section == "Cardiff Overview":
         st.markdown(" ")
         st.markdown(" ")
         st.markdown(" ")
-        st.markdown("### Total Net-Zero Co-Benefits/LSOA")
-        st.markdown("""
-        This chart shows the distribution of overall Total Net-Zero Co-Benefits across LSOAs. 
-        It is a measure of the financial value of the "Green Dividend", the extra perks like health improvements and energy savings. The data shows these rewards 
-        are currently concentrated; the vast majority of neighborhoods see very little benefit, 
-        while a tiny few see gains of up to £17 million.
-
+        st.markdown("### Total Net-Zero Co-Benefits")
+        st.markdown(f"""
+        This chart shows the distribution of overall Total Net-Zero Co-Benefits across neighbourhoods. 
+        
+        - It is a measure of the financial value of the "Green Dividend", the extra perks like health improvements and energy savings.
+        - The Total Net-Zero Co-Benefits value ranges from a loss of {min_tot_cobenefit:,} million £ (Cyncoed 1)
+        to a gain of {max_tot_cobenefit:,} million £ (Cathays 12)
+        - **The data shows these rewards are currently concentrated; the vast majority of neighbourhoods see very little benefit, 
+        while a tiny few see gains of up to £17 million**.
+        
         """)
 
     with col2:
@@ -204,40 +235,21 @@ if section == "Cardiff Overview":
         )
 
     
-
-    st.markdown("### Small Areas ranked by Population Size (Highest 3 and Lowest 3 values)")
-    st.dataframe(
-        Top3_Bottom3_LSOAs(value_col='population'), 
-        hide_index=True)
-    
-    st.markdown("### Small Areas ranked by Number of Households (Highest 3 and Lowest 3 values)")
-    st.dataframe(
-        Top3_Bottom3_LSOAs(value_col='households'), 
-        hide_index=True)
-    
-    st.markdown("#### Small Areas ranked by Average Household Size (Highest 3 and Lowest 3 values)")
-    st.dataframe(
-        Top3_Bottom3_LSOAs(value_col='average_household_size'), 
-        hide_index=True)
-    
-    st.markdown("## Small Areas ranked by Total Net-Zero Cobenefits value (Highest 3 and Lowest 3 values)")
-    st.dataframe(
-        Top3_Bottom3_LSOAs(value_col='sum'), 
-        hide_index=True)
+    with st.expander('Expand to explore the neighbourhoods with the largest and smallest Net-Zero Co-benefits'):
+        st.dataframe(
+            Top3_Bottom3_LSOAs(value_col='sum'), 
+            hide_index=True)
 
 
-    # st.markdown(
-    #     f"""
-    #     Cardiff is expected to benefit from Net Zero policies by ...
+    # Example with different colors
+    bottom_line_message(
+        "Your message here",
+        bg_color="#fff3cd",      # Light yellow
+        border_color="#ffc107",  # Gold
+        text_color="#856404"     # Dark yellow/brown
+    )
 
-    #     While most local areas are expected to see overall only modest financial benefits from climate action, 
-    #     a restricted number of specific areas are projected to receive exceptionally large gains, showing the value 
-    #     derived from Net-Zero policies is not evenly spread across Cardiff communities. 
-        
-    #     We will investigate the association between net zero co-benefits and levels 
-    #     of social deprivation to assess how the poorest communities are going to be impacted by the net zero changes
-    #     """
-    # )
+
 
     st.markdown(
         f"""
@@ -265,12 +277,6 @@ if section == "Cardiff Overview":
          """
     )
     
-    # histogram_totals(
-    #     num_cols = 1, 
-    #     columns_to_plot = ['sum'],
-    #     x_labels = ['Total Co-Benefit [£ million]'],
-    #     colors = ["#AFEA24"]
-    # )
 
 
     
