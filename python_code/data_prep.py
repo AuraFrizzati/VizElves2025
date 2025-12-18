@@ -42,6 +42,8 @@ df_l2Car_lookup_wimd.drop(
 )
 
 df_l2Car_lookup_wimd['average_household_size']= round(df_l2Car_lookup_wimd['population']/df_l2Car_lookup_wimd['households'],2)
+# df_l2Car_lookup_wimd['sum_std1000']= 1000*df_l2Car_lookup_wimd['sum']/df_l2Car_lookup_wimd['population']
+
 # save as csv
 df_l2Car_lookup_wimd.to_csv(
     "data/lsoa_cardiff_wimd.csv"
@@ -54,6 +56,8 @@ l2data_totals = l2data.pivot(
     columns = 'co-benefit_type',
     values = 'sum'
     ).reset_index()
+
+l2data_totals['sum_std1000']= 1000*l2data_totals['sum']/l2data_totals['population']
 
 # save it for further processing
 l2data_totals.to_csv("data/l2data_totals.csv")

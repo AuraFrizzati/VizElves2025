@@ -137,7 +137,7 @@ if section == "Cardiff Overview":
         }
 
         metric_display = st.selectbox(
-            "Net-Zero Co-Benefits metric",
+            "Net-Zero Co-Benefits metrics",
             list(metric_options.keys())
         )
 
