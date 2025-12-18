@@ -98,18 +98,23 @@ if section == "Cardiff Overview":
         metric_options = {
             "Population": "population",
             "Households": "households",
-            "Average Household Size": "average_household_size",
-            "Total Net-Zero Co-benefits": "sum"
+            "Average Household Size": "average_household_size"
+        }
+
+        metric_titles = {
+            "Population": "Population size",
+            "Households": "Number of households",
+            "Average Household Size": "Average Household Size"
         }
 
         metric_display = st.selectbox(
-            "Co-benefit metric",
+            "Population metrics",
             list(metric_options.keys())
         )
 
         metric = metric_options[metric_display]
+        legend_title = metric_titles[metric_display]
 
-    with col2:
         choropleth_map(
             gdf = cardiff_gdf, 
             column_colour=metric
@@ -117,8 +122,40 @@ if section == "Cardiff Overview":
             ,zoom = 9.75
             ,lon_correction=0.001
             ,lat_correction=0.03
-            #,colour_high= (84, 0, 100)
+            ,legend_title=legend_title
+            ,colour_high= (0, 0, 255)
             )
+
+    with col2:
+                # Show map
+        metric_options = {
+            "Tot Co-Benefits": "sum"
+        }
+
+        metric_titles = {
+            "Tot Co-Benefits": "Tot Net-Zero Co-benefits [million £]"
+        }
+
+        metric_display = st.selectbox(
+            "Net-Zero Co-Benefits metric",
+            list(metric_options.keys())
+        )
+
+        metric = metric_options[metric_display]
+        legend_title = metric_titles[metric_display]
+
+        choropleth_map(
+            gdf = cardiff_gdf, 
+            column_colour=metric
+            ,height = 300
+            ,zoom = 9.75
+            ,lon_correction=0.001
+            ,lat_correction=0.03
+            ,legend_title=legend_title
+            ,colour_high= (0, 153, 51)
+            )
+
+
   
     # Cardiff population/LSOA distribution
     col1, col2 = st.columns([1, 1])
