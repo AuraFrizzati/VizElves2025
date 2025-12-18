@@ -177,7 +177,7 @@ if section == "Cardiff Overview":
         
         x_labels = ['Number of People']
 
-        colors = [ '#00CC96']  # or any hex colors
+        colors = [ '#0000ff'] 
         titles = ['Population Size']
         histogram_totals(
             num_cols = 1, 
@@ -219,7 +219,7 @@ if section == "Cardiff Overview":
             'Number of Households'
         ]
 
-        colors = [ '#00CC96']  # or any hex colors
+        colors = [ '#0000ff'] 
         histogram_totals(
             num_cols = 1, 
             columns_to_plot = columns_to_plot,
@@ -260,7 +260,7 @@ if section == "Cardiff Overview":
             'Average Household Size'
         ]
 
-        colors = [ '#00CC96']  # or any hex colors
+        colors = [ '#0000ff'] 
         histogram_totals(
             num_cols = 1, 
             columns_to_plot = columns_to_plot,
@@ -302,7 +302,7 @@ if section == "Cardiff Overview":
             'Total Net-Zero Co-Benefits [million £]'
         ]
 
-        colors = [ '#00CC96']  # or any hex colors
+        colors = [ '#009933']  # or any hex colors
         histogram_totals(
             num_cols = 1, 
             columns_to_plot = columns_to_plot,
