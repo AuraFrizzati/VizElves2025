@@ -48,11 +48,15 @@ if section == "Cardiff Overview":
     cardiff_num_lsoas = l2data_totals['LSOA code'].nunique()
     cardiff_pop_size = l2data_totals['population'].sum()
     cardiff_n_households = l2data_totals['households'].sum()
+    max_average_household_size = max(l2data_totals['average_household_size'])
+    min_average_household_size = min(l2data_totals['average_household_size'])
 
     st.markdown(
         f"""
 
-        Cardiff comprises **{cardiff_num_lsoas} distinct neighbourhoods** (LSOAs), home to **{cardiff_pop_size:,} residents** and **{cardiff_n_households:,} households**. 
+        Cardiff comprises **{cardiff_num_lsoas} distinct neighbourhoods** (LSOAs), home to **{cardiff_pop_size:,} residents** 
+        and **{cardiff_n_households:,} households** (with the average household size ranging 
+        from **{min_average_household_size:,} persons/household** to **{max_average_household_size:,} persons/household**). 
         
         Achieving Net Zero by 2050 isn't just a carbon target, but an opportunity to unlock "co-benefits", 
         tangible improvements in air quality, public health, and energy affordability.
@@ -60,6 +64,25 @@ if section == "Cardiff Overview":
         """
     )
 
+    st.markdown(
+        f"""
+
+        These four charts provide a snapshot of Cardiff's 218 LSOAs, illustrating the diversity in how residents 
+        live and the potential "green rewards" available to different areas.
+        
+        * **Population** & **Households**: LSOA subdivisions have been designed by the Office of National Statistics (ONS)
+        to be of similar scale, typically housing 1,000-3,000 residents or 400-1,200 households.
+        * **Average Household Size**: Most Cardiff homes have 2 to 3 residents, though a small number of 
+        neighbourhoods stand out with much larger households.
+        * **Total Net-Zero Co-Benefits**: This measures the financial value of the "Green Dividend",
+        the extra perks like health improvements and energy savings. The data shows these rewards 
+        are currently concentrated; the vast majority of neighborhoods see very little benefit, 
+        while a tiny few see gains of up to £17 million.
+
+        """
+    )
+
+ 
     # Show Cardiff LSOAs content
     columns_to_plot = [
         'population', 
