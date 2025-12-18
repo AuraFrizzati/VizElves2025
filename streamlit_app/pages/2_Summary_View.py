@@ -91,6 +91,14 @@ if section == "Cardiff Overview":
             """
             )
     
+    # Add LSOA selector
+    lsoa_names = ["None"] + sorted(cardiff_gdf['LSOA name (Eng)'].dropna().unique().tolist())
+    selected_lsoa = st.selectbox(
+        "Highlight neighbourhood:",
+        lsoa_names,
+        key="lsoa_left"
+    )
+
     col1, col2 = st.columns([1, 1])
 
     with col1:
@@ -123,7 +131,10 @@ if section == "Cardiff Overview":
             ,lon_correction=0.001
             ,lat_correction=0.03
             ,legend_title=legend_title
-            ,colour_high= (0, 0, 255)
+            ,colour_high= (0, 0, 255),
+            highlight_lsoa=selected_lsoa,
+            tooltip_html = "Neighbourhood: <b>{LSOA name (Eng)}</b><br/>Population: {population}<br/>Households: {households}<br/>Average household size: {average_household_size}<br/>"
+  
             )
 
     with col2:
@@ -154,7 +165,10 @@ if section == "Cardiff Overview":
             ,lon_correction=0.001
             ,lat_correction=0.03
             ,legend_title=legend_title
-            ,colour_high= (0, 153, 51)
+            ,colour_high= (0, 153, 51),
+            highlight_lsoa=selected_lsoa
+            ,tooltip_html = "Neighbourhood: <b>{LSOA name (Eng)}</b><br/>Tot net-zero co-benefits [mil £]: {sum_rounded}<br/>Normalised tot net-zero co-benefits [£/person]: {sum_std_rounded}"
+
             #,colour_low= (230, 0, 0)
             )
 

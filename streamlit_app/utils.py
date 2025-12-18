@@ -39,7 +39,8 @@ def choropleth_map(gdf, column_colour='population',
                    colour_low=None, colour_high= None,
                    legend_title=None, height=400
                    ,zoom=10.5, lon_correction = 0, lat_correction = 0
-                   ,legend_bins=5, tooltip_font_size=11):
+                   ,legend_bins=5, tooltip_font_size=11,
+                   highlight_lsoa=None, tooltip_html = None):
     
     # Set default colors if not provided
     if colour_low is None:
@@ -79,6 +80,25 @@ def choropleth_map(gdf, column_colour='population',
         pickable=True,
     )
 
+    layers = [layer]
+    
+    # Add highlight layer if an LSOA is selected
+    if highlight_lsoa and highlight_lsoa != "None":
+        highlight_gdf = gdf[gdf['LSOA name (Eng)'] == highlight_lsoa]
+        if not highlight_gdf.empty:
+            highlight_json = json.loads(highlight_gdf.to_json())
+            highlight_layer = pdk.Layer(
+                "GeoJsonLayer",
+                highlight_json,
+                filled=False,
+                stroked=True,
+                get_line_color=[255, 0, 0, 255],  # Red border
+                get_line_width=50,
+                line_width_min_pixels=4,
+                pickable=False,
+            )
+            layers.append(highlight_layer)
+
     # Set the view
     view_state = pdk.ViewState(
         latitude=center_lat,
@@ -94,17 +114,9 @@ def choropleth_map(gdf, column_colour='population',
         gdf['sum_std_rounded'] = gdf['sum_std'].round(2)
 
 
-    # Build tooltip HTML dynamically based on available columns
-    tooltip_html = "Neighbourhood: <b>{LSOA name (Eng)}</b><br/>"
-    tooltip_html += "Population: {population}<br/>"
-    tooltip_html += "Households: {households}<br/>"
-    tooltip_html += "Average household size: {average_household_size}<br/>"
-    tooltip_html += "Tot net-zero co-benefits [mil £]: {sum_rounded}<br/>"
-    tooltip_html += "Normalised tot net-zero co-benefits [£/person]: {sum_std_rounded}"
-
     # Create the deck
     deck = pdk.Deck(
-        layers=[layer],
+        layers=layers,  # <-- use layers list instead of single layer
         initial_view_state=view_state,
         map_style="light",
         tooltip={
