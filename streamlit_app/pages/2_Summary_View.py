@@ -1,13 +1,30 @@
 import streamlit as st
 import pandas as pd
+import geopandas as gpd
 import plotly.express as px
+import pydeck as pdk
+import json
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-from utils import histogram_totals, Top3_Bottom3_LSOAs, bottom_line_message
+from utils import histogram_totals, Top3_Bottom3_LSOAs, bottom_line_message, choropleth_map
 
 st.set_page_config(page_title="Summary View", page_icon=":bar_chart:")
 
 l2data_totals = pd.read_csv("data/l2data_totals.csv")
+
+## geodata
+# Load shapefile and merge with data
+shapefile_path = "data/cardiff_shapefile/cardiff_lsoa.shp"
+cardiff_gdf = gpd.read_file(shapefile_path).to_crs(epsg=4326)
+cardiff_gdf["small_area"] = cardiff_gdf["small_area"].astype(str).str.strip()
+
+# Merge population data with geometry
+cardiff_gdf = cardiff_gdf.merge(
+    l2data_totals.rename(columns={"LSOA code": "small_area"}), 
+    on="small_area", 
+    how="left"
+)
+
 
     
 # Initialize session state for navigation
@@ -53,13 +70,13 @@ if section == "Cardiff Overview":
 
     st.markdown(
         f"""
-
-        Cardiff comprises {cardiff_num_lsoas} distinct neighbourhoods (LSOAs), home to {cardiff_pop_size:,} residents 
-        and {cardiff_n_households:,} households. LWe will use the term 'Neighbourhood' 
-        to refer to LSOAs.
-
-        This page provides a snapshot of Cardiff's 218 LSOAs, illustrating the diversity in how residents 
+        This page provides a snapshot of Cardiff's {cardiff_num_lsoas}  neighbourhoods, illustrating the diversity in how residents 
         live and the potential "green rewards" available to different areas.
+
+        Cardiff is home to {cardiff_pop_size:,} residents and {cardiff_n_households:,} households. 
+
+        //ADD SOME QUICK COMPARISONS TO REST OF WALES AND UK//
+
 
         """
     )
@@ -67,14 +84,28 @@ if section == "Cardiff Overview":
     with st.expander('Note on the use of the term "Neighbourhood" in this dashboard'):
         st.markdown(
             """
-            In the text and visuals of this dashbaord we used the term "neighbourhood" in place of the 
-            more technical term Lower-layer Super Output Area (LSOA), the geographical .... because...
+            In the text and visuals of this dashbaord we used the layman term "neighbourhood" in place of the 
+            more technical term "Lower-layer Super Output Area" (LSOA), the geographical unit provided in the data.
             LSOA subdivisions have been designed by the Office of National Statistics (ONS)
             to be of similar scale, typically housing 1,000-3,000 residents or 400-1,200 households. 
-
             """
             )
+    
+    col1, col2 = st.columns([1, 2])
 
+    with col1:
+        # Show map
+        metric = st.selectbox(
+            "Co-benefit metric",
+            ['population', 'households', 'average_household_size', 'sum' ]
+        )
+    with col2:
+        choropleth_map(
+            gdf = cardiff_gdf, 
+            column_colour=metric
+            ,colour_high= (84, 0, 100)
+            )
+  
     # Cardiff population/LSOA distribution
     col1, col2 = st.columns([1, 1])
 
@@ -88,17 +119,12 @@ if section == "Cardiff Overview":
         - Most neighbourhoods cluster around 1,400-1,800 residents
         - The number of people per neighbourhood ranges from {min_pop_size:,} residents (Grangetown 13) to {max_pop_size:,} residents (Adamsdown 2). 
         This variation reflects Cardiff's diverse urban landscape
-        - Expand the table below to discover the neighbourhoods with the highest and lowest population size.
         """)
 
     with col2:
-        columns_to_plot = [
-            'population'
-        ]
+        columns_to_plot = ['population']
         
-        x_labels = [
-            'Number of People'
-        ]
+        x_labels = ['Number of People']
 
         colors = [ '#00CC96']  # or any hex colors
         titles = ['Population Size']
@@ -109,7 +135,7 @@ if section == "Cardiff Overview":
             colors = colors
         )
 
-    with st.expander('Expand to explore the neighbourhoods with the highest and lowest Population Size'):
+    with st.expander('Click to explore the neighbourhoods with the highest and lowest Population Size'):
         st.dataframe(
             Top3_Bottom3_LSOAs(value_col='population'), 
             hide_index=True)
@@ -130,7 +156,6 @@ if section == "Cardiff Overview":
         - Most neighbourhoods cluster around 600 to 700 households.
         - The number of households per neighburhood ranges from 407 (Cathays 9) to 1,169 (Pentyrch and St Fagans 3). This range highlights 
         the difference between high-density urban areas and more sprawling residential pockets across the city.
-        - Expand the table below to discover the neighbourhoods with the highest and lowest number of households.
 
         """)
 
@@ -151,7 +176,7 @@ if section == "Cardiff Overview":
             colors = colors
         )
 
-    with st.expander('Expand to explore the neighbourhoods with the largest and smallest Numbers of Households'):
+    with st.expander('Click to explore the neighbourhoods with the largest and smallest Numbers of Households'):
         st.dataframe(
             Top3_Bottom3_LSOAs(value_col='households'), 
             hide_index=True)
