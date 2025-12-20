@@ -78,102 +78,11 @@ if section == "Cardiff Overview":
         """
     )
 
-    st.markdown("### Mapping the Net Zero Transition in Cardiff")
-
-    st.markdown(
-        """
-        These maps visualize the relationship between Cardiff's demographic landscape and the projected economic 
-        "green rewards" of Net Zero policies. By comparing population density with co-benefit distribution across 218 neighborhoods, 
-        we can identify whether current pathways equitably serve high-density urban centers or primarily benefit lower-density 
-        suburban areas.
-        """
-    )
-    
-  
-    # Add LSOA selector
-    lsoa_names = ["None"] + sorted(cardiff_gdf['LSOA name (Eng)'].dropna().unique().tolist())
-    selected_lsoa = st.selectbox(
-        "Highlight neighbourhood:",
-        lsoa_names,
-        key="lsoa_left"
-    )
-
-    col1, col2 = st.columns([1, 1])
-
-    with col1:
-        # Show map
-        metric_options = {
-            "Population": "population",
-            "Households": "households",
-            "Average Household Size": "average_household_size"
-        }
-
-        metric_titles = {
-            "Population": "Population size",
-            "Households": "Number of households",
-            "Average Household Size": "Average Household Size"
-        }
-
-        metric_display = st.selectbox(
-            "Population metrics",
-            list(metric_options.keys())
-        )
-
-        metric = metric_options[metric_display]
-        legend_title = metric_titles[metric_display]
-
-        choropleth_map(
-            gdf = cardiff_gdf, 
-            column_colour=metric
-            ,height = 300
-            ,zoom = 9.75
-            ,lon_correction=0.001
-            ,lat_correction=0.03
-            ,legend_title=legend_title
-            ,colour_high= (0, 0, 255),
-            highlight_lsoa=selected_lsoa,
-            tooltip_html = "Neighbourhood: <b>{LSOA name (Eng)}</b><br/>Population: {population}<br/>Households: {households}<br/>Average household size: {average_household_size}<br/>"
-  
-            )
-
-    with col2:
-
-        metric_options = {
-            "Tot Co-Benefits": "sum"
-            ,"Tot Co-Benefits Normalised": "sum_std"
-        }
-
-        metric_titles = {
-            "Tot Co-Benefits": "Tot net-zero co-benefits [million £]",
-            "Tot Co-Benefits Normalised": "Normalised tot net-zero co-benefits [£ per person]"
-        }
-
-        metric_display = st.selectbox(
-            "Net-Zero Co-Benefits metrics",
-            list(metric_options.keys())
-        )
-
-        metric = metric_options[metric_display]
-        legend_title = metric_titles[metric_display]
-
-        choropleth_map(
-            gdf = cardiff_gdf, 
-            column_colour=metric
-            ,height = 300
-            ,zoom = 9.75
-            ,lon_correction=0.001
-            ,lat_correction=0.03
-            ,legend_title=legend_title
-            ,colour_high= (0, 153, 51),
-            highlight_lsoa=selected_lsoa
-            ,tooltip_html = "Neighbourhood: <b>{LSOA name (Eng)}</b><br/>Tot net-zero co-benefits [mil £]: {sum_rounded}<br/>Normalised tot net-zero co-benefits [£/person]: {sum_std_rounded}"
-
-            #,colour_low= (230, 0, 0)
-            )
 
 
-  
+    ### HISTOGRAMS
     # Cardiff population/LSOA distribution
+    st.markdown("---")
     col1, col2 = st.columns([1, 1])
 
     with col1:
@@ -370,8 +279,106 @@ if section == "Cardiff Overview":
     )
 
     ########################################  
-    # Breakdown by Co-benefit type
+    # Maps
 
+    st.markdown("---")
+    st.markdown("### Mapping the Net Zero Transition in Cardiff")
+
+    st.markdown(
+        """
+        These maps visualize the relationship between Cardiff's demographic landscape and the projected economic 
+        "green rewards" of Net Zero policies. By comparing population density with co-benefit distribution across 218 neighborhoods, 
+        we can identify whether current pathways equitably serve high-density urban centers or primarily benefit lower-density 
+        suburban areas.
+        """
+    )
+    
+  
+    # Add LSOA selector
+    lsoa_names = ["None"] + sorted(cardiff_gdf['LSOA name (Eng)'].dropna().unique().tolist())
+    selected_lsoa = st.selectbox(
+        "Highlight neighbourhood:",
+        lsoa_names,
+        key="lsoa_left"
+    )
+
+    col1, col2 = st.columns([1, 1])
+
+    with col1:
+        # Show map
+        metric_options = {
+            "Population": "population",
+            "Households": "households",
+            "Average Household Size": "average_household_size"
+        }
+
+        metric_titles = {
+            "Population": "Population size",
+            "Households": "Number of households",
+            "Average Household Size": "Average Household Size"
+        }
+
+        metric_display = st.selectbox(
+            "Population metrics",
+            list(metric_options.keys())
+        )
+
+        metric = metric_options[metric_display]
+        legend_title = metric_titles[metric_display]
+
+        choropleth_map(
+            gdf = cardiff_gdf, 
+            column_colour=metric
+            ,height = 300
+            ,zoom = 9.75
+            ,lon_correction=0.001
+            ,lat_correction=0.03
+            ,legend_title=legend_title
+            ,colour_high= (0, 0, 255),
+            highlight_lsoa=selected_lsoa,
+            tooltip_html = "Neighbourhood: <b>{LSOA name (Eng)}</b><br/>Population: {population}<br/>Households: {households}<br/>Average household size: {average_household_size}<br/>"
+  
+            )
+
+    with col2:
+
+        metric_options = {
+            "Tot Co-Benefits": "sum"
+            ,"Tot Co-Benefits Normalised": "sum_std"
+        }
+
+        metric_titles = {
+            "Tot Co-Benefits": "Tot net-zero co-benefits [million £]",
+            "Tot Co-Benefits Normalised": "Normalised tot net-zero co-benefits [£ per person]"
+        }
+
+        metric_display = st.selectbox(
+            "Net-Zero Co-Benefits metrics",
+            list(metric_options.keys())
+        )
+
+        metric = metric_options[metric_display]
+        legend_title = metric_titles[metric_display]
+
+        choropleth_map(
+            gdf = cardiff_gdf, 
+            column_colour=metric
+            ,height = 300
+            ,zoom = 9.75
+            ,lon_correction=0.001
+            ,lat_correction=0.03
+            ,legend_title=legend_title
+            ,colour_high= (0, 153, 51),
+            highlight_lsoa=selected_lsoa
+            ,tooltip_html = "Neighbourhood: <b>{LSOA name (Eng)}</b><br/>Tot net-zero co-benefits [mil £]: {sum_rounded}<br/>Normalised tot net-zero co-benefits [£/person]: {sum_std_rounded}"
+
+            #,colour_low= (230, 0, 0)
+            )
+
+
+    ########################################  
+    # Breakdown by Co-benefit type
+    st.markdown("---")
     st.markdown("### Net-Zero Co-Benefits and Costs")
 
 
