@@ -74,7 +74,7 @@ if section == "Cardiff Overview":
         f"""
         Cardiff is home to {cardiff_pop_size:,} residents and {cardiff_n_households:,} households, distributed in {cardiff_num_lsoas}  neighbourhoods. 
         In this page we tried to use the demographics data to illustrate the diversity in how Cardiff residents 
-        live and the potential "green rewards" available to different areas. We alsp explored at a high level the co-benefits data available (Level 2)
+        live and the potential "green rewards" available to different areas. We also explored at a high level the co-benefits data available (Level 2)
         """
     )
 
@@ -412,16 +412,12 @@ if section == "Cardiff Overview":
 
     st.markdown(
         f"""
-
         Across Cardiff, Net Zero pathways are projected to deliver **£{tot_net_benefits} million in total net benefits 
         from 2025 through 2050**. While major health gains like **Physical Activity** (£510.49M) and **Air Quality** (£262.53M) 
         drive these results, they are offset by significant **Hassle Costs** of £374.13 million.
-
-        As evidenced in the **Data Quality** section, the categories 'Congestion', 'Noise', 'Road Repairs' and 'Road Safety' appear 
-        null (£0) for Cardiff for all or most of the data points. Therefore, we excluded these categories from the rest of this dashboard.
-
         """
     )
+
 
     # Filter out the 'total' row
     column_sums_filtered = column_sums[column_sums['benefit_type'] != 'Total']
@@ -524,71 +520,70 @@ if section == "Cardiff Overview":
 
     st.plotly_chart(fig, use_container_width=True)
 
+    with st.expander('Net-Zero Co-benefits categories excluded'):
+        st.markdown(
+        """
+        As evidenced in the **Data Quality** section, the categories 'Congestion', 'Noise', 'Road Repairs' and 'Road Safety' appear 
+        null (£0) for Cardiff for all or most of the data points. Therefore, we excluded these categories from the rest of this dashboard.
+
+        """
+    )
+
     ########################################  
     # Time Series of Co-Benefits
     st.markdown("---")
     st.markdown("### Net-Zero Co-Benefits Over Time (2025-2050)")
     
-    col1, col2 = st.columns([1, 1])
+    #col1, col2 = st.columns([1, 1])
     
-    with col1:
-        st.markdown("""
-        This interactive chart shows how different co-benefit categories are projected to accumulate 
-        over the 25-year period from 2025 to 2050 across all Cardiff neighbourhoods.
-        
-        - **Stack layers** represent different co-benefit types (health, buildings, transport) and costs
-        - **Hover** over the chart to see exact values for each year and category
-        - The stacked view shows both individual contributions and the total combined effect
-        
-        Key insights:
-        - Observe which co-benefit types contribute most to the overall total
-        - Identify trends and changes in co-benefit accumulation over time
-        - See how costs (shown as negative values) offset the positive benefits
-        """)
+    st.markdown("""
+    This interactive time chart shows how different co-benefit categories are projected to accumulate 
+    over the 25-year period from 2025 to 2050 across all Cardiff neighbourhoods.
     
-    with col2:
-        # Prepare data for time series line chart
-        year_cols = [str(year) for year in range(2025, 2051)]
-        
-        # Group by co-benefit_type and sum across LSOAs for each year
-        cobenefit_sums = l2data_time.groupby('co-benefit_type')[year_cols].sum()
-        
-        # Create the figure
-        fig = go.Figure()
-        
-        # Add traces for each co-benefit type as separate lines
-        for cobenefit_type in cobenefit_sums.index:
-            fig.add_trace(go.Scatter(
-                x=year_cols,
-                y=cobenefit_sums.loc[cobenefit_type],
-                name=cobenefit_type.replace('_', ' ').title(),
-                mode='lines+markers',
-                line=dict(width=2),
-                marker=dict(size=4),
-                hovertemplate='<b>%{fullData.name}</b><br>' +
-                             'Year: %{x}<br>' +
-                             'Value: £%{y:.2f}M<br>' +
-                             '<extra></extra>'
-            ))
-        
-        fig.update_layout(
-            title="Co-Benefits Time Series (2025-2050)",
-            xaxis_title="Year",
-            yaxis_title="Co-benefit Value (£ Million)",
-            hovermode='x unified',
-            legend=dict(
-                title="Co-benefit Type",
-                orientation="v",
-                yanchor="top",
-                y=1,
-                xanchor="left",
-                x=1.02
-            ),
-            height=500,
-            template="plotly_white"
-        )
-        
-        st.plotly_chart(fig, use_container_width=True)
+    """)
+
+    # Prepare data for time series line chart
+    year_cols = [str(year) for year in range(2025, 2051)]
+    
+    # Group by co-benefit_type and sum across LSOAs for each year
+    cobenefit_sums = l2data_time[~l2data_time['co-benefit_type'].isin(['noise', 'congestion','road_repairs','road_safety'])].groupby('co-benefit_type')[year_cols].sum().add_suffixrename(index={'sum': 'Total'})
+    
+    # Create the figure
+    fig = go.Figure()
+    
+    # Add traces for each co-benefit type as separate lines
+    for cobenefit_type in cobenefit_sums.index:
+        fig.add_trace(go.Scatter(
+            x=year_cols,
+            y=cobenefit_sums.loc[cobenefit_type],
+            name=cobenefit_type.replace('_', ' ').title(),
+            mode='lines+markers',
+            line=dict(width=2),
+            marker=dict(size=4),
+            hovertemplate='<b>%{fullData.name}</b><br>' +
+                            'Year: %{x}<br>' +
+                            'Value: £%{y:.2f}M<br>' +
+                            '<extra></extra>'
+        ))
+    
+    fig.update_layout(
+        title="Co-Benefits Time Series (2025-2050)",
+        xaxis_title="Year",
+        yaxis_title="Co-benefit Value (£ Million)",
+        hovermode='x unified',
+        legend=dict(
+            title="Co-benefit Type",
+            orientation="v",
+            yanchor="top",
+            y=1,
+            xanchor="left",
+            x=1.02
+        ),
+        height=500,
+        template="plotly_white"
+    )
+    
+    st.plotly_chart(fig, use_container_width=True)
 
 
 elif section == "Health Co-Benefits":
