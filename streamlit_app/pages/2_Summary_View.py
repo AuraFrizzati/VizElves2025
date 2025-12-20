@@ -539,8 +539,15 @@ if section == "Cardiff Overview":
     st.markdown("""
     This interactive time chart shows how different co-benefit categories are projected to accumulate 
     over the 25-year period from 2025 to 2050 across all Cardiff neighbourhoods.
-    
     """)
+
+    with st.expander('Explanation'):
+        st.markdown("""
+        * The black line shows the "Net Total Benefit", the final value after subtracting costs from benefits.
+        * Net impact starts slightly negative (-£0.5M) in 2025 as initial "Hassle Costs" outweigh early gains, but it successfully "breaks even" by 2026.
+        * The **"Hassle" Drag**: Bars below the zero line represent the friction of shifting to green habits; these costs act as a weight, pulling the net total significantly below gross benefits.
+        * Accelerating Growth: While health gains from **Physical Activity** and **Air Quality** climb steadily, Hassle Costs remain relatively flat. This stability allows the net benefit to accelerate, reaching £31.7M per year by 2050.
+        """)
 
     # Prepare data for time series line chart
     year_cols = [str(year) for year in range(2025, 2051)]
@@ -702,3 +709,4 @@ elif section == "Net-Zero Costs":
         columns_to_plot = columns_to_plot,
         x_labels = x_labels
         )
+
