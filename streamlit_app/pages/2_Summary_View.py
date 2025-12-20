@@ -302,7 +302,7 @@ if section == "Cardiff Overview":
         # Add toggle for normalized vs absolute
         histogram_metric = st.radio(
             "Select metric:",
-            ["Normalized (£/person)", "Absolute (million £)"],
+            ["Absolute (million £)", "Normalized (£/person)"],
             horizontal=True
         )
         
@@ -331,7 +331,7 @@ if section == "Cardiff Overview":
             This chart shows the distribution of **normalized** Net-Zero Co-Benefits per person across neighbourhoods.
             
             - This normalised view shows the value of the benefit per resident, independent of neighbourhood size
-            - The normalised co-benefits per resident range from {min_val:,} £/person to {max_val:,} £/person.
+            - The normalised co-benefits per resident range from {min_val:,} £/person (Cathays 12) to {max_val:,} £/person (Cyncoed 1).
             """)
 
     with col2:
@@ -361,7 +361,7 @@ if section == "Cardiff Overview":
     # Example with different colors
     bottom_line_message(
         "Co-benefit distribution is currently uneven, with affluent suburbs like Cyncoed capturing the highest " \
-        "gains while dense urban centers like Cathays 12 rank last (218th). Despite supporting nearly 5,000 residents, " \
+        "gains while dense urban centers like Cathays 12 rank last (218th). Similarly, despite supporting nearly 5,000 residents, " \
         "areas like Adamsdown 2 are excluded from top benefit tiers, suggesting current Net Zero models inadvertently " \
         "favour low-density areas over high-occupancy urban households." \
         ,bg_color="#fff3cd",      # Light yellow
@@ -371,6 +371,10 @@ if section == "Cardiff Overview":
 
     ########################################  
     # Breakdown by Co-benefit type
+
+    st.markdown("### Net-Zero Co-Benefits and Costs")
+
+
     # List the columns you want to sum
     cobenefit_columns = [
         'sum',
@@ -397,22 +401,23 @@ if section == "Cardiff Overview":
 
     # Rename 'sum' to 'total'
     column_sums['benefit_type'] = column_sums['benefit_type'].replace('sum', 'total').str.replace('_', ' ').str.title()
+    tot_net_benefits = round(column_sums.loc[column_sums['benefit_type']=='Total', 'value'],2).values[0]
 
-    # Capitalize and replace underscores with spaces
-    #column_sums['benefit_type'] = column_sums['benefit_type'].str.replace('_', ' ').str.title()
+    st.markdown(
+        f"""
+
+        Across Cardiff, Net Zero pathways are projected to deliver **£{tot_net_benefits} million in total net benefits 
+        from 2025 through 2050**. While major health gains like **Physical Activity** (£510.49M) and **Air Quality** (£262.53M) 
+        drive these results, they are offset by significant **Hassle Costs** of £374.13 million.
+
+        As evidenced in the **Data Quality** section, the categories 'Congestion', 'Noise', 'Road Repairs' and 'Road Safety' appear 
+        null (£0) for Cardiff for all or most of the data points. Therefore, we excluded these categories from the rest of this dashboard.
+
+        """
+    )
 
     # Filter out the 'total' row
     column_sums_filtered = column_sums[column_sums['benefit_type'] != 'Total']
-
-    ## Add percentage column
-    #total_value = column_sums_filtered['value'].sum()
-    #column_sums_filtered['percentage'] = (column_sums_filtered['value'] / total_value) * 100
-
-    # Round 'value' column to 2 decimal places before displaying
-    # st.dataframe(
-    #     column_sums_filtered.assign(value=column_sums_filtered['value'].round(4)), 
-    #     hide_index=True)
-
 
     # Create diverging bar chart
     # Separate positive and negative values
