@@ -546,21 +546,52 @@ if section == "Cardiff Overview":
     year_cols = [str(year) for year in range(2025, 2051)]
     
     # Group by co-benefit_type and sum across LSOAs for each year
-    cobenefit_sums = l2data_time[~l2data_time['co-benefit_type'].isin(['noise', 'congestion','road_repairs','road_safety'])].groupby('co-benefit_type')[year_cols].sum().add_suffixrename(index={'sum': 'Total'})
+    cobenefit_sums = l2data_time[~l2data_time['co-benefit_type'].isin(['noise', 'congestion','road_repairs','road_safety'])].groupby('co-benefit_type')[year_cols].sum()
     
+    # Rename 'sum' to 'Total' if it exists
+    if 'sum' in cobenefit_sums.index:
+        cobenefit_sums = cobenefit_sums.rename(index={'sum': 'Total'})
+      
     # Create the figure
     fig = go.Figure()
     
-    # Add traces for each co-benefit type as separate lines
+   # Add stacked bar traces for all co-benefit types except 'Total'
     for cobenefit_type in cobenefit_sums.index:
+        if cobenefit_type != 'Total':
+            fig.add_trace(go.Bar(
+                x=year_cols,
+                y=cobenefit_sums.loc[cobenefit_type],
+                name=cobenefit_type.replace('_', ' ').title(),
+                opacity=0.7,  # Add transparency
+                hovertemplate='<b>%{fullData.name}</b><br>' +
+                                'Year: %{x}<br>' +
+                                'Value: £%{y:.2f}M<br>' +
+                                '<extra></extra>'
+            ))
+    
+    # Add Total as a line trace (if it exists)
+    if 'Total' in cobenefit_sums.index:
+
+        # Create text labels - only for every 5th year
+        text_labels = []
+        for i, year in enumerate(year_cols):
+            if i % 5 == 0 or i == len(year_cols) - 1:  # Show every 5th year and the last year
+                text_labels.append(f'£{cobenefit_sums.loc["Total"][i]:.1f}M')
+            else:
+                text_labels.append('')  # Empty string for years we don't want to label
+
+
         fig.add_trace(go.Scatter(
             x=year_cols,
-            y=cobenefit_sums.loc[cobenefit_type],
-            name=cobenefit_type.replace('_', ' ').title(),
-            mode='lines+markers',
-            line=dict(width=2),
-            marker=dict(size=4),
-            hovertemplate='<b>%{fullData.name}</b><br>' +
+            y=cobenefit_sums.loc['Total'],
+            name='Total',
+            mode='lines+markers+text',
+            line=dict(width=3, color='black'),
+            marker=dict(size=6, color='black'),
+            text=text_labels,
+            textposition='top center',
+            textfont=dict(size=12, color='black'),
+            hovertemplate='<b>Total</b><br>' +
                             'Year: %{x}<br>' +
                             'Value: £%{y:.2f}M<br>' +
                             '<extra></extra>'
@@ -571,6 +602,7 @@ if section == "Cardiff Overview":
         xaxis_title="Year",
         yaxis_title="Co-benefit Value (£ Million)",
         hovermode='x unified',
+        barmode='stack',
         legend=dict(
             title="Co-benefit Type",
             orientation="v",
