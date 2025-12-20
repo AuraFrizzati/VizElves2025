@@ -52,6 +52,11 @@ def choropleth_map(gdf, column_colour='population',
     max_pop = gdf[column_colour].max()
     rng = (max_pop - min_pop) if pd.notna(max_pop) and pd.notna(min_pop) else 0.0
 
+    # Calculate rank (1 = highest value)
+    gdf['rank'] = gdf[column_colour].rank(ascending=False, method='min').astype(int)
+    total_areas = len(gdf)
+    gdf['rank_display'] = gdf['rank'].apply(lambda x: f"{int(x)} of {total_areas}")
+
     gdf['fill_color'] = gdf[column_colour].apply(
         lambda x: value_to_color(x, min_pop, max_pop, 
                                       colour_low, colour_high)
@@ -113,10 +118,19 @@ def choropleth_map(gdf, column_colour='population',
     if 'sum_std' in gdf.columns:
         gdf['sum_std_rounded'] = gdf['sum_std'].round(2)
 
+    # If tooltip_html is not provided or doesn't contain rank, add it
+    if tooltip_html and '{rank_display}' not in tooltip_html:
+        # Insert rank after the first line (neighbourhood name)
+        parts = tooltip_html.split('<br/>', 1)
+    if len(parts) == 2:
+        tooltip_html = f"{parts[0]}<br/>Rank: <b>{{rank_display}}</b><br/>{parts[1]}"
+    else:
+        tooltip_html = f"{tooltip_html}<br/>Rank: <b>{{rank_display}}</b>"
+
 
     # Create the deck
     deck = pdk.Deck(
-        layers=layers,  # <-- use layers list instead of single layer
+        layers=layers, 
         initial_view_state=view_state,
         map_style="light",
         tooltip={
@@ -124,7 +138,7 @@ def choropleth_map(gdf, column_colour='population',
             "style": {
                 "backgroundColor": "white",
                 "color": "black",
-                "fontSize": f"{tooltip_font_size}px",  # <-- use parameter
+                "fontSize": f"{tooltip_font_size}px",
                 "fontFamily": "Arial, sans-serif",
                 "padding": "8px",
                 "borderRadius": "4px",
