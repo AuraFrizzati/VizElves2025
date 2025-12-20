@@ -635,10 +635,14 @@ elif section == "Co-Benefits Categories":
         'Total Co-Benefit [£ million]',
         'Total Co-Benefit [£ million]'
         ]
+
+    titles = ["Diet Change Co-Benefit", "Phyisical Activity Co-Benefit", "Air Quality Co-Benefit"]
+
     histogram_totals(
         num_cols = 1, 
         columns_to_plot = columns_to_plot,
-        x_labels = x_labels
+        x_labels = x_labels,
+        titles = titles
         )
     
     #######################
@@ -658,10 +662,14 @@ elif section == "Co-Benefits Categories":
         'Total Co-Benefit [£ million]',
         'Total Co-Benefit [£ million]'
         ]
+    
+    titles = ["Dampness Co-Benefit", "Excess Cold  Co-Benefit", "Excess Heat Co-Benefit"]
+
     histogram_totals(
         num_cols = 1, 
         columns_to_plot = columns_to_plot,
-        x_labels = x_labels
+        x_labels = x_labels,
+        titles = titles
         )
 
 
@@ -671,18 +679,18 @@ elif section == "Co-Benefits Categories":
     st.markdown("## Net-Zero Costs")
     # Show Cardiff LSOAs content
     columns_to_plot = [
-        'congestion',
-        'hassle_costs',
+        'hassle_costs'
         ]
     
+    titles = ["Hassle Costs"]
+    
     x_labels = [
-        'Total Costs [negative £ million]',
-        'Total Costs [negative £ million]',
         'Total Costs [negative £ million]'
         ]
     histogram_totals(
         num_cols = 1, 
         columns_to_plot = columns_to_plot,
-        x_labels = x_labels
+        x_labels = x_labels,
+        titles = titles
         )
 
