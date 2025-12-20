@@ -33,3 +33,13 @@ st.markdown(
 
     """
 )
+
+with st.expander('Note on the use of the term "Neighbourhood" in this dashboard'):
+    st.markdown(
+        """
+        In the text and visuals of this dashbaord we used the layman term "neighbourhood" in place of the 
+        more technical term "Lower-layer Super Output Area" (LSOA), the geographical unit provided in the data.
+        LSOA subdivisions have been designed by the Office of National Statistics (ONS)
+        to be of similar scale, typically housing 1,000-3,000 residents or 400-1,200 households. 
+        """
+        )

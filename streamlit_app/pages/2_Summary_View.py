@@ -72,27 +72,24 @@ if section == "Cardiff Overview":
 
     st.markdown(
         f"""
-        This page provides a snapshot of Cardiff's {cardiff_num_lsoas}  neighbourhoods, illustrating the diversity in how residents 
-        live and the potential "green rewards" available to different areas.
-
-        Cardiff is home to {cardiff_pop_size:,} residents and {cardiff_n_households:,} households. 
-
-        //ADD SOME QUICK COMPARISONS TO REST OF WALES AND UK//
-
-
+        Cardiff is home to {cardiff_pop_size:,} residents and {cardiff_n_households:,} households, distributed in {cardiff_num_lsoas}  neighbourhoods. 
+        In this page we tried to use the demographics data to illustrate the diversity in how Cardiff residents 
+        live and the potential "green rewards" available to different areas. We alsp explored at a high level the co-benefits data available (Level 2)
         """
     )
 
-    with st.expander('Note on the use of the term "Neighbourhood" in this dashboard'):
-        st.markdown(
-            """
-            In the text and visuals of this dashbaord we used the layman term "neighbourhood" in place of the 
-            more technical term "Lower-layer Super Output Area" (LSOA), the geographical unit provided in the data.
-            LSOA subdivisions have been designed by the Office of National Statistics (ONS)
-            to be of similar scale, typically housing 1,000-3,000 residents or 400-1,200 households. 
-            """
-            )
+    st.markdown("### Mapping the Net Zero Transition in Cardiff")
+
+    st.markdown(
+        """
+        These maps visualize the relationship between Cardiff's demographic landscape and the projected economic 
+        "green rewards" of Net Zero policies. By comparing population density with co-benefit distribution across 218 neighborhoods, 
+        we can identify whether current pathways equitably serve high-density urban centers or primarily benefit lower-density 
+        suburban areas.
+        """
+    )
     
+  
     # Add LSOA selector
     lsoa_names = ["None"] + sorted(cardiff_gdf['LSOA name (Eng)'].dropna().unique().tolist())
     selected_lsoa = st.selectbox(
@@ -305,7 +302,7 @@ if section == "Cardiff Overview":
         # Add toggle for normalized vs absolute
         histogram_metric = st.radio(
             "Select metric:",
-            ["Absolute (million £)", "Normalized (£/person)"],
+            ["Normalized (£/person)", "Absolute (million £)"],
             horizontal=True
         )
         
@@ -333,9 +330,8 @@ if section == "Cardiff Overview":
             st.markdown(f"""
             This chart shows the distribution of **normalized** Net-Zero Co-Benefits per person across neighbourhoods.
             
-            - This metric accounts for population size, showing the benefit per resident.
-            - The normalized co-benefits range from {min_val:,} £/person to {max_val:,} £/person.
-            - **This view reveals how benefits are distributed on a per-capita basis, independent of neighbourhood size**.
+            - This normalised view shows the value of the benefit per resident, independent of neighbourhood size
+            - The normalised co-benefits per resident range from {min_val:,} £/person to {max_val:,} £/person.
             """)
 
     with col2:
@@ -364,21 +360,159 @@ if section == "Cardiff Overview":
 
     # Example with different colors
     bottom_line_message(
-        "Currently, the projected Total Net-Zero Co-Benefits is unevenly distributed. Suburban areas like " \
-        "Cyncoed and Lisvane are positioned to capture the highest co-benefits. Densely populated urban centers " \
-        "like 'Cathays 12', instead, despite being the third most populated area, rank last (218th) for " \
-        "projected benefits. We must ensure that our most populated neighborhoods, from the students in Cathays " \
-        "to the families in 'Adamsdown 2' (which supports nearly 5,000 residents) are not left behind in the race" \
-        " to a healthier, greener future. The extreme disconnect between  population density and benefit suggests " \
-        "current green models may inadvertently favor low-density, affluent suburbs over high-density urban areas. " \
-        "'Adamsdown 2' (highest population/household size) fails to appear in the top benefit tier, indicating that " \
-        "current Net Zero pathways may not yet be optimised for large, urban households.",
-        bg_color="#fff3cd",      # Light yellow
+        "Co-benefit distribution is currently uneven, with affluent suburbs like Cyncoed capturing the highest " \
+        "gains while dense urban centers like Cathays 12 rank last (218th). Despite supporting nearly 5,000 residents, " \
+        "areas like Adamsdown 2 are excluded from top benefit tiers, suggesting current Net Zero models inadvertently " \
+        "favour low-density areas over high-occupancy urban households." \
+        ,bg_color="#fff3cd",      # Light yellow
         border_color="#ffc107",  # Gold
         text_color="#856404"     # Dark yellow/brown
     )
 
-        ########################################  
+    ########################################  
+    # Breakdown by Co-benefit type
+    # List the columns you want to sum
+    cobenefit_columns = [
+        'sum',
+        'air_quality',
+        'congestion',
+        'dampness',
+        'diet_change',
+        'excess_cold',
+        'excess_heat',
+        'hassle_costs',
+        'noise',
+        'physical_activity',
+        'road_repairs',
+        'road_safety'
+    ]
+    # add/remove as needed
+
+    # Sum each column individually
+    column_sums = l2data_totals[cobenefit_columns].sum()
+
+    # Convert to DataFrame with proper column names
+    column_sums = column_sums.reset_index()
+    column_sums.columns = ['benefit_type', 'value']
+
+    # Rename 'sum' to 'total'
+    column_sums['benefit_type'] = column_sums['benefit_type'].replace('sum', 'total').str.replace('_', ' ').str.title()
+
+    # Capitalize and replace underscores with spaces
+    #column_sums['benefit_type'] = column_sums['benefit_type'].str.replace('_', ' ').str.title()
+
+    # Filter out the 'total' row
+    column_sums_filtered = column_sums[column_sums['benefit_type'] != 'Total']
+
+    ## Add percentage column
+    #total_value = column_sums_filtered['value'].sum()
+    #column_sums_filtered['percentage'] = (column_sums_filtered['value'] / total_value) * 100
+
+    # Round 'value' column to 2 decimal places before displaying
+    # st.dataframe(
+    #     column_sums_filtered.assign(value=column_sums_filtered['value'].round(4)), 
+    #     hide_index=True)
+
+
+    # Create diverging bar chart
+    # Separate positive and negative values
+    column_sums_filtered['color_category'] = column_sums_filtered['value'].apply(
+        lambda x: 'Positive Co-benefits' if x > 0 else 'Negative Costs'
+    )
+
+    # Sort by value for better visualization
+    column_sums_sorted = column_sums_filtered.sort_values('value', ascending=True)
+
+
+    # Create custom text labels with consistent formatting
+    def format_value(val):
+        abs_val = abs(val)
+        sign = '+' if val > 0 else '-'
+        if abs_val < 0.001 and abs_val > 0:
+            return f'{sign}£{abs_val:.5f}M'  # 5 decimals for very small values
+        elif abs_val < 0.1:
+            return f'{sign}£{abs_val:.4f}M'  # 4 decimals for small values
+        else:
+            return f'{sign}£{abs_val:.2f}M'  # 2 decimals for normal values
+
+    fig = go.Figure()
+
+    # Add negative values (red)
+    negative_data = column_sums_sorted[column_sums_sorted['value'] < 0].copy()
+    negative_data['formatted_text'] = negative_data['value'].apply(format_value)
+    # Place large negative values inside, small ones outside
+    negative_data['text_position'] = negative_data['value'].apply(
+        lambda x: 'inside' if abs(x) > 50 else 'outside'
+    )
+
+    fig.add_trace(go.Bar(
+        y=negative_data['benefit_type'],
+        x=negative_data['value'],
+        orientation='h',
+        name='Costs',
+        marker=dict(color='#e74c3c', line=dict(color='#c0392b', width=1)),
+        text=negative_data['formatted_text'],
+        textposition=negative_data['text_position'].tolist(),
+        textfont=dict(color='black', size=13,  family='Arial Black'),
+        insidetextanchor='end',
+        cliponaxis=False,
+        hovertemplate='<b>%{y}</b><br>' +
+                    'Value: £%{x:.5f}M<br>' +
+                    '<extra></extra>'
+    ))
+
+    # Add positive values (green)
+    positive_data = column_sums_sorted[column_sums_sorted['value'] > 0].copy()
+    positive_data['formatted_text'] = positive_data['value'].apply(format_value)
+    # Place large positive values inside, small ones outside
+    positive_data['text_position'] = positive_data['value'].apply(
+        lambda x: 'inside' if abs(x) > 50 else 'outside'
+    )
+
+    fig.add_trace(go.Bar(
+        y=positive_data['benefit_type'],
+        x=positive_data['value'],
+        orientation='h',
+        name='Co-benefits',
+        marker=dict(color='#2ecc71', line=dict(color='#27ae60', width=1)),
+        text=positive_data['formatted_text'],
+        textposition=positive_data['text_position'].tolist(),
+        textfont=dict(color='black', size=13, family='Arial Black'),
+        insidetextanchor='end',
+        cliponaxis=False,
+        hovertemplate='<b>%{y}</b><br>' +
+                    'Value: £%{x:.5f}M<br>' +
+                    '<extra></extra>'
+    ))
+
+    # Update layout
+    fig.update_layout(
+        title='Distribution of Co-benefits and Costs Across Cardiff Neighbourhoods',
+        xaxis_title='Value (£ Million)',
+        yaxis_title='',
+        barmode='overlay',
+        height=600,
+        template='plotly_white',
+        showlegend=True,
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1
+        ),
+        xaxis=dict(
+            zeroline=True,
+            zerolinewidth=2,
+            zerolinecolor='black'
+        ),
+        margin=dict(l=150, r=150, t=80, b=50)
+    )
+
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    ########################################  
     # Time Series of Co-Benefits
     st.markdown("---")
     st.markdown("### Net-Zero Co-Benefits Over Time (2025-2050)")
