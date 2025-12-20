@@ -39,20 +39,11 @@ st.sidebar.header("Navigate to:")
 if st.sidebar.button("Cardiff Overview", use_container_width=True):
     st.session_state.section = "Cardiff Overview"
 
-if st.sidebar.button("Health Co-Benefits", use_container_width=True):
-    st.session_state.section = "Health Co-Benefits"
+if st.sidebar.button("Co-Benefits Categories", use_container_width=True):
+    st.session_state.section = "Co-Benefits Categories"
 
-if st.sidebar.button("Buildings Co-Benefits", use_container_width=True):
-    st.session_state.section = "Buildings Co-Benefits"
-
-if st.sidebar.button("Transport Co-Benefits", use_container_width=True):
-    st.session_state.section = "Transport Co-Benefits"
-    
-if st.sidebar.button("Net-Zero Costs", use_container_width=True):
-    st.session_state.section = "Net-Zero Costs"
 
 # Use session state to determine which section to show
-
 section = st.session_state.section
 
 if section == "Cardiff Overview":
@@ -625,9 +616,13 @@ if section == "Cardiff Overview":
     st.plotly_chart(fig, use_container_width=True)
 
 
-elif section == "Health Co-Benefits":
-    st.markdown("# Health Co-Benefits")
-    st.sidebar.header("Health Co-Benefits")
+elif section == "Co-Benefits Categories":
+    st.markdown("# Co-Benefits Categories")
+    st.sidebar.header("Co-Benefits Categories")
+
+    #######################
+    ### HEALTH COBENEFITS
+    st.markdown("## Health Co-Benefits")
     # Show Cardiff LSOAs content
     columns_to_plot = [
         'diet_change',
@@ -645,11 +640,12 @@ elif section == "Health Co-Benefits":
         columns_to_plot = columns_to_plot,
         x_labels = x_labels
         )
+    
+    #######################
+    ### BUILDING COBENEFITS
+    st.markdown("---")
+    st.markdown("## Buildings Co-Benefits")
 
-
-elif section == "Buildings Co-Benefits":
-    st.markdown("# Buildings Co-Benefits")
-    st.sidebar.header("Buildings Co-Benefits")
     # Show Cardiff LSOAs content
     columns_to_plot = [
         'dampness',
@@ -668,31 +664,11 @@ elif section == "Buildings Co-Benefits":
         x_labels = x_labels
         )
 
-elif section == "Transport Co-Benefits":
-    st.markdown("# Transport Co-Benefits")
-    st.sidebar.header("Transport Co-Benefits")
-    # Show Cardiff LSOAs content
-    columns_to_plot = [
-        'road_repairs',
-        'road_safety',
-        'noise'
-        ]
-    
-    x_labels = [
-        'Total Co-Benefit [£ million]',
-        'Total Co-Benefit [£ million]',
-        'Total Co-Benefit [£ million]'
-        ]
-    histogram_totals(
-        num_cols = 1, 
-        columns_to_plot = columns_to_plot,
-        x_labels = x_labels
-        )
 
-elif section == "Net-Zero Costs":
-    # Show Negative co-benefits content
-    st.markdown("# Net-Zero Costs")
-    st.sidebar.header("Net-Zero Costs")
+    #######################
+    ### NET ZERO COSTS
+    st.markdown("---")
+    st.markdown("## Net-Zero Costs")
     # Show Cardiff LSOAs content
     columns_to_plot = [
         'congestion',
