@@ -44,21 +44,30 @@ st.markdown("---")
 st.markdown("### Net-Zero Co-Benefits and Costs")
 #st.markdown("### Net-Zero Co-Benefits and Costs")
 
+with st.expander('Net-Zero Co-benefits categories excluded'):
+    st.markdown(
+    """
+    As evidenced in the **Data Quality** section, the categories 'Congestion', 'Noise', 'Road Repairs' and 'Road Safety' appear 
+    null (£0) for Cardiff for all or most of the data points. Therefore, we excluded these categories from the rest of this dashboard.
+
+    """
+)
+
 
 # List the columns you want to sum
 cobenefit_columns = [
     'sum',
     'air_quality',
-    'congestion',
+    #'congestion',
     'dampness',
     'diet_change',
     'excess_cold',
     'excess_heat',
     'hassle_costs',
-    'noise',
-    'physical_activity',
-    'road_repairs',
-    'road_safety'
+    #'noise',
+    'physical_activity'
+    #,'road_repairs',
+    #'road_safety'
 ]
 # add/remove as needed
 
@@ -182,16 +191,6 @@ fig.update_layout(
 
 
 st.plotly_chart(fig, use_container_width=True)
-
-with st.expander('Net-Zero Co-benefits categories excluded'):
-    st.markdown(
-    """
-    As evidenced in the **Data Quality** section, the categories 'Congestion', 'Noise', 'Road Repairs' and 'Road Safety' appear 
-    null (£0) for Cardiff for all or most of the data points. Therefore, we excluded these categories from the rest of this dashboard.
-
-    """
-)
-
 
 st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 
