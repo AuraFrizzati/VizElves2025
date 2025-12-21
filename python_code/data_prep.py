@@ -57,7 +57,11 @@ l2data_totals = l2data.pivot(
     values = 'sum'
     ).reset_index()
 
-l2data_totals['sum_std']= 1000000*l2data_totals['sum']/l2data_totals['population']
+# Standardize co-benefit columns by dividing by population and multiplying by 1,000,000
+cobenefit_cols = ['air_quality', 'congestion', 'dampness', 'diet_change', 'excess_cold', 'excess_heat', 'hassle_costs', 'noise', 'physical_activity', 'road_repairs', 'road_safety', 'sum']
+for col in cobenefit_cols:
+    l2data_totals[f'{col}_std'] = 1000000 * l2data_totals[col] / l2data_totals['population']
+    
 
 # save it for further processing
 l2data_totals.to_csv("data/l2data_totals.csv")
