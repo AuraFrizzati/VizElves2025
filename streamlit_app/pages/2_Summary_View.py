@@ -623,6 +623,28 @@ elif section == "Co-Benefits Categories":
     #######################
     ### HEALTH COBENEFITS
     st.markdown("## Health Co-Benefits")
+
+    # Add toggle for normalized vs absolute
+    histogram_metric = st.radio(
+        "Select metric:",
+        ["Absolute (million £)", "Normalized (£/person)"],
+        horizontal=True
+    )
+
+    if histogram_metric == "Absolute (million £)":
+        histogram_column = ['diet_change']
+        histogram_label = 'Total Net-Zero Co-Benefits [million £]',
+        x_labels = 'Total Co-Benefit [£ million]',
+        titles = ["Diet Change Co-Benefit"]
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+        )
+        # min_val = min_tot_cobenefit
+        # max_val = max_tot_cobenefit
+
     # Show Cardiff LSOAs content
     columns_to_plot = [
         'diet_change',
