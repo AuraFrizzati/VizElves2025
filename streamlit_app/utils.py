@@ -428,7 +428,7 @@ def deprivation_quintiles_boxplots_totals(
             font=dict(size=24)
         ),
         xaxis_title="WIMD Quintile",
-        yaxis_title=f"{value_label} Co-Benefits [£ million]",
+        yaxis_title="Normalised Net-Zero Co-Benefits [£/person]",
         height=600,
         hoverlabel=dict(font_size=14, font_family="Arial"),
         showlegend=False
@@ -495,3 +495,189 @@ def create_cobenefit_timeline(l2data_time, cobenefit_name, display_name, line_co
     )
     
     return fig
+
+
+# Function to add to utils.py
+
+def test_quintile_differences(
+    data_path="data/l2data_totals.csv",
+    quintile_col='WIMD 2025 overall quintile',
+    value_col='sum_std',
+    alpha=0.05
+):
+    """
+    Test for statistical differences between WIMD quintiles using ANOVA and post-hoc tests.
+    
+    Parameters:
+    -----------
+    data_path : str
+        Path to the data CSV file
+    quintile_col : str
+        Column name for the quintile grouping variable
+    value_col : str
+        Column name for the co-benefit value to test (per person, e.g., 'sum_std')
+    alpha : float
+        Significance level for hypothesis testing (default: 0.05)
+    
+    Returns:
+    --------
+    dict : Dictionary containing:
+        - 'anova_result': ANOVA test results (F-statistic, p-value)
+        - 'quintile_stats': Descriptive statistics by quintile
+        - 'significant': Boolean indicating if differences are significant
+        - 'posthoc': Post-hoc test results (if ANOVA is significant)
+    """
+    import scipy.stats as stats
+    from scipy.stats import f_oneway
+    import pandas as pd
+    import numpy as np
+    
+    # Load data
+    data = pd.read_csv(data_path)
+    
+    # Remove any NaN values in the relevant columns
+    data_clean = data[[quintile_col, value_col]].dropna()
+    
+    # Group data by quintile
+    groups = [group[value_col].values for name, group in data_clean.groupby(quintile_col)]
+    quintile_names = sorted(data_clean[quintile_col].unique())
+    
+    # Calculate descriptive statistics by quintile
+    quintile_stats = data_clean.groupby(quintile_col)[value_col].agg([
+        ('n', 'count'),
+        ('mean', 'mean'),
+        ('median', 'median'),
+        ('std', 'std'),
+        ('min', 'min'),
+        ('max', 'max')
+    ]).round(4)
+    
+    # Perform one-way ANOVA
+    f_stat, p_value = f_oneway(*groups)
+    
+    # Determine if significant
+    is_significant = p_value < alpha
+    
+    results = {
+        'anova_result': {
+            'F_statistic': round(f_stat, 4),
+            'p_value': round(p_value, 6),
+            'df_between': len(groups) - 1,
+            'df_within': len(data_clean) - len(groups)
+        },
+        'quintile_stats': quintile_stats,
+        'significant': is_significant,
+        'interpretation': None
+    }
+    
+    # If ANOVA is significant, perform post-hoc Tukey HSD test
+    if is_significant:
+        try:
+            from scipy.stats import tukey_hsd
+            
+            # Perform Tukey HSD test
+            res = tukey_hsd(*groups)
+            
+            # Create a matrix of p-values
+            posthoc_df = pd.DataFrame(
+                res.pvalue,
+                index=[f'Q{int(q)}' for q in quintile_names],
+                columns=[f'Q{int(q)}' for q in quintile_names]
+            ).round(4)
+            
+            results['posthoc'] = posthoc_df
+            results['interpretation'] = f"ANOVA is significant (p={p_value:.6f}). There are statistically significant differences between at least two quintiles."
+            
+        except ImportError:
+            # Fallback to pairwise t-tests with Bonferroni correction
+            n_comparisons = len(groups) * (len(groups) - 1) / 2
+            bonferroni_alpha = alpha / n_comparisons
+            
+            pairwise_results = []
+            for i in range(len(groups)):
+                for j in range(i + 1, len(groups)):
+                    t_stat, p_val = stats.ttest_ind(groups[i], groups[j])
+                    pairwise_results.append({
+                        'Quintile_1': f'Q{int(quintile_names[i])}',
+                        'Quintile_2': f'Q{int(quintile_names[j])}',
+                        't_statistic': round(t_stat, 4),
+                        'p_value': round(p_val, 6),
+                        'significant_bonferroni': p_val < bonferroni_alpha
+                    })
+            
+            results['posthoc'] = pd.DataFrame(pairwise_results)
+            results['interpretation'] = f"ANOVA is significant (p={p_value:.6f}). Pairwise comparisons use Bonferroni correction (α={bonferroni_alpha:.6f})."
+    else:
+        results['interpretation'] = f"ANOVA is not significant (p={p_value:.6f}). No evidence of differences between quintiles."
+    
+    return results
+
+
+def display_quintile_test_results(test_results, value_col_name=None):
+    """
+    Display the results of quintile difference testing in Streamlit.
+    
+    Parameters:
+    -----------
+    test_results : dict
+        Output from test_quintile_differences()
+    value_col_name : str, optional
+        Display name for the value column
+    """
+    import streamlit as st
+    
+    if value_col_name is None:
+        value_col_name = "Co-benefit value"
+    
+    st.markdown("### 📊 Statistical Analysis")
+    
+    # ANOVA results
+    anova = test_results['anova_result']
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("F-statistic", f"{anova['F_statistic']:.4f}")
+    with col2:
+        st.metric("p-value", f"{anova['p_value']:.6f}")
+    with col3:
+        if test_results['significant']:
+            st.metric("Result", "Significant ✓", delta="Differences detected")
+        else:
+            st.metric("Result", "Not Significant", delta="No differences")
+    
+    # Interpretation
+    st.info(test_results['interpretation'])
+    
+    # Descriptive statistics
+    st.markdown("#### Descriptive Statistics by Quintile")
+    st.dataframe(
+        test_results['quintile_stats'].style.format("{:.4f}"),
+        use_container_width=True
+    )
+    
+    # Post-hoc results if available
+    if 'posthoc' in test_results and test_results['posthoc'] is not None:
+        st.markdown("#### Post-hoc Test Results")
+        
+        posthoc = test_results['posthoc']
+        
+        if isinstance(posthoc, pd.DataFrame) and 'Quintile_1' in posthoc.columns:
+            # Pairwise comparison format
+            st.dataframe(
+                posthoc.style.format({
+                    't_statistic': '{:.4f}',
+                    'p_value': '{:.6f}'
+                }),
+                use_container_width=True
+            )
+            st.caption("Bonferroni-corrected pairwise t-tests between quintiles.")
+        else:
+            # Tukey HSD matrix format
+            st.dataframe(
+                posthoc.style.background_gradient(cmap='RdYlGn_r', vmin=0, vmax=0.05)
+                .format("{:.4f}"),
+                use_container_width=True
+            )
+            st.caption("Tukey HSD p-values. Values < 0.05 indicate significant differences (highlighted).")
+
+

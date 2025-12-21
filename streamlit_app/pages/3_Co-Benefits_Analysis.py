@@ -42,7 +42,6 @@ st.markdown(nav_links)
 # Breakdown by Co-benefit type
 st.markdown("---")
 st.markdown("### Net-Zero Co-Benefits and Costs")
-#st.markdown("### Net-Zero Co-Benefits and Costs")
 
 with st.expander('Net-Zero Co-benefits categories excluded'):
     st.markdown(
