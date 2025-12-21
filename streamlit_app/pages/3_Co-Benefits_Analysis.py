@@ -360,6 +360,8 @@ with tab1:
         
         st.plotly_chart(fig_diet, use_container_width=True)
 
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
+
 ### PHYSICAL ACTIVITY
 # Create tabs for Diet Change visualization
 cobenefit = 'physical_activity'
@@ -423,6 +425,8 @@ with tab1:
         )
         
         st.plotly_chart(fig_diet, use_container_width=True)
+
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 
 ### AIR QUALITY
 # Create tabs for Diet Change visualization
@@ -488,6 +492,7 @@ with tab1:
         
         st.plotly_chart(fig_diet, use_container_width=True)
 
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 
 ### DAMPNESS
 # Create tabs for Diet Change visualization
@@ -553,6 +558,7 @@ with tab1:
         
         st.plotly_chart(fig_diet, use_container_width=True)
 
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 
 ### EXCESS COLD
 # Create tabs for Diet Change visualization
@@ -618,6 +624,8 @@ with tab1:
         
         st.plotly_chart(fig_diet, use_container_width=True)
 
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
+
 ### EXCESS HEAT
 # Create tabs for Diet Change visualization
 cobenefit = 'excess_heat'
@@ -682,6 +690,8 @@ with tab1:
         
         st.plotly_chart(fig_diet, use_container_width=True)
 
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
+
 ### HASSLE COSTS
 # Create tabs for Diet Change visualization
 cobenefit = 'hassle_costs'
@@ -745,3 +755,5 @@ with tab1:
         )
         
         st.plotly_chart(fig_diet, use_container_width=True)
+
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
