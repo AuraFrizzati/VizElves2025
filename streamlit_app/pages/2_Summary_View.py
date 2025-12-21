@@ -629,43 +629,101 @@ elif section == "Co-Benefits Categories":
         "Select metric:",
         ["Absolute (million £)", "Normalized (£/person)"],
         horizontal=True
+        ,key="radio_health"
     )
 
     if histogram_metric == "Absolute (million £)":
         histogram_column = ['diet_change']
         histogram_label = 'Total Net-Zero Co-Benefits [million £]',
-        x_labels = 'Total Co-Benefit [£ million]',
-        titles = ["Diet Change Co-Benefit"]
+        x_labels = 'Total Co-Benefits [£ million]',
+        titles = ["Diet Change Co-Benefits"]
         histogram_totals(
             num_cols = 1, 
             columns_to_plot = histogram_column,
             x_labels = x_labels,
             titles = titles
         )
-        # min_val = min_tot_cobenefit
-        # max_val = max_tot_cobenefit
 
-    # Show Cardiff LSOAs content
-    columns_to_plot = [
-        'diet_change',
-        'physical_activity',
-        'air_quality',
-        ]
-    
-    x_labels = [
-        'Total Co-Benefit [£ million]',
-        'Total Co-Benefit [£ million]',
-        'Total Co-Benefit [£ million]'
-        ]
-
-    titles = ["Diet Change Co-Benefit", "Phyisical Activity Co-Benefit", "Air Quality Co-Benefit"]
-
-    histogram_totals(
-        num_cols = 1, 
-        columns_to_plot = columns_to_plot,
-        x_labels = x_labels,
-        titles = titles
+    else:
+        histogram_column = ['diet_change_std']
+        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
+        titles = ["Normalised Diet Change Co-Benefits"]
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
         )
+
+
+    # Add toggle for normalized vs absolute
+    histogram_metric = st.radio(
+        "Select metric:",
+        ["Absolute (million £)", "Normalized (£/person)"],
+        horizontal=True
+        ,key="radio_physical"
+    )
+
+
+    if histogram_metric == "Absolute (million £)":
+        histogram_column = ['physical_activity']
+        histogram_label = 'Total Net-Zero Co-Benefits [million £]',
+        x_labels = 'Total Co-Benefits [£ million]',
+        titles = ["Physical Activity Co-Benefits"]
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+        )
+
+    else:
+        histogram_column = ['physical_activity_std']
+        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
+        titles = ["Normalised Diet Change Co-Benefits"]
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+        )
+
+    # Add toggle for normalized vs absolute
+    histogram_metric = st.radio(
+        "Select metric:",
+        ["Absolute (million £)", "Normalized (£/person)"],
+        horizontal=True
+        ,key="radio_air_quality"
+    )
+
+    
+    if histogram_metric == "Absolute (million £)":
+        histogram_column = ['air_quality']
+        histogram_label = 'Total Net-Zero Co-Benefits [million £]',
+        x_labels = 'Total Co-Benefits [£ million]',
+        titles = ["Air Quality Co-Benefits"]
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+        )
+
+    else:
+        histogram_column = ['air_quality_std']
+        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
+        titles = ["Normalised Air Quality Co-Benefits"]
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+        )
+    
+
     
     #######################
     ### BUILDING COBENEFITS

@@ -275,7 +275,8 @@ def Top3_Bottom3_LSOAs(data=None, value_col=None):
     return(styled_df)
 
 
-def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors=None, colorscales=None, titles = None):
+def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors=None, colorscales=None, titles = None,
+                     x_range = None):
     """
     Create histogram subplots for given columns.
     
@@ -358,6 +359,9 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors
         
         # Set x-axis label for this specific subplot
         fig.update_xaxes(title_text=x_labels[i], row=row, col=col_pos)
+
+        if(x_range):
+            fig.update_xaxes(range=x_range)
     
     fig.update_annotations(font_size=24)  
     fig.update_yaxes(title_text="Number of Neighbourhoods")
