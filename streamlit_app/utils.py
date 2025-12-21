@@ -7,6 +7,20 @@ import streamlit as st
 import pydeck as pdk
 import json
 
+
+# Co-benefit color dictionary for uniform styling across the dashboard
+cobenefit_colors = {
+    'diet_change': {'line': '#2ecc71', 'fill': 'rgba(46, 204, 113, 0.3)'},
+    'physical_activity': {'line': '#27ae60', 'fill': 'rgba(39, 174, 96, 0.3)'},
+    'air_quality': {'line': '#58d68d', 'fill': 'rgba(88, 214, 141, 0.3)'},
+    'dampness': {'line': '#3498db', 'fill': 'rgba(52, 152, 219, 0.3)'},
+    'excess_cold': {'line': '#2980b9', 'fill': 'rgba(41, 128, 185, 0.3)'},
+    'excess_heat': {'line': '#85c1e9', 'fill': 'rgba(133, 193, 233, 0.3)'},
+    'hassle_costs': {'line': '#e74c3c', 'fill': 'rgba(231, 76, 60, 0.3)'},
+    'total': {'line': '#000000', 'fill': 'rgba(0, 0, 0, 0.3)'}
+}
+
+
 ##### MAPS
 # Create color gradient: white (low) -> red (high) based on population
 def value_to_color(colour_value, min_pop, max_pop
@@ -275,8 +289,8 @@ def Top3_Bottom3_LSOAs(data=None, value_col=None):
     return(styled_df)
 
 
-def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors=None, colorscales=None, titles = None,
-                     x_range = None):
+def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, 
+                     colors=None, colorscales=None, titles = None,x_range = None):
     """
     Create histogram subplots for given columns.
     
@@ -295,12 +309,6 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors
     # Create subplots
     num_rows = (len(columns_to_plot) + num_cols - 1) // num_cols
 
-    # Create titles for each column
-    # titles = []
-    # for col in columns_to_plot:
-    #     col_name = col.replace("_", " ").capitalize()
-    #     titles.append(f'Distribution of {col_name}')
-
     # Default x-axis labels if not provided
     if x_labels is None:
         x_labels = [col.replace("_", " ").capitalize() for col in columns_to_plot]
@@ -308,6 +316,7 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors
     # Default colors if not provided
     if colors is None:
         colors = px.colors.qualitative.Plotly[:len(columns_to_plot)]
+
 
     fig = make_subplots(
         rows=num_rows, 
@@ -363,7 +372,10 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, colors
         if(x_range):
             fig.update_xaxes(range=x_range)
     
-    fig.update_annotations(font_size=24)  
+    fig.update_annotations(font_size=20, 
+                           font_color='black', 
+                           font_family='Arial'
+                           ,font_weight='bold')  
     fig.update_yaxes(title_text="Number of Neighbourhoods")
 
     fig.update_layout(
@@ -423,3 +435,63 @@ def deprivation_quintiles_boxplots_totals(
     )
     
     st.plotly_chart(fig, use_container_width=True)
+
+def create_cobenefit_timeline(l2data_time, cobenefit_name, display_name, line_color, fill_color, year_cols):
+    """
+    Create a timeline chart for a specific co-benefit.
+    
+    Parameters:
+    -----------
+    l2data_time : DataFrame
+        The dataframe containing time series data
+    cobenefit_name : str
+        The name of the co-benefit column in the dataframe (e.g., 'diet_change')
+    display_name : str
+        The display name for the chart and tooltip (e.g., 'Diet Change')
+    line_color : str
+        The color for the line and markers (e.g., '#2ecc71')
+    fill_color : str
+        The color for the area fill with opacity (e.g., 'rgba(46, 204, 113, 0.3)')
+    year_cols : list
+        List of year column names as strings
+    
+    Returns:
+    --------
+    fig : plotly.graph_objects.Figure
+        The configured plotly figure
+    """
+    # Filter for the specific co-benefit and sum across all LSOAs for each year
+    cobenefit_time = l2data_time[l2data_time['co-benefit_type'] == cobenefit_name][year_cols].sum()
+    
+    # Create the figure
+    fig = go.Figure()
+    
+    fig.add_trace(go.Scatter(
+        x=year_cols,
+        y=cobenefit_time.values,
+        name=display_name,
+        mode='lines+markers',
+        line=dict(width=2, color=line_color),
+        marker=dict(size=5, color=line_color),
+        fill='tozeroy',
+        fillcolor=fill_color,
+        hovertemplate=f'<b>{display_name}</b><br>' +
+                        'Year: %{x}<br>' +
+                        'Value: £%{y:.2f}M<br>' +
+                        '<extra></extra>'
+    ))
+    
+    fig.update_layout(
+        title=dict(
+            text=f"{display_name} Co-Benefits Time Series (2025-2050)",
+            x=0.5,
+            xanchor='center',
+            font=dict(size=20, color='black', family='Arial')
+        ),        xaxis_title="Year",
+        yaxis_title="Co-benefit Value (£ Million)",
+        height=400,
+        template="plotly_white",
+        hovermode='x'
+    )
+    
+    return fig
