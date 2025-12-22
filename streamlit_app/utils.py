@@ -462,20 +462,6 @@ def deprivation_quintiles_boxplots_totals(
         q1 = data_subset[value_col].quantile(0.25)
         median = data_subset[value_col].median()
         q3 = data_subset[value_col].quantile(0.75)
-        
-        # fig.add_trace(
-        #     go.Box(
-        #         y=data_subset[value_col],
-        #         name=f'Quintile {int(quintile)}',
-        #         marker_color=colors[int(quintile)-1],
-        #         boxmean=False,
-        #         hoverinfo='skip',
-        #         customdata=[[q1, median, q3]] * len(data_subset),
-        #         hovertemplate='<b>%{fullData.name}</b><br>Q1: %{customdata[0]:.2f}<br>Median: %{customdata[1]:.2f}<br>Q3: %{customdata[2]:.2f}<extra></extra>'
-        #         # hovertemplate='<b>%{fullData.name}</b><br>Q1: %{q1:.2f}<br>Median: %{median:.2f}<br>Q3: %{q3:.2f}<extra></extra>'
-        #         #,hovertemplate='Quintile %{fullData.name}<br>Total: %{y:.4f}<extra></extra>'
-        #     )
-        # )
 
         fig.add_trace(
             go.Box(
@@ -494,7 +480,7 @@ def deprivation_quintiles_boxplots_totals(
             text=title,
             x=0.5,
             xanchor='center',
-            font=dict(size=24)
+            font=dict(size=5)
         ),
         xaxis_title="WIMD Quintile",
         yaxis_title="Normalised Net-Zero Co-Benefits [£/person]",
@@ -613,13 +599,13 @@ def test_quintile_differences(
     
     # Calculate descriptive statistics by quintile
     quintile_stats = data_clean.groupby(quintile_col)[value_col].agg([
-        ('n', 'count'),
+        #('n', 'count'),
         ('mean', 'mean'),
-        ('median', 'median'),
-        ('std', 'std'),
+        #('median', 'median'),
+        #('std', 'std'),
         ('min', 'min'),
         ('max', 'max')
-    ]).round(4)
+    ]).round(2)
     
     # Perform one-way ANOVA
     f_stat, p_value = f_oneway(*groups)
@@ -703,16 +689,11 @@ def display_quintile_test_results(test_results, value_col_name=None):
     # ANOVA results
     anova = test_results['anova_result']
     
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
     with col1:
         st.metric("F-statistic", f"{anova['F_statistic']:.4f}")
     with col2:
         st.metric("p-value", f"{anova['p_value']:.6f}")
-    with col3:
-        if test_results['significant']:
-            st.metric("Result", "Significant ✓", delta="Differences detected")
-        else:
-            st.metric("Result", "Not Significant", delta="No differences")
     
     # Interpretation
     st.info(test_results['interpretation'])
@@ -726,27 +707,36 @@ def display_quintile_test_results(test_results, value_col_name=None):
     
     # Post-hoc results if available
     if 'posthoc' in test_results and test_results['posthoc'] is not None:
-        st.markdown("#### Post-hoc Test Results")
+        st.markdown("#### Post-hoc Test Results: Significant Differences")
         
         posthoc = test_results['posthoc']
         
         if isinstance(posthoc, pd.DataFrame) and 'Quintile_1' in posthoc.columns:
-            # Pairwise comparison format
-            st.dataframe(
-                posthoc.style.format({
-                    't_statistic': '{:.4f}',
-                    'p_value': '{:.6f}'
-                }),
-                use_container_width=True
-            )
-            st.caption("Bonferroni-corrected pairwise t-tests between quintiles.")
+            # Pairwise comparison format (Bonferroni)
+            sig_pairs = posthoc[posthoc['significant_bonferroni'] == True]
+            if len(sig_pairs) > 0:
+                sig_text = []
+                for _, row in sig_pairs.iterrows():
+                    sig_text.append(f"**{row['Quintile_1']} vs {row['Quintile_2']}** (p = {row['p_value']:.4f})")
+                st.write("Significantly different quintile pairs:")
+                for text in sig_text:
+                    st.write("- " + text)
+            else:
+                st.write("No significant pairwise differences found after Bonferroni correction.")
         else:
             # Tukey HSD matrix format
-            st.dataframe(
-                posthoc.style.background_gradient(cmap='RdYlGn_r', vmin=0, vmax=0.05)
-                .format("{:.4f}"),
-                use_container_width=True
-            )
-            st.caption("Tukey HSD p-values. Values < 0.05 indicate significant differences (highlighted).")
-
-
+            sig_pairs = []
+            for i in range(len(posthoc)):
+                for j in range(i+1, len(posthoc)):
+                    p_val = posthoc.iloc[i, j]
+                    if p_val < 0.05:
+                        q1 = posthoc.index[i]
+                        q2 = posthoc.columns[j]
+                        sig_pairs.append(f"**{q1} vs {q2}** (p = {p_val:.4f})")
+            
+            if sig_pairs:
+                st.write("Significantly different quintile pairs:")
+                for pair in sig_pairs:
+                    st.write("- " + pair)
+            else:
+                st.write("No significant pairwise differences found (all p-values ≥ 0.05).")

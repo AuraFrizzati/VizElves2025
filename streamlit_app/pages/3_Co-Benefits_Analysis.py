@@ -341,23 +341,23 @@ with tab1:
             ,colors = [cobenefit_colors[cobenefit]['line']]
         )
 
-    with tab2:
-        # Timeline chart for Diet Change       
-        # Prepare data for time series
-        year_cols = [str(year) for year in range(2025, 2051)]
-        cobenefit = cobenefit
-        fig_diet = create_cobenefit_timeline(
-            l2data_time=l2data_time,
-            cobenefit_name=cobenefit,
-            display_name=cobenefit_display,
-            line_color=cobenefit_colors[cobenefit]['line'],
-            fill_color=cobenefit_colors[cobenefit]['fill'],
-            # line_color='#2ecc71',
-            # fill_color='rgba(46, 204, 113, 0.3)',
-            year_cols=year_cols
-        )
-        
-        st.plotly_chart(fig_diet, use_container_width=True)
+with tab2:
+    # Timeline chart for Diet Change       
+    # Prepare data for time series
+    year_cols = [str(year) for year in range(2025, 2051)]
+    cobenefit = cobenefit
+    fig_diet = create_cobenefit_timeline(
+        l2data_time=l2data_time,
+        cobenefit_name=cobenefit,
+        display_name=cobenefit_display,
+        line_color=cobenefit_colors[cobenefit]['line'],
+        fill_color=cobenefit_colors[cobenefit]['fill'],
+        # line_color='#2ecc71',
+        # fill_color='rgba(46, 204, 113, 0.3)',
+        year_cols=year_cols
+    )
+    
+    st.plotly_chart(fig_diet, use_container_width=True)
 
 st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 

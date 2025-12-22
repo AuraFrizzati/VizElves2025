@@ -201,52 +201,113 @@ with col2:
         )
 
 
+
 st.markdown("---")
 st.markdown("## Total Net-Zero Co-Benefits")
-deprivation_quintiles_boxplots_totals(
-    value_col = 'sum_std'
+tab1, tab2 = st.tabs(["📊 BOXPLOTS", "📈 STATISTICAL TEST"])
+with tab1:
+    deprivation_quintiles_boxplots_totals(value_col = 'sum_std')
+with tab2:
+    # Test for total co-benefits
+    test_results = test_quintile_differences(
+        value_col='sum_std',  # Total co-benefits per person
+        alpha=0.05
     )
+    display_quintile_test_results(test_results, value_col_name="Total Co-benefits per person")
 
 st.markdown("---")
 st.markdown("## Physical Activity Co-Benefits")
-deprivation_quintiles_boxplots_totals(value_col = 'physical_activity_std')
+tab1, tab2 = st.tabs(["📊 BOXPLOTS", "📈 STATISTICAL TEST"])
+with tab1:
+    deprivation_quintiles_boxplots_totals(value_col = 'physical_activity_std')
+with tab2:
+    # Test for total co-benefits
+    test_results = test_quintile_differences(
+        value_col='physical_activity_std',  # Total co-benefits per person
+        alpha=0.05
+    )
+    display_quintile_test_results(test_results, value_col_name="Total Co-benefits per person")
+
 
 st.markdown("---")
 st.markdown("## Air Quality Co-Benefits")
-deprivation_quintiles_boxplots_totals(value_col = 'air_quality_std')
+tab1, tab2 = st.tabs(["📊 BOXPLOTS", "📈 STATISTICAL TEST"])
+with tab1:
+    deprivation_quintiles_boxplots_totals(value_col = 'air_quality_std')
+with tab2:
+    # Test for total co-benefits
+    test_results = test_quintile_differences(
+        value_col='air_quality_std',  # Total co-benefits per person
+        alpha=0.05
+    )
+    display_quintile_test_results(test_results, value_col_name="Total Co-benefits per person")
+
 
 st.markdown("---")
 st.markdown("## Excess Cold Co-Benefits")
-deprivation_quintiles_boxplots_totals(value_col = 'excess_cold_std')
+tab1, tab2 = st.tabs(["📊 BOXPLOTS", "📈 STATISTICAL TEST"])
+with tab1:
+    deprivation_quintiles_boxplots_totals(value_col = 'excess_cold_std')
+with tab2:
+    # Test for total co-benefits
+    test_results = test_quintile_differences(
+        value_col='excess_cold_std',  # Total co-benefits per person
+        alpha=0.05
+    )
+    display_quintile_test_results(test_results, value_col_name="Total Co-benefits per person")
+
 
 st.markdown("---")
 st.markdown("## Diet Change Co-Benefits")
-deprivation_quintiles_boxplots_totals(value_col = 'diet_change_std')
+tab1, tab2 = st.tabs(["📊 BOXPLOTS", "📈 STATISTICAL TEST"])
+with tab1:
+    deprivation_quintiles_boxplots_totals(value_col = 'diet_change_std')
+with tab2:
+    # Test for total co-benefits
+    test_results = test_quintile_differences(
+        value_col='diet_change_std',  # Total co-benefits per person
+        alpha=0.05
+    )
+    display_quintile_test_results(test_results, value_col_name="Total Co-benefits per person")
+
 
 st.markdown("---")
 st.markdown("## Dampness Co-Benefits")
-deprivation_quintiles_boxplots_totals(value_col = 'dampness_std')
+tab1, tab2 = st.tabs(["📊 BOXPLOTS", "📈 STATISTICAL TEST"])
+with tab1:
+    deprivation_quintiles_boxplots_totals(value_col = 'dampness_std')
+with tab2:
+    # Test for total co-benefits
+    test_results = test_quintile_differences(
+        value_col='dampness_std',  # Total co-benefits per person
+        alpha=0.05
+    )
+    display_quintile_test_results(test_results, value_col_name="Total Co-benefits per person")
+
 
 st.markdown("---")
 st.markdown("## Excess Heat Co-Benefits")
-deprivation_quintiles_boxplots_totals(value_col = 'excess_heat_std')
+tab1, tab2 = st.tabs(["📊 BOXPLOTS", "📈 STATISTICAL TEST"])
+with tab1:
+    deprivation_quintiles_boxplots_totals(value_col = 'excess_heat_std')
+with tab2:
+    # Test for total co-benefits
+    test_results = test_quintile_differences(
+        value_col='excess_heat_std',  # Total co-benefits per person
+        alpha=0.05
+    )
+    display_quintile_test_results(test_results, value_col_name="Total Co-benefits per person")
+
 
 st.markdown("---")
 st.markdown("## Hassle Costs")
-deprivation_quintiles_boxplots_totals(value_col = 'hassle_costs_std')
-
-
-# Test for total co-benefits
-st.markdown("## Statistical Testing")
-test_results = test_quintile_differences(
-    value_col='sum_std',  # Total co-benefits per person
-    alpha=0.05
-)
-display_quintile_test_results(test_results, value_col_name="Total Co-benefits per person")
-
-# Test for specific co-benefits
-st.markdown("### Health Co-Benefits Tests")
-for col in ['diet_change_std', 'physical_activity_std', 'air_quality_std']:
-    st.markdown(f"#### {col.replace('_std', '').replace('_', ' ').title()}")
-    results = test_quintile_differences(value_col=col)
-    display_quintile_test_results(results, value_col_name=col.replace('_std', '').title())
+tab1, tab2 = st.tabs(["📊 BOXPLOTS", "📈 STATISTICAL TEST"])
+with tab1:
+    deprivation_quintiles_boxplots_totals(value_col = 'hassle_costs_std')
+with tab2:
+    # Test for total co-benefits
+    test_results = test_quintile_differences(
+        value_col='hassle_costs_std',  # Total co-benefits per person
+        alpha=0.05
+    )
+    display_quintile_test_results(test_results, value_col_name="Total Co-benefits per person")
