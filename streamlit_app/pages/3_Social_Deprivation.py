@@ -4,7 +4,7 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import geopandas as gpd
-from utils import histogram_totals, deprivation_quintiles_boxplots_totals, test_quintile_differences, display_quintile_test_results,choropleth_map
+from utils import histogram_totals, deprivation_quintiles_boxplots_totals, test_quintile_differences, display_quintile_test_results,choropleth_map, cobenefit_colors
 
 
 
@@ -92,13 +92,13 @@ with col1:
         "Social Deprivation": "Social Deprivation WIMD Quintile"
     }
 
-    metric_display = st.selectbox(
-        "Social Deprivation WIMD Quintile",
-        list(metric_options.keys())
-    )
+    st.markdown("**Social Deprivation WIMD Quintile**")
+    st.markdown("(1 = most deprived, 5 = least deprived)")
 
-    metric = metric_options[metric_display]
-    legend_title = metric_titles[metric_display]
+    metric = metric_options["Social Deprivation"]
+    legend_title = metric_titles["Social Deprivation"]
+    tooltip_html = f"Neighbourhood: <b>{{LSOA name (Eng)}}</b><br/> Social Deprivation Quintile: <b>{{WIMD 2025 overall quintile}}</b>"
+
 
     choropleth_map(
         gdf = cardiff_gdf, 
@@ -108,14 +108,15 @@ with col1:
         ,lon_correction=0.001
         ,lat_correction=0.03
         ,legend_title=legend_title
-        ,colour_high= (0, 0, 255),
+        ,colour_low=(0, 0, 255),      # Blue for low (deprived)
+        colour_high=(255, 165, 0),   # Orange for high (least deprived)
         highlight_lsoa=selected_lsoa,
-        tooltip_html = "Neighbourhood: <b>{LSOA name (Eng)}</b><br/>Population: {population}<br/>Households: {households}<br/>Average household size: {average_household_size}<br/>"
-
+        tooltip_html = tooltip_html
         )
 
 
 with col2:
+    
 
     metric_options = {
         "Tot Co-Benefits Normalised": "sum_std"
@@ -130,13 +131,13 @@ with col2:
 
     metric_titles = {
         "Tot Co-Benefits Normalised": "Normalised tot net-zero co-benefits [£ per person]",
-        "Air Quality Normalised": "Normalised tot net-zero co-benefits [£ per person]",
-        "Dampness Normalised": "Normalised tot net-zero co-benefits [£ per person]",
-        "Diet Change Normalised": "Normalised tot net-zero co-benefits [£ per person]",
-        "Excess Cold Normalised": "Normalised tot net-zero co-benefits [£ per person]",
-        "Excess Heat Normalised": "Normalised tot net-zero co-benefits [£ per person]",
-        "Physical Activity Normalised": "Normalised tot net-zero co-benefits [£ per person]",
-        "Hassle Costs Normalised": "Normalised tot net-zero co-benefits [£ per person]"
+        "Air Quality Normalised": "Normalised Air Quality co-benefits [£ per person]",
+        "Dampness Normalised": "Normalised Dampness co-benefits [£ per person]",
+        "Diet Change Normalised": "Normalised Diet Change co-benefits [£ per person]",
+        "Excess Cold Normalised": "Normalised Excess Cold co-benefits [£ per person]",
+        "Excess Heat Normalised": "Normalised Excess Heat co-benefits [£ per person]",
+        "Physical Activity Normalised": "Normalised Physical Activity co-benefits [£ per person]",
+        "Hassle Costs Normalised": "Normalised Hassle costs [£ per person]"
     }
 
     metric_display = st.selectbox(
@@ -147,6 +148,44 @@ with col2:
     metric = metric_options[metric_display]
     legend_title = metric_titles[metric_display]
 
+    # Map the selected metric to the cobenefit_colors key
+    cobenefit_key_map = {
+        "Tot Co-Benefits Normalised": "total",
+        "Air Quality Normalised": "air_quality",
+        "Dampness Normalised": "dampness",
+        "Diet Change Normalised": "diet_change",
+        "Excess Cold Normalised": "excess_cold",
+        "Excess Heat Normalised": "excess_heat",
+        "Physical Activity Normalised": "physical_activity",
+        "Hassle Costs Normalised": "hassle_costs"
+    }
+
+        # Get the key (default to 'total' if not found)
+    cobenefit_key = cobenefit_key_map.get(metric_display, "total")
+
+    # Get the hex color from cobenefit_colors
+    hex_color = cobenefit_colors[cobenefit_key]['line']
+    # Convert hex to RGB tuple (e.g., '#94CBEC' -> (148, 203, 236))
+    colour_high = tuple(int(hex_color[i:i+2], 16) for i in (1, 3, 5))
+
+    # Special override for "Tot Co-Benefits Normalised" to match Summary View (green)
+    if metric_display == "Tot Co-Benefits Normalised":
+        colour_high = (0, 153, 51)  # Green color from 2_Summary_View.py
+    
+    # Special handling for "Hassle Costs Normalised" to reverse the gradient
+    if metric_display == "Hassle Costs Normalised":
+        colour_low = colour_high  # Use the co-benefit color for low values (high intensity)
+        colour_high = (255, 255, 255)  # White for high values (low intensity)
+    else:
+        colour_low = None  # Default to white for other metrics
+
+    # Create a rounded version of the selected metric for the tooltip
+    cardiff_gdf[f'{metric}_rounded'] = cardiff_gdf[metric].round(2)
+    # Set the tooltip HTML dynamically
+    tooltip_html = f"Neighbourhood: <b>{{LSOA name (Eng)}}</b><br/> {metric_display} [per person]: <b>£{{{metric}_rounded}}</b>"
+
+
+
     choropleth_map(
         gdf = cardiff_gdf, 
         column_colour=metric
@@ -155,11 +194,10 @@ with col2:
         ,lon_correction=0.001
         ,lat_correction=0.03
         ,legend_title=legend_title
-        ,colour_high= (0, 153, 51),
+        ,colour_high= colour_high,
         highlight_lsoa=selected_lsoa
-        ,tooltip_html = "Neighbourhood: <b>{LSOA name (Eng)}</b><br/>Tot net-zero co-benefits [mil £]: {sum_rounded}<br/>Normalised tot net-zero co-benefits [£/person]: {sum_std_rounded}"
-
-        #,colour_low= (230, 0, 0)
+        ,tooltip_html = tooltip_html
+        ,colour_low= colour_low
         )
 
 

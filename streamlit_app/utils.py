@@ -191,16 +191,37 @@ def choropleth_map(gdf, column_colour='population',
         g = int(colour_low[1] + (colour_high[1] - colour_low[1]) * t)
         b = int(colour_low[2] + (colour_high[2] - colour_low[2]) * t)
         return f"rgb({r},{g},{b})"
+    
+    # Check if the data is discrete (few unique values, e.g., <= legend_bins)
+    unique_vals = sorted(gdf[column_colour].dropna().unique())
+    is_discrete = len(unique_vals) <= legend_bins and all(v == int(v) for v in unique_vals)
+    #st.write(f"Column: {column_colour}, unique_vals: {unique_vals}, len: {len(unique_vals)}, is_discrete: {is_discrete}")
 
-    if rng <= 0 or legend_bins <= 0:
+    if is_discrete:
+        # For discrete data, create labels for each unique value
+        edges = unique_vals + [unique_vals[-1] + 1]  # Add a dummy edge for the last bin
+        swatches = [color_at_t((v - min_pop) / (max_pop - min_pop) if max_pop != min_pop else 0) for v in unique_vals]
+        labels = [str(int(v)) for v in unique_vals]  # Use integer labels like "1", "2", etc.
+    elif rng <= 0 or legend_bins <= 0:
         edges = [min_pop, max_pop]
         swatches = [color_at_t(0.5)]
         labels = [f"{fmt_val(min_pop)}–{fmt_val(max_pop)}"]
     else:
+        # Original continuous logic
         edges = [min_pop + (rng * i / legend_bins) for i in range(legend_bins + 1)]
-        # Midpoint t for each bin across 0..1
         swatches = [color_at_t((i + 0.5) / legend_bins) for i in range(legend_bins)]
         labels = [f"{fmt_val(edges[i])}–{fmt_val(edges[i + 1])}" for i in range(legend_bins)]
+
+
+    # if rng <= 0 or legend_bins <= 0:
+    #     edges = [min_pop, max_pop]
+    #     swatches = [color_at_t(0.5)]
+    #     labels = [f"{fmt_val(min_pop)}–{fmt_val(max_pop)}"]
+    # else:
+    #     edges = [min_pop + (rng * i / legend_bins) for i in range(legend_bins + 1)]
+    #     # Midpoint t for each bin across 0..1
+    #     swatches = [color_at_t((i + 0.5) / legend_bins) for i in range(legend_bins)]
+    #     labels = [f"{fmt_val(edges[i])}–{fmt_val(edges[i + 1])}" for i in range(legend_bins)]
 
 
     # Build the swatch divs WITHOUT f-string nesting
@@ -413,11 +434,25 @@ def deprivation_quintiles_boxplots_totals(
         value_label = 'Total'
     else:
        value_label =  value_col.replace("_", " ").capitalize() 
+    
+    # Define color gradient matching the map (white to blue)
+    colour_high = (255, 165, 0)   # Orange for high values (quintile 5)
+    colour_low = (0, 0, 255)     # Blue for low values (quintile 1, most deprived)
+    
+    def color_at_t(t):
+        r = int(colour_low[0] + (colour_high[0] - colour_low[0]) * t)
+        g = int(colour_low[1] + (colour_high[1] - colour_low[1]) * t)
+        b = int(colour_low[2] + (colour_high[2] - colour_low[2]) * t)
+        return f'rgb({r},{g},{b})'
+    
+    # Generate colors for quintiles 1-5
+    quintiles = sorted(data[quintile_col].unique())
+    colors = [color_at_t((q - 1) / (len(quintiles) - 1)) for q in quintiles]  # t from 0 to 1
 
-  
+
     fig = go.Figure()
     
-    colors = px.colors.qualitative.Plotly
+    #colors = px.colors.qualitative.Plotly
     
     for quintile in sorted(data[quintile_col].unique()):
         data_subset = data[data[quintile_col] == quintile]
