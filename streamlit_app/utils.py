@@ -376,7 +376,7 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None,
                         line=dict(color='black', width=1),
                         showscale=False
                     ),
-                    hovertemplate='%{x}: %{y}<extra></extra>'
+                    hovertemplate=f'x value = %{{x}}<br>y value = %{{y}} <extra></extra>'
                 ),
                 row=row, 
                 col=col_pos
@@ -392,7 +392,7 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None,
                         color=colors[i],
                         line=dict(color='black', width=1)
                     ),
-                    hovertemplate='%{x}: %{y}<extra></extra>'
+                    hovertemplate=f'x value = %{{x}}<br>y value = %{{y}} <extra></extra>'
                 ),
                 row=row, 
                 col=col_pos

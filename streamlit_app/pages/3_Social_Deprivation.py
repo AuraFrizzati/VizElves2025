@@ -48,7 +48,7 @@ columns_to_plot = [
 x_labels = ['WIMD 2025 Quintile (1 = most deprived, 5 = least deprived)']
 colorscales = [
     #'RdYlGn',  # Red-Yellow-Green for WIMD (red=deprived, green=least 
-    'viridis'
+    [[0, 'rgb(0,0,255)'], [1, 'rgb(255,165,0)']] 
 ]
 histogram_totals(
     num_cols = 1, 
@@ -93,7 +93,7 @@ with col1:
     }
 
     st.markdown("**Social Deprivation WIMD Quintile**")
-    st.markdown("(1 = most deprived, 5 = least deprived)")
+    st.markdown("(1 = most deprived <---------------> 5 = least deprived)")
 
     metric = metric_options["Social Deprivation"]
     legend_title = metric_titles["Social Deprivation"]
