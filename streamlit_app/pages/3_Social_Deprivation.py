@@ -78,6 +78,8 @@ selected_lsoa = st.selectbox(
     key="lsoa_left"
 )
 
+#st.dataframe(cardiff_gdf.head())
+
 col1, col2 = st.columns([1, 1])
 
 with col1:
@@ -87,7 +89,7 @@ with col1:
     }
 
     metric_titles = {
-        "Social Deprivation": "Population size"
+        "Social Deprivation": "Social Deprivation WIMD Quintile"
     }
 
     metric_display = st.selectbox(
@@ -112,20 +114,33 @@ with col1:
 
         )
 
+
 with col2:
 
     metric_options = {
         "Tot Co-Benefits Normalised": "sum_std"
-        ,"Tot Co-Benefits Normalised": "sum_std"
+        ,"Air Quality Normalised": "air_quality_std"
+        ,"Dampness Normalised": "dampness_std"
+        ,"Diet Change Normalised": "diet_change_std"
+        ,"Excess Cold Normalised": "excess_cold_std"
+        ,"Excess Heat Normalised": "excess_heat_std"
+        ,"Physical Activity Normalised": "physical_activity_std"
+        ,"Hassle Costs Normalised": "hassle_costs_std"
     }
 
     metric_titles = {
         "Tot Co-Benefits Normalised": "Normalised tot net-zero co-benefits [£ per person]",
-        "Tot Co-Benefits Normalised": "Normalised tot net-zero co-benefits [£ per person]"
+        "Air Quality Normalised": "Normalised tot net-zero co-benefits [£ per person]",
+        "Dampness Normalised": "Normalised tot net-zero co-benefits [£ per person]",
+        "Diet Change Normalised": "Normalised tot net-zero co-benefits [£ per person]",
+        "Excess Cold Normalised": "Normalised tot net-zero co-benefits [£ per person]",
+        "Excess Heat Normalised": "Normalised tot net-zero co-benefits [£ per person]",
+        "Physical Activity Normalised": "Normalised tot net-zero co-benefits [£ per person]",
+        "Hassle Costs Normalised": "Normalised tot net-zero co-benefits [£ per person]"
     }
 
     metric_display = st.selectbox(
-        "Net-Zero Co-Benefits metrics",
+        "Net-Zero Co-Benefits/Costs metrics",
         list(metric_options.keys())
     )
 

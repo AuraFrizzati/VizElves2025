@@ -9,14 +9,25 @@ import json
 
 
 # Co-benefit color dictionary for uniform styling across the dashboard
+# cobenefit_colors = {
+#     'diet_change': {'line': '#2ecc71', 'fill': 'rgba(46, 204, 113, 0.3)'},
+#     'physical_activity': {'line': '#27ae60', 'fill': 'rgba(39, 174, 96, 0.3)'},
+#     'air_quality': {'line': '#58d68d', 'fill': 'rgba(88, 214, 141, 0.3)'},
+#     'dampness': {'line': '#3498db', 'fill': 'rgba(52, 152, 219, 0.3)'},
+#     'excess_cold': {'line': '#2980b9', 'fill': 'rgba(41, 128, 185, 0.3)'},
+#     'excess_heat': {'line': '#85c1e9', 'fill': 'rgba(133, 193, 233, 0.3)'},
+#     'hassle_costs': {'line': '#e74c3c', 'fill': 'rgba(231, 76, 60, 0.3)'},
+#     'total': {'line': '#000000', 'fill': 'rgba(0, 0, 0, 0.3)'}
+# }
+
 cobenefit_colors = {
-    'diet_change': {'line': '#2ecc71', 'fill': 'rgba(46, 204, 113, 0.3)'},
-    'physical_activity': {'line': '#27ae60', 'fill': 'rgba(39, 174, 96, 0.3)'},
-    'air_quality': {'line': '#58d68d', 'fill': 'rgba(88, 214, 141, 0.3)'},
-    'dampness': {'line': '#3498db', 'fill': 'rgba(52, 152, 219, 0.3)'},
-    'excess_cold': {'line': '#2980b9', 'fill': 'rgba(41, 128, 185, 0.3)'},
-    'excess_heat': {'line': '#85c1e9', 'fill': 'rgba(133, 193, 233, 0.3)'},
-    'hassle_costs': {'line': '#e74c3c', 'fill': 'rgba(231, 76, 60, 0.3)'},
+    'diet_change': {'line': '#009988', 'fill': 'rgba(0, 153, 136, 0.3)'}, #
+    'physical_activity': {'line': '#EE7733', 'fill': 'rgba(238, 119, 51, 0.3)'}, #
+    'air_quality': {'line': '#EE3377', 'fill': 'rgba(238, 51, 119, 0.3)'}, #
+    'dampness': {'line': '#33BBEE', 'fill': 'rgba(51, 187, 238, 0.3)'}, #
+    'excess_cold':{'line': '#0077BB', 'fill': 'rgba(0, 119, 187, 0.3)'}, #
+    'excess_heat': {'line': '#CC3311', 'fill': 'rgba(204, 51, 17, 0.3)'}, #
+    'hassle_costs': {'line': '#BBBBBB', 'fill': 'rgba(187, 187, 187, 0.3)'}, 
     'total': {'line': '#000000', 'fill': 'rgba(0, 0, 0, 0.3)'}
 }
 

@@ -25,3 +25,14 @@ st.markdown(
       services, and physical environment.
     """
 )
+
+
+st.markdown(
+    """
+    [Colour blind friendly palettes](https://observablehq.com/@jotasolano/paul-tol-schemes): 
+
+    https://sronpersonalpages.nl/~pault/data/colourschemes.pdf
+
+    * For the co-benefits type we used Paul Tol's QualVibrant palette 
+    """
+)

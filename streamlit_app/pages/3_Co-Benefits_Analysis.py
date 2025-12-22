@@ -234,6 +234,7 @@ for cobenefit_type in cobenefit_sums.index:
             x=year_cols,
             y=cobenefit_sums.loc[cobenefit_type],
             name=cobenefit_type.replace('_', ' ').title(),
+            marker=dict(color=cobenefit_colors[cobenefit_type]['line']),  # Set bar color from cobenefit_colors
             opacity=0.7,  # Add transparency
             hovertemplate='<b>%{fullData.name}</b><br>' +
                             'Year: %{x}<br>' +
