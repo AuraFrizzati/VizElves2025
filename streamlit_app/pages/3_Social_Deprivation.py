@@ -204,12 +204,8 @@ with col2:
 st.markdown("---")
 st.markdown("## Total Net-Zero Co-Benefits")
 deprivation_quintiles_boxplots_totals(
-    value_col = 'sum'
+    value_col = 'sum_std'
     )
-
-st.markdown("---")
-st.markdown("## Diet Change Co-Benefits")
-deprivation_quintiles_boxplots_totals(value_col = 'diet_change_std')
 
 st.markdown("---")
 st.markdown("## Physical Activity Co-Benefits")
@@ -220,12 +216,16 @@ st.markdown("## Air Quality Co-Benefits")
 deprivation_quintiles_boxplots_totals(value_col = 'air_quality_std')
 
 st.markdown("---")
-st.markdown("## Dampness Co-Benefits")
-deprivation_quintiles_boxplots_totals(value_col = 'dampness_std')
-
-st.markdown("---")
 st.markdown("## Excess Cold Co-Benefits")
 deprivation_quintiles_boxplots_totals(value_col = 'excess_cold_std')
+
+st.markdown("---")
+st.markdown("## Diet Change Co-Benefits")
+deprivation_quintiles_boxplots_totals(value_col = 'diet_change_std')
+
+st.markdown("---")
+st.markdown("## Dampness Co-Benefits")
+deprivation_quintiles_boxplots_totals(value_col = 'dampness_std')
 
 st.markdown("---")
 st.markdown("## Excess Heat Co-Benefits")

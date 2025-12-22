@@ -425,6 +425,7 @@ def deprivation_quintiles_boxplots_totals(
         data_path="data/l2data_totals.csv", 
         quintile_col = 'WIMD 2025 overall quintile',
         value_col =None
+        , title = ""
         ):
     
     # Load data if not provided
@@ -456,19 +457,41 @@ def deprivation_quintiles_boxplots_totals(
     
     for quintile in sorted(data[quintile_col].unique()):
         data_subset = data[data[quintile_col] == quintile]
+
+        # Calculate Q1, median, Q3
+        q1 = data_subset[value_col].quantile(0.25)
+        median = data_subset[value_col].median()
+        q3 = data_subset[value_col].quantile(0.75)
         
+        # fig.add_trace(
+        #     go.Box(
+        #         y=data_subset[value_col],
+        #         name=f'Quintile {int(quintile)}',
+        #         marker_color=colors[int(quintile)-1],
+        #         boxmean=False,
+        #         hoverinfo='skip',
+        #         customdata=[[q1, median, q3]] * len(data_subset),
+        #         hovertemplate='<b>%{fullData.name}</b><br>Q1: %{customdata[0]:.2f}<br>Median: %{customdata[1]:.2f}<br>Q3: %{customdata[2]:.2f}<extra></extra>'
+        #         # hovertemplate='<b>%{fullData.name}</b><br>Q1: %{q1:.2f}<br>Median: %{median:.2f}<br>Q3: %{q3:.2f}<extra></extra>'
+        #         #,hovertemplate='Quintile %{fullData.name}<br>Total: %{y:.4f}<extra></extra>'
+        #     )
+        # )
+
         fig.add_trace(
             go.Box(
                 y=data_subset[value_col],
                 name=f'Quintile {int(quintile)}',
                 marker_color=colors[int(quintile)-1],
-                hovertemplate='Quintile %{fullData.name}<br>Total: %{y:.4f}<extra></extra>'
+                boxmean=False,
+                hoverinfo='none'
+                ,customdata=[[quintile, q1, median, q3]] * len(data_subset),
+                hovertemplate='<b>Quintile %{customdata[0]:.0f}</b><br>Q1: %{customdata[1]:.2f}<br>Median: %{customdata[2]:.2f}<br>Q3: %{customdata[3]:.2f}<extra></extra>'
             )
         )
     
     fig.update_layout(    
         title=dict(
-            text=f"{value_label} Co-Benefits Distribution by WIMD Quintile",
+            text=title,
             x=0.5,
             xanchor='center',
             font=dict(size=24)
@@ -476,7 +499,7 @@ def deprivation_quintiles_boxplots_totals(
         xaxis_title="WIMD Quintile",
         yaxis_title="Normalised Net-Zero Co-Benefits [£/person]",
         height=600,
-        hoverlabel=dict(font_size=14, font_family="Arial"),
+        #hoverlabel=dict(font_size=14, font_family="Arial"),
         showlegend=False
     )
     
