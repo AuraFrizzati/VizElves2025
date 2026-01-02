@@ -1,5 +1,6 @@
 import streamlit as st
 
+st.set_page_config(page_title="Definitions & Methods")
 st.sidebar.header("Definitions & Methods")
 
 st.markdown("# Definitions of Terms")
