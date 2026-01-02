@@ -53,7 +53,7 @@ bottom_line_message(
     f"<li>Across Cardiff, Net Zero pathways are projected to deliver <b>£{tot_net_benefits} million in total net benefits from 2025 through 2050</b></li>"
     "<li><b>Physical Activity:</b> is the largest positive driver, scaling to a city-wide annual value of £25 million/year by 2050</li>"
     "<li><b>Hassle Costs:</b> is the primary barrier to uptake, representing a sustained annual city-wide cost of roughly -£15 million/year</li>"
-    "<li><b>Health & Environment:</b> Air quality and dietary changes offer 'universal' rewards, providing a combined baseline of over £780/person across nearly all neighborhoods</li>"
+    "<li><b>Health & Environment:</b> Air quality and dietary changes offer 'universal' rewards, providing a combined baseline of over £780/person across nearly all neighbourhoods</li>"
     "</ul>",
     bg_color="#fff3cd",
     border_color="#ffc107",
@@ -378,7 +378,7 @@ with tab1:
 with st.expander('Explanation'):
     st.markdown("""
     * The Physical Activity Co-Benefit provides approximately £250-750 per person for the majority of neighbourhoods. 
-    The normalised gains range from under £500 to over £10,000 per person depending on the neighborhood
+    The normalised gains range from under £500 to over £10,000 per person depending on the neighbourhood
     * The co-benefit value increases annually each year, starting at approximately £6 million in 2025 
       passing £17 million around 2032, and stabilizing near £25 million by 2050  
     """)
@@ -459,7 +459,7 @@ with tab1:
 with st.expander('Explanation'):
     st.markdown("""
     * The Hassle Costs Co-Benefit—which represents is a significant negative value averaging roughly -£1,000/person
-      across almost all Cardiff neighborhoods. 
+      across almost all Cardiff neighbourhoods. 
     * This "behavioral barrier" is projected to create a sustained city-wide annual cost of approximately -£15 million through 2050.
     """)
 

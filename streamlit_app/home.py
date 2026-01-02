@@ -1,5 +1,6 @@
 ## streamlit run streamlit_app/home.py
 import streamlit as st
+from utils import bottom_line_message
 
 # streamlit page config
 st.set_page_config(
@@ -10,14 +11,15 @@ st.set_page_config(
 # page title
 st.title("Net Zero Co-Benefits in Wales :deciduous_tree:")
 
-# 'About dashboard' section
-with st.expander('About this Data Viz'):
-    st.header("About this Data Viz")
-    st.markdown("""
-                **SOME TEXT** [emphasise the importance of explaining net zero 
-             cobenefits to population]
-                """)
+st.markdown(
+    f"""
+    **Achieving Net Zero by 2050** is more than a carbon reduction target, it is a great opportunity to 
+    unlock **Net Zero 'Co-Benefits'**, tangible improvements in air quality, public health, and energy affordability. 
     
+    Using data from the [UK Co-Benefits Atlas](https://ukcobenefitsatlas.net/), this dashboard visualises the projected geographical spread and 
+    timing of these gains across Cardiff's neighborhoods. By integrating Welsh Government deprivation metrics, 
+    we analysed the equity of these distributions to ensure the path to Net Zero is fair and that no community is left behind.
+    """)
 
 
 st.markdown("## Index")
@@ -35,8 +37,21 @@ st.markdown(
     """
 )
 
-st.header("## Audience")
+st.markdown("### Audience")
 st.markdown("""
            * This dashboard could support **Cardiff policy-makers** working on planning and implementing Environmental Net-Zero policies
            * It can also be used by **Cardiff citizens** curious to know more about the impact of net-zero policies in their living area
             """)
+
+
+bottom_line_message(
+    "<b>Overall Key Findings:</b>"
+    "<ul style='margin: 10px 0; padding-left: 5px;'>"
+    "<li><b>Total Economic Impact</b>: Cardiff is projected to see <b>£472.93 million in total Co-Benefits through 2050</b> driven by the Net Zero transition</li>"
+    "<li><b>Hassle Costs:</b> is the primary barrier to uptake, representing a sustained annual city-wide cost of roughly -£15 million/year</li>"
+    "<li><b>Health & Environment:</b> Air quality and dietary changes offer 'universal' rewards, providing a combined baseline of over £780/person across nearly all neighbourhoods</li>"
+    "</ul>",
+    bg_color="#fff3cd",
+    border_color="#ffc107",
+    text_color="#856404"
+)

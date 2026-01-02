@@ -56,8 +56,6 @@ bottom_line_message(
     "<ul style='margin: 10px 0; padding-left: 5px;'>"
     f"<li><b>Cardiff</b> is home to <b>{cardiff_pop_size:,} residents</b> and <b>{cardiff_n_households:,} households</b>, distributed in <b>{cardiff_num_lsoas} neighbourhoods</b></li>"
     "<li><b>Co-benefit distribution is currently uneven</b>, with affluent suburbs like Cyncoed capturing the highest gains</li>"
-    "<li>Dense urban centers like Cathays 12 rank last (218th)</li>"
-    "<li>Areas like Adamsdown 2 supporting nearly 5,000 residents are excluded from top benefit tiers</li>"
     "</ul>",
     bg_color="#fff3cd",
     border_color="#ffc107",
