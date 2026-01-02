@@ -21,6 +21,19 @@ st.markdown(
     we analysed the equity of these distributions to ensure the path to Net Zero is fair and that no community is left behind.
     """)
 
+bottom_line_message(
+    "<b>Executive Summary:</b>"
+    "<ul style='margin: 10px 0; padding-left: 5px;'>"
+    "<li><b>Total Economic Impact</b>: Cardiff is projected to see <b>£472.93 million in total Co-Benefits through 2050</b> driven by the <b>Net Zero transition</b></li>"
+    "<li><b>Primary Value Driver</b>: <b>increased Physical Activity</b> is the single largest benefit, expected to scale to <b>£25 million/year city-wide by 2050</b></li>"
+    "<li><b>Health & Environment:</b> <b>Air quality</b> and <b>dietary changes</b> offer 'universal' rewards, providing a combined baseline of over £780/person across nearly all neighbourhoods</li>"
+    "<li><b>Equity Gap</b>: co-benefit distribution is currently uneven, with <b>affluent areas getting the highest gains</b> (median £2,420/person), while 'Hassle Costs' (due to increased journey times) remain equal for everyone.</li>"
+    "<li><b>Targeted Opportunity</b>: <b>Dampness reduction</b> is the only category where the <b>most deprived neighbourhoods see the highest relative gains</b></li>"
+    "</ul>",
+    bg_color="#e1ffcd",
+    border_color="#033b18",
+    text_color="#1E8504"
+)
 
 st.markdown("## Index")
 st.markdown(
@@ -44,14 +57,4 @@ st.markdown("""
             """)
 
 
-bottom_line_message(
-    "<b>Overall Key Findings:</b>"
-    "<ul style='margin: 10px 0; padding-left: 5px;'>"
-    "<li><b>Total Economic Impact</b>: Cardiff is projected to see <b>£472.93 million in total Co-Benefits through 2050</b> driven by the Net Zero transition</li>"
-    "<li><b>Hassle Costs:</b> is the primary barrier to uptake, representing a sustained annual city-wide cost of roughly -£15 million/year</li>"
-    "<li><b>Health & Environment:</b> Air quality and dietary changes offer 'universal' rewards, providing a combined baseline of over £780/person across nearly all neighbourhoods</li>"
-    "</ul>",
-    bg_color="#fff3cd",
-    border_color="#ffc107",
-    text_color="#856404"
-)
+
