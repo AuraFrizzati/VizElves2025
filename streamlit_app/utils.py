@@ -521,7 +521,7 @@ def deprivation_quintiles_boxplots_totals(
             xanchor='center',
             font=dict(size=5)
         ),
-        xaxis_title="WIMD Quintile",
+        xaxis_title="WIMD 2025 Quintile (1 = most deprived, 5 = least deprived)",
         yaxis_title="Normalised Net-Zero Co-Benefits [£/person]",
         height=600,
         #hoverlabel=dict(font_size=14, font_family="Arial"),
