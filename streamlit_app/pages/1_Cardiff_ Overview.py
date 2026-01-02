@@ -8,7 +8,7 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from utils import histogram_totals, Top3_Bottom3_LSOAs, bottom_line_message, choropleth_map, create_cobenefit_timeline, cobenefit_colors, style_expanders
 
-st.set_page_config(page_title="Summary View", page_icon=":bar_chart:")
+st.set_page_config(page_title="Cardiff Overview", page_icon=":bar_chart:")
 
 l2data_totals = pd.read_csv("data/l2data_totals.csv")
 
