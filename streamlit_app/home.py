@@ -17,7 +17,7 @@ st.markdown(
     unlock **Net Zero 'Co-Benefits'**, tangible improvements in air quality, public health, and energy affordability. 
     
     Using data from the [UK Co-Benefits Atlas](https://ukcobenefitsatlas.net/), this dashboard visualises the projected geographical spread and 
-    timing of these gains across Cardiff's neighborhoods. By integrating Welsh Government deprivation metrics, 
+    timing of these gains across Cardiff's neighbourhoods. By integrating Welsh Government deprivation metrics, 
     we analysed the equity of these distributions to ensure the path to Net Zero is fair and that no community is left behind.
     """)
 

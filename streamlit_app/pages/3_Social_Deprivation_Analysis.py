@@ -47,7 +47,7 @@ bottom_line_message(
     "<b>Key Findings:</b>"
     "<ul style='margin: 10px 0; padding-left: 5px;'>"
     "<li><b>Disproportionate Gains in Most Affluent Areas</b>: The statistical analysis of the total Net Zero co-benefits confirms the" \
-    " trend where the most affluent neighborhoods (Quintile 5) capture significantly higher overall value (median of £2,420/person)</li>"
+    " trend where the most affluent neighbourhoods (Quintile 5) capture significantly higher overall value (median of £2,420/person)</li>"
     "<li><b>Dominance of Physical Activity Trends</b>: This pattern is primarily driven by physical activity benefits, " \
     "which follow the same distribution and constitute the largest proportion of the total co-benefit data (the most affluent areas benefits the most).</li>"
     "<li><b>Targeted Benefits for Dampness Reduction</b>: The Damp (reduction) co-benefit is the only category that reverses the general trend, with the highest health gains concentrated in Quintile 1. This indicates that the most deprived neighbourhoods stand to benefit the most from this specific intervention."
@@ -88,7 +88,7 @@ with col1:
         Cardiff's neighbourhoods show a clear social deprivation divide, with the greatest number of areas being either among the most deprived or 
         the least deprived in Wales. 
         
-        This pattern highlights **significant local inequality**, as fewer neighborhoods fall into 
+        This pattern highlights **significant local inequality**, as fewer neighbourhoods fall into 
         the middle range of deprivation.
         """
     )
@@ -120,7 +120,7 @@ st.markdown("### Maps of Social Deprivation and Net Zero Co-Benefits")
 
 st.markdown(
     """
-    These maps enable a visual comparison between social deprivation levels and standardised Net Zero co-benefit values (Totals or by Category), 
+    These maps enable a visual comparison between social deprivation levels and normalised Net Zero co-benefit values (Totals or by Category), 
     allowing for a clear inspection of geographic inequalities across Cardiff. By contrasting these metrics, we can identify whether 
     climate rewards are equitably distributed or if certain neighbourhoods face a disproportionate lack of investment.
     """
@@ -263,7 +263,7 @@ st.markdown("---")
 st.markdown("### Total Net-Zero Co-Benefits")
 st.markdown(
     """
-    * The boxplots and supporting statistical test confirm that the most affluent neighborhoods (Quintile 5) will capture 
+    * The boxplots and supporting statistical test confirm that the most affluent neighbourhoods (Quintile 5) will capture 
     significantly higher co-benefits than all other areas, with a median of £2,420 per person and peaks reaching £10,602 in 'Cyncoed 1'.
     * In contrast, the most deprived areas (Quintile 1) are projected to gain a median of only £430 per person, 
     highlighting a clear geographic divide where the health and economic dividends of the Net Zero transition are currently skewed

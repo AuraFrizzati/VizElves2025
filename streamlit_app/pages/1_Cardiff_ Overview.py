@@ -207,10 +207,10 @@ with col1:
     st.markdown(" ")
     st.markdown("### Total Net-Zero Co-Benefits")
     
-    # Add toggle for normalized vs absolute
+    # Add toggle for normalised vs absolute
     histogram_metric = st.radio(
         "Select metric:",
-        ["Absolute (million £)", "Normalized (£/person)"],
+        ["Absolute (million £)", "Normalised (£/person)"],
         horizontal=True
     )
     
@@ -276,7 +276,7 @@ st.markdown("### Maps of Demographics and Net Zero Co-Benefits")
 st.markdown(
     """
     These maps visualize the relationship between Cardiff's demographic landscape and the projected economic 
-    "green rewards" of Net Zero policies (overall from 2025 to 2050). By comparing population density with co-benefit distribution across 218 neighborhoods, 
+    "green rewards" of Net Zero policies (overall from 2025 to 2050). By comparing population density with co-benefit distribution across 218 neighbourhoods, 
     it is possible to identify whether current pathways equitably serve high-density urban centers or primarily benefit lower-density 
     suburban areas.
     """

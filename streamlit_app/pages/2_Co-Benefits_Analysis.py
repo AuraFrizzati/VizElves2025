@@ -323,10 +323,10 @@ st.markdown(
 tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
 
 with tab1:
-    # Add toggle for normalized vs absolute
+    # Add toggle for normalised vs absolute
     histogram_metric = st.radio(
     "Select metric:",
-    ["Absolute (million £)", "Normalized (£/person)"],
+    ["Absolute (million £)", "Normalised (£/person)"],
     horizontal=True
     ,key=f"radio_{cobenefit}")
 
@@ -346,7 +346,7 @@ with tab1:
 
     else:
         histogram_column = [cobenefit+'_std']
-        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        histogram_label = 'Normalised Net-Zero Co-Benefits [£/person]'
         x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
         titles = [f"Normalised {cobenefit_display} Distribution"]
         histogram_totals(
@@ -404,10 +404,10 @@ tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
 
 with tab1:
     # Diet Change Distributon     
-    # Add toggle for normalized vs absolute
+    # Add toggle for normalised vs absolute
     histogram_metric = st.radio(
     "Select metric:",
-    ["Absolute (million £)", "Normalized (£/person)"],
+    ["Absolute (million £)", "Normalised (£/person)"],
     horizontal=True
     ,key=f"radio_{cobenefit}")
 
@@ -427,7 +427,7 @@ with tab1:
 
     else:
         histogram_column = [cobenefit+'_std']
-        histogram_label = 'Normalized Net-Zero Costs [£/person]'
+        histogram_label = 'Normalised Net-Zero Costs [£/person]'
         x_labels = 'Normalised Net-Zero Costs [£/person]',
         titles = [f"Normalised {cobenefit_display} Distribution"]
         histogram_totals(
@@ -484,10 +484,10 @@ st.markdown(
 tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
 
 with tab1: 
-    # Add toggle for normalized vs absolute
+    # Add toggle for normalised vs absolute
     histogram_metric = st.radio(
     "Select metric:",
-    ["Absolute (million £)", "Normalized (£/person)"],
+    ["Absolute (million £)", "Normalised (£/person)"],
     horizontal=True
     ,key=f"radio_{cobenefit}")
 
@@ -507,7 +507,7 @@ with tab1:
 
     else:
         histogram_column = [cobenefit+'_std']
-        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        histogram_label = 'Normalised Net-Zero Co-Benefits [£/person]'
         x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
         titles = [f"Normalised {cobenefit_display} Distribution"]
         histogram_totals(
@@ -563,10 +563,10 @@ tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
 
 with tab1:
     # Diet Change Distributon     
-    # Add toggle for normalized vs absolute
+    # Add toggle for normalised vs absolute
     histogram_metric = st.radio(
     "Select metric:",
-    ["Absolute (million £)", "Normalized (£/person)"],
+    ["Absolute (million £)", "Normalised (£/person)"],
     horizontal=True
     ,key=f"radio_{cobenefit}")
 
@@ -586,7 +586,7 @@ with tab1:
 
     else:
         histogram_column = [cobenefit+'_std']
-        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        histogram_label = 'Normalised Net-Zero Co-Benefits [£/person]'
         x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
         titles = [f"Normalised {cobenefit_display} Distribution"]
         histogram_totals(
@@ -617,7 +617,7 @@ with tab1:
 
 with st.expander('Explanation'):
     st.markdown("""
-    * The Excess Cold Co-Benefit varies significantly across Cardiff, with normalized values ranging from under £10 to over £250 per person,
+    * The Excess Cold Co-Benefit varies significantly across Cardiff, with normalised values ranging from under £10 to over £250 per person,
     * The co-benefit value grows each year, eventually reaching £3.4 million/year in 2050
     """)
 
@@ -643,10 +643,10 @@ st.markdown(
 tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
 
 with tab1:   
-    # Add toggle for normalized vs absolute
+    # Add toggle for normalised vs absolute
     histogram_metric = st.radio(
     "Select metric:",
-    ["Absolute (million £)", "Normalized (£/person)"],
+    ["Absolute (million £)", "Normalised (£/person)"],
     horizontal=True
     ,key=f"radio_{cobenefit}")
 
@@ -666,7 +666,7 @@ with tab1:
 
     else:
         histogram_column = [cobenefit+'_std']
-        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        histogram_label = 'Normalised Net-Zero Co-Benefits [£/person]'
         x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
         titles = [f"Normalised {cobenefit_display} Distribution"]
         histogram_totals(
@@ -721,10 +721,10 @@ st.markdown(
 tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
 
 with tab1:   
-    # Add toggle for normalized vs absolute
+    # Add toggle for normalised vs absolute
     histogram_metric = st.radio(
     "Select metric:",
-    ["Absolute (million £)", "Normalized (£/person)"],
+    ["Absolute (million £)", "Normalised (£/person)"],
     horizontal=True
     ,key=f"radio_{cobenefit}")
 
@@ -744,7 +744,7 @@ with tab1:
 
     else:
         histogram_column = [cobenefit+'_std']
-        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        histogram_label = 'Normalised Net-Zero Co-Benefits [£/person]'
         x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
         titles = [f"Normalised {cobenefit_display} Distribution"]
         histogram_totals(
@@ -799,10 +799,10 @@ st.markdown(
 tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
 
 with tab1: 
-    # Add toggle for normalized vs absolute
+    # Add toggle for normalised vs absolute
     histogram_metric = st.radio(
     "Select metric:",
-    ["Absolute (million £)", "Normalized (£/person)"],
+    ["Absolute (million £)", "Normalised (£/person)"],
     horizontal=True
     ,key=f"radio_{cobenefit}")
 
@@ -824,7 +824,7 @@ with tab1:
 
     else:
         histogram_column = [cobenefit+'_std']
-        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        histogram_label = 'Normalised Net-Zero Co-Benefits [£/person]'
         x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
         titles = [f"Normalised {cobenefit_display} Distribution"]
         histogram_totals(
