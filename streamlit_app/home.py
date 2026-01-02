@@ -28,7 +28,7 @@ bottom_line_message(
     "<li><b>Primary Value Driver</b>: <b>increased Physical Activity</b> is the single largest benefit, expected to scale to <b>£25 million/year city-wide by 2050</b></li>"
     "<li><b>Health & Environment:</b> <b>Air quality</b> and <b>dietary changes</b> offer 'universal' rewards, providing a combined baseline of over £780/person across nearly all neighbourhoods</li>"
     "<li><b>Equity Gap</b>: co-benefit distribution is currently uneven, with <b>affluent areas getting the highest gains</b> (median £2,420/person), while 'Hassle Costs' (due to increased journey times) remain equal for everyone.</li>"
-    "<li><b>Targeted Opportunity</b>: <b>Dampness reduction</b> is the only category where the <b>most deprived neighbourhoods see the highest relative gains</b></li>"
+    "<li><b>Targeted Opportunity</b>: <b>Dampness reduction</b> is the only net zero co-benefit category where the <b>most deprived neighbourhoods see the highest relative gains</b></li>"
     "</ul>",
     bg_color="#e1ffcd",
     border_color="#033b18",
