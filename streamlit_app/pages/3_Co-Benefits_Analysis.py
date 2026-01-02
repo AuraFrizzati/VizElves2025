@@ -9,49 +9,15 @@ import plotly.graph_objects as go
 from utils import histogram_totals, Top3_Bottom3_LSOAs, bottom_line_message, choropleth_map, create_cobenefit_timeline, cobenefit_colors
 
 st.set_page_config(page_title="Co-Benefits Analysis", page_icon=":bar_chart:")
+st.sidebar.header("Co-Benefits Analysis")
+st.markdown("# Co-Benefits Analysis")
+
+st.markdown("""This section focusses on the expected value generated in Cardiff through the Net Zero transition. We analysed each available
+            co-benefit subcategory, exploring both the distribution of data by neighbourhood and the overall projections through 2050""")
 
 l2data_totals = pd.read_csv("data/l2data_totals.csv")
 
 l2data_time= pd.read_csv("data/lsoa_cardiff_wimd.csv")
-
-# Navigation links to sections
-st.markdown('<div id="top"></div>', unsafe_allow_html=True)
-st.markdown("""
-### Quick Navigation
-##### Overall
-- [Jump to Net-Zero Co-Benefits and Costs](#net-zero-co-benefits-and-costs)
-- [Jump to Net-Zero Co-Benefits Over Time](#net-zero-co-benefits-over-time-2025-2050)
-""")
-# Define co-benefits list
-cobenefits = ['diet_change', 'physical_activity', 'air_quality', 'dampness', 'excess_cold', 'excess_heat', 'hassle_costs']
-
-nav_links=""
-for cobenefit in cobenefits:
-    display_name = cobenefit.replace('_', ' ').title()
-    if cobenefit == 'hassle_costs':
-        anchor = display_name.lower().replace(' ', '-')
-        nav_links += f"- [Jump to {display_name}](#{anchor})\n"
-    else:
-        anchor = f"{display_name.lower().replace(' ', '-')}-co-benefits"
-        nav_links += f"- [Jump to {display_name} Co-Benefits](#{anchor})\n"
-
-st.markdown('##### Specific Benefits/Costs')
-st.markdown(nav_links)
-
-########################################  
-# Breakdown by Co-benefit type
-st.markdown("---")
-st.markdown("### Net-Zero Co-Benefits and Costs")
-
-with st.expander('Net-Zero Co-benefits categories excluded'):
-    st.markdown(
-    """
-    As evidenced in the **Data Quality** section, the categories 'Congestion', 'Noise', 'Road Repairs' and 'Road Safety' appear 
-    null (£0) for Cardiff for all or most of the data points. Therefore, we excluded these categories from the rest of this dashboard.
-
-    """
-)
-
 
 # List the columns you want to sum
 cobenefit_columns = [
@@ -80,6 +46,50 @@ column_sums.columns = ['benefit_type', 'value']
 # Rename 'sum' to 'total'
 column_sums['benefit_type'] = column_sums['benefit_type'].replace('sum', 'total').str.replace('_', ' ').str.title()
 tot_net_benefits = round(column_sums.loc[column_sums['benefit_type']=='Total', 'value'],2).values[0]
+
+bottom_line_message(
+    "<b>Key Findings:</b>"
+    "<ul style='margin: 10px 0; padding-left: 5px;'>"
+    f"<li>Across Cardiff, Net Zero pathways are projected to deliver <b>£{tot_net_benefits} million in total net benefits from 2025 through 2050</b></li>"
+    "<li><b>Physical Activity:</b> is the largest positive driver, scaling to a city-wide annual value of £25 million/year by 2050</li>"
+    "<li><b>Hassle Costs:</b> is the primary barrier to uptake, representing a sustained annual city-wide cost of roughly -£15 million/year</li>"
+    "<li><b>Health & Environment:</b> Air quality and dietary changes offer 'universal' rewards, providing a combined baseline of over £780/person across nearly all neighborhoods</li>"
+    "</ul>",
+    bg_color="#fff3cd",
+    border_color="#ffc107",
+    text_color="#856404"
+)
+
+# Navigation links to sections
+st.markdown('<div id="top"></div>', unsafe_allow_html=True)
+st.markdown("""
+### Quick Navigation
+##### Overall
+- [Net-Zero Co-Benefits and Costs](#net-zero-co-benefits-and-costs)
+- [Net-Zero Co-Benefits Over Time](#net-zero-co-benefits-over-time-2025-2050)
+""")
+# Define co-benefits list
+cobenefits = ['physical_activity', 'hassle_costs', 'air_quality', 'excess_cold', 'diet_change', 'dampness', 'excess_heat']
+
+nav_links=""
+for cobenefit in cobenefits:
+    display_name = cobenefit.replace('_', ' ').title()
+    if cobenefit == 'hassle_costs':
+        anchor = display_name.lower().replace(' ', '-')
+        nav_links += f"- [{display_name}](#{anchor})\n"
+    else:
+        anchor = f"{display_name.lower().replace(' ', '-')}-co-benefits"
+        nav_links += f"- [{display_name} Co-Benefits](#{anchor})\n"
+
+st.markdown('##### Specific Benefits/Costs')
+st.markdown(nav_links)
+
+########################################  
+# Breakdown by Co-benefit type
+st.markdown("---")
+st.markdown("### Net-Zero Co-Benefits and Costs")
+
+
 
 st.markdown(
     f"""
@@ -295,84 +305,24 @@ st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 
 #################################
 #######################
-### DIET CHANGE
-# Create tabs for Diet Change visualization
-cobenefit = 'diet_change'
-cobenefit_display = cobenefit.replace('_', ' ').title()
-
-st.markdown("---")
-st.markdown(f"## {cobenefit_display} Co-Benefits")
-
-tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
-
-with tab1:
-    # Diet Change Distributon     
-    # Add toggle for normalized vs absolute
-    histogram_metric = st.radio(
-    "Select metric:",
-    ["Absolute (million £)", "Normalized (£/person)"],
-    horizontal=True
-    ,key=f"radio_{cobenefit}")
-
-    if histogram_metric == "Absolute (million £)":
-        histogram_column = [cobenefit]
-        histogram_label = 'Total Net-Zero Co-Benefits [million £]',
-        x_labels = 'Total Co-Benefits [£ million]',
-        titles = [f"{cobenefit_display} Distribution"]
-        colors=['#2ecc71']
-        histogram_totals(
-            num_cols = 1, 
-            columns_to_plot = histogram_column,
-            x_labels = x_labels,
-            titles = titles
-            ,colors = [cobenefit_colors[cobenefit]['line']]
-        )
-
-    else:
-        histogram_column = [cobenefit+'_std']
-        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
-        x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
-        titles = [f"Normalised {cobenefit_display} Distribution"]
-        histogram_totals(
-            num_cols = 1, 
-            columns_to_plot = histogram_column,
-            x_labels = x_labels,
-            titles = titles
-            ,colors = [cobenefit_colors[cobenefit]['line']]
-        )
-
-with tab2:
-    # Timeline chart for Diet Change       
-    # Prepare data for time series
-    year_cols = [str(year) for year in range(2025, 2051)]
-    cobenefit = cobenefit
-    fig_diet = create_cobenefit_timeline(
-        l2data_time=l2data_time,
-        cobenefit_name=cobenefit,
-        display_name=cobenefit_display,
-        line_color=cobenefit_colors[cobenefit]['line'],
-        fill_color=cobenefit_colors[cobenefit]['fill'],
-        # line_color='#2ecc71',
-        # fill_color='rgba(46, 204, 113, 0.3)',
-        year_cols=year_cols
-    )
-    
-    st.plotly_chart(fig_diet, use_container_width=True)
-
-st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 
 ### PHYSICAL ACTIVITY
-# Create tabs for Diet Change visualization
 cobenefit = 'physical_activity'
 cobenefit_display = cobenefit.replace('_', ' ').title()
 
 st.markdown("---")
 st.markdown(f"## {cobenefit_display} Co-Benefits")
 
+st.markdown(
+    f"""
+    Increased physical activity co-benefit represents the health benefits gained through increased levels of exercise, 
+    resulting from a shift to active travel journeys from car trips.
+    """
+)
+
 tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
 
 with tab1:
-    # Diet Change Distributon     
     # Add toggle for normalized vs absolute
     histogram_metric = st.radio(
     "Select metric:",
@@ -425,279 +375,30 @@ with tab1:
         
         st.plotly_chart(fig_diet, use_container_width=True)
 
-st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
-
-### AIR QUALITY
-# Create tabs for Diet Change visualization
-cobenefit = 'air_quality'
-cobenefit_display = cobenefit.replace('_', ' ').title()
-
-st.markdown("---")
-st.markdown(f"## {cobenefit_display} Co-Benefits")
-
-tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
-
-with tab1:
-    # Diet Change Distributon     
-    # Add toggle for normalized vs absolute
-    histogram_metric = st.radio(
-    "Select metric:",
-    ["Absolute (million £)", "Normalized (£/person)"],
-    horizontal=True
-    ,key=f"radio_{cobenefit}")
-
-    if histogram_metric == "Absolute (million £)":
-        histogram_column = [cobenefit]
-        histogram_label = 'Total Net-Zero Co-Benefits [million £]',
-        x_labels = 'Total Co-Benefits [£ million]',
-        titles = [f"{cobenefit_display} Distribution"]
-        colors=['#2ecc71']
-        histogram_totals(
-            num_cols = 1, 
-            columns_to_plot = histogram_column,
-            x_labels = x_labels,
-            titles = titles
-            ,colors = [cobenefit_colors[cobenefit]['line']]
-        )
-
-    else:
-        histogram_column = [cobenefit+'_std']
-        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
-        x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
-        titles = [f"Normalised {cobenefit_display} Distribution"]
-        histogram_totals(
-            num_cols = 1, 
-            columns_to_plot = histogram_column,
-            x_labels = x_labels,
-            titles = titles
-            ,colors = [cobenefit_colors[cobenefit]['line']]
-        )
-
-    with tab2:
-        # Timeline chart for Diet Change       
-        # Prepare data for time series
-        year_cols = [str(year) for year in range(2025, 2051)]
-        cobenefit = cobenefit
-        fig_diet = create_cobenefit_timeline(
-            l2data_time=l2data_time,
-            cobenefit_name=cobenefit,
-            display_name=cobenefit_display,
-            line_color=cobenefit_colors[cobenefit]['line'],
-            fill_color=cobenefit_colors[cobenefit]['fill'],
-            # line_color='#2ecc71',
-            # fill_color='rgba(46, 204, 113, 0.3)',
-            year_cols=year_cols
-        )
-        
-        st.plotly_chart(fig_diet, use_container_width=True)
-
-st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
-
-### DAMPNESS
-# Create tabs for Diet Change visualization
-cobenefit = 'dampness'
-cobenefit_display = cobenefit.replace('_', ' ').title()
-
-st.markdown("---")
-st.markdown(f"## {cobenefit_display} Co-Benefits")
-
-tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
-
-with tab1:
-    # Diet Change Distributon     
-    # Add toggle for normalized vs absolute
-    histogram_metric = st.radio(
-    "Select metric:",
-    ["Absolute (million £)", "Normalized (£/person)"],
-    horizontal=True
-    ,key=f"radio_{cobenefit}")
-
-    if histogram_metric == "Absolute (million £)":
-        histogram_column = [cobenefit]
-        histogram_label = 'Total Net-Zero Co-Benefits [million £]',
-        x_labels = 'Total Co-Benefits [£ million]',
-        titles = [f"{cobenefit_display} Distribution"]
-        colors=['#2ecc71']
-        histogram_totals(
-            num_cols = 1, 
-            columns_to_plot = histogram_column,
-            x_labels = x_labels,
-            titles = titles
-            ,colors = [cobenefit_colors[cobenefit]['line']]
-        )
-
-    else:
-        histogram_column = [cobenefit+'_std']
-        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
-        x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
-        titles = [f"Normalised {cobenefit_display} Distribution"]
-        histogram_totals(
-            num_cols = 1, 
-            columns_to_plot = histogram_column,
-            x_labels = x_labels,
-            titles = titles
-            ,colors = [cobenefit_colors[cobenefit]['line']]
-        )
-
-    with tab2:
-        # Timeline chart for Diet Change       
-        # Prepare data for time series
-        year_cols = [str(year) for year in range(2025, 2051)]
-        cobenefit = cobenefit
-        fig_diet = create_cobenefit_timeline(
-            l2data_time=l2data_time,
-            cobenefit_name=cobenefit,
-            display_name=cobenefit_display,
-            line_color=cobenefit_colors[cobenefit]['line'],
-            fill_color=cobenefit_colors[cobenefit]['fill'],
-            # line_color='#2ecc71',
-            # fill_color='rgba(46, 204, 113, 0.3)',
-            year_cols=year_cols
-        )
-        
-        st.plotly_chart(fig_diet, use_container_width=True)
-
-st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
-
-### EXCESS COLD
-# Create tabs for Diet Change visualization
-cobenefit = 'excess_cold'
-cobenefit_display = cobenefit.replace('_', ' ').title()
-
-st.markdown("---")
-st.markdown(f"## {cobenefit_display} Co-Benefits")
-
-tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
-
-with tab1:
-    # Diet Change Distributon     
-    # Add toggle for normalized vs absolute
-    histogram_metric = st.radio(
-    "Select metric:",
-    ["Absolute (million £)", "Normalized (£/person)"],
-    horizontal=True
-    ,key=f"radio_{cobenefit}")
-
-    if histogram_metric == "Absolute (million £)":
-        histogram_column = [cobenefit]
-        histogram_label = 'Total Net-Zero Co-Benefits [million £]',
-        x_labels = 'Total Co-Benefits [£ million]',
-        titles = [f"{cobenefit_display} Distribution"]
-        colors=['#2ecc71']
-        histogram_totals(
-            num_cols = 1, 
-            columns_to_plot = histogram_column,
-            x_labels = x_labels,
-            titles = titles
-            ,colors = [cobenefit_colors[cobenefit]['line']]
-        )
-
-    else:
-        histogram_column = [cobenefit+'_std']
-        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
-        x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
-        titles = [f"Normalised {cobenefit_display} Distribution"]
-        histogram_totals(
-            num_cols = 1, 
-            columns_to_plot = histogram_column,
-            x_labels = x_labels,
-            titles = titles
-            ,colors = [cobenefit_colors[cobenefit]['line']]
-        )
-
-    with tab2:
-        # Timeline chart for Diet Change       
-        # Prepare data for time series
-        year_cols = [str(year) for year in range(2025, 2051)]
-        cobenefit = cobenefit
-        fig_diet = create_cobenefit_timeline(
-            l2data_time=l2data_time,
-            cobenefit_name=cobenefit,
-            display_name=cobenefit_display,
-            line_color=cobenefit_colors[cobenefit]['line'],
-            fill_color=cobenefit_colors[cobenefit]['fill'],
-            # line_color='#2ecc71',
-            # fill_color='rgba(46, 204, 113, 0.3)',
-            year_cols=year_cols
-        )
-        
-        st.plotly_chart(fig_diet, use_container_width=True)
-
-st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
-
-### EXCESS HEAT
-# Create tabs for Diet Change visualization
-cobenefit = 'excess_heat'
-cobenefit_display = cobenefit.replace('_', ' ').title()
-
-st.markdown("---")
-st.markdown(f"## {cobenefit_display} Co-Benefits")
-
-tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
-
-with tab1:
-    # Diet Change Distributon     
-    # Add toggle for normalized vs absolute
-    histogram_metric = st.radio(
-    "Select metric:",
-    ["Absolute (million £)", "Normalized (£/person)"],
-    horizontal=True
-    ,key=f"radio_{cobenefit}")
-
-    if histogram_metric == "Absolute (million £)":
-        histogram_column = [cobenefit]
-        histogram_label = 'Total Net-Zero Co-Benefits [million £]',
-        x_labels = 'Total Co-Benefits [£ million]',
-        titles = [f"{cobenefit_display} Distribution"]
-        colors=['#2ecc71']
-        histogram_totals(
-            num_cols = 1, 
-            columns_to_plot = histogram_column,
-            x_labels = x_labels,
-            titles = titles
-            ,colors = [cobenefit_colors[cobenefit]['line']]
-        )
-
-    else:
-        histogram_column = [cobenefit+'_std']
-        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
-        x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
-        titles = [f"Normalised {cobenefit_display} Distribution"]
-        histogram_totals(
-            num_cols = 1, 
-            columns_to_plot = histogram_column,
-            x_labels = x_labels,
-            titles = titles
-            ,colors = [cobenefit_colors[cobenefit]['line']]
-        )
-
-    with tab2:
-        # Timeline chart for Diet Change       
-        # Prepare data for time series
-        year_cols = [str(year) for year in range(2025, 2051)]
-        cobenefit = cobenefit
-        fig_diet = create_cobenefit_timeline(
-            l2data_time=l2data_time,
-            cobenefit_name=cobenefit,
-            display_name=cobenefit_display,
-            line_color=cobenefit_colors[cobenefit]['line'],
-            fill_color=cobenefit_colors[cobenefit]['fill'],
-            # line_color='#2ecc71',
-            # fill_color='rgba(46, 204, 113, 0.3)',
-            year_cols=year_cols
-        )
-        
-        st.plotly_chart(fig_diet, use_container_width=True)
+with st.expander('Explanation'):
+    st.markdown("""
+    * The Physical Activity Co-Benefit provides approximately £250-750 per person for the majority of neighbourhoods. 
+    The normalised gains range from under £500 to over £10,000 per person depending on the neighborhood
+    * The co-benefit value increases annually each year, starting at approximately £6 million in 2025 
+      passing £17 million around 2032, and stabilizing near £25 million by 2050  
+    """)
 
 st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 
 ### HASSLE COSTS
-# Create tabs for Diet Change visualization
 cobenefit = 'hassle_costs'
 cobenefit_display = cobenefit.replace('_', ' ').title()
 
 st.markdown("---")
 st.markdown(f"## {cobenefit_display}")
+
+st.markdown(
+    f"""
+    The hassle costs in the data represent longer travel times as a cost of switching to active travel modes, 
+    in terms of additional time spent and reluctance to change engrained behaviours. The perceived annoyance or effort 
+    required to engage in low-carbon activities represents a key barrier to public uptake.
+    """
+)
 
 tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
 
@@ -755,4 +456,406 @@ with tab1:
         
         st.plotly_chart(fig_diet, use_container_width=True)
 
+with st.expander('Explanation'):
+    st.markdown("""
+    * The Hassle Costs Co-Benefit—which represents is a significant negative value averaging roughly -£1,000/person
+      across almost all Cardiff neighborhoods. 
+    * This "behavioral barrier" is projected to create a sustained city-wide annual cost of approximately -£15 million through 2050.
+    """)
+
 st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
+
+### AIR QUALITY
+# Create tabs for Diet Change visualization
+cobenefit = 'air_quality'
+cobenefit_display = cobenefit.replace('_', ' ').title()
+
+st.markdown("---")
+st.markdown(f"## {cobenefit_display} Co-Benefits")
+
+st.markdown(
+    f"""
+    The air quality co-benefit measures the reduction in air pollution, primarily as a result of decreased fossil fuel combustion, 
+    and quantifies the benefit to individuals and society.
+    """
+)
+
+
+tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
+
+with tab1: 
+    # Add toggle for normalized vs absolute
+    histogram_metric = st.radio(
+    "Select metric:",
+    ["Absolute (million £)", "Normalized (£/person)"],
+    horizontal=True
+    ,key=f"radio_{cobenefit}")
+
+    if histogram_metric == "Absolute (million £)":
+        histogram_column = [cobenefit]
+        histogram_label = 'Total Net-Zero Co-Benefits [million £]',
+        x_labels = 'Total Co-Benefits [£ million]',
+        titles = [f"{cobenefit_display} Distribution"]
+        colors=['#2ecc71']
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+            ,colors = [cobenefit_colors[cobenefit]['line']]
+        )
+
+    else:
+        histogram_column = [cobenefit+'_std']
+        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
+        titles = [f"Normalised {cobenefit_display} Distribution"]
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+            ,colors = [cobenefit_colors[cobenefit]['line']]
+        )
+
+    with tab2: 
+        # Prepare data for time series
+        year_cols = [str(year) for year in range(2025, 2051)]
+        cobenefit = cobenefit
+        fig_diet = create_cobenefit_timeline(
+            l2data_time=l2data_time,
+            cobenefit_name=cobenefit,
+            display_name=cobenefit_display,
+            line_color=cobenefit_colors[cobenefit]['line'],
+            fill_color=cobenefit_colors[cobenefit]['fill'],
+            # line_color='#2ecc71',
+            # fill_color='rgba(46, 204, 113, 0.3)',
+            year_cols=year_cols
+        )
+        
+        st.plotly_chart(fig_diet, use_container_width=True)
+
+with st.expander('Explanation'):
+    st.markdown("""
+    * The Air Quality Co-Benefit provides approximately £705/person for the majority of neighbourhoods
+    * The co-benefit value shows an upward trend, eventually stabilizing at approximately £17 million/year in the final years (2045-2050)
+    """)
+
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
+
+
+### EXCESS COLD
+# Create tabs for Diet Change visualization
+cobenefit = 'excess_cold'
+cobenefit_display = cobenefit.replace('_', ' ').title()
+
+st.markdown("---")
+st.markdown(f"## {cobenefit_display} Co-Benefits")
+
+st.markdown(
+    f"""
+    Excess cold co-benefit represents the avoided costs of poor health and NHS costs resulting from individuals 
+    living in homes with low internal temperatures.
+    """
+)
+
+tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
+
+with tab1:
+    # Diet Change Distributon     
+    # Add toggle for normalized vs absolute
+    histogram_metric = st.radio(
+    "Select metric:",
+    ["Absolute (million £)", "Normalized (£/person)"],
+    horizontal=True
+    ,key=f"radio_{cobenefit}")
+
+    if histogram_metric == "Absolute (million £)":
+        histogram_column = [cobenefit]
+        histogram_label = 'Total Net-Zero Co-Benefits [million £]',
+        x_labels = 'Total Co-Benefits [£ million]',
+        titles = [f"{cobenefit_display} Distribution"]
+        colors=['#2ecc71']
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+            ,colors = [cobenefit_colors[cobenefit]['line']]
+        )
+
+    else:
+        histogram_column = [cobenefit+'_std']
+        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
+        titles = [f"Normalised {cobenefit_display} Distribution"]
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+            ,colors = [cobenefit_colors[cobenefit]['line']]
+        )
+
+    with tab2:
+        # Timeline chart for Diet Change       
+        # Prepare data for time series
+        year_cols = [str(year) for year in range(2025, 2051)]
+        cobenefit = cobenefit
+        fig_diet = create_cobenefit_timeline(
+            l2data_time=l2data_time,
+            cobenefit_name=cobenefit,
+            display_name=cobenefit_display,
+            line_color=cobenefit_colors[cobenefit]['line'],
+            fill_color=cobenefit_colors[cobenefit]['fill'],
+            # line_color='#2ecc71',
+            # fill_color='rgba(46, 204, 113, 0.3)',
+            year_cols=year_cols
+        )
+        
+        st.plotly_chart(fig_diet, use_container_width=True)
+
+with st.expander('Explanation'):
+    st.markdown("""
+    * The Excess Cold Co-Benefit varies significantly across Cardiff, with normalized values ranging from under £10 to over £250 per person,
+    * The co-benefit value grows each year, eventually reaching £3.4 million/year in 2050
+    """)
+
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
+
+
+### DIET CHANGE
+# Create tabs for Diet Change visualization
+cobenefit = 'diet_change'
+cobenefit_display = cobenefit.replace('_', ' ').title()
+
+st.markdown("---")
+st.markdown(f"## {cobenefit_display} Co-Benefits")
+
+st.markdown(
+    f"""
+    Diet change co-benefit models the impact on health from individuals shifting from meat and dairy consumption to more plant-based diets. Shifts 
+    away from carbon-intensive food types, namely meat and dairy products, to plant-based foods are associated with carbon reductions as 
+    well as lower incidence of disease.
+    """
+)
+
+tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
+
+with tab1:   
+    # Add toggle for normalized vs absolute
+    histogram_metric = st.radio(
+    "Select metric:",
+    ["Absolute (million £)", "Normalized (£/person)"],
+    horizontal=True
+    ,key=f"radio_{cobenefit}")
+
+    if histogram_metric == "Absolute (million £)":
+        histogram_column = [cobenefit]
+        histogram_label = 'Total Net-Zero Co-Benefits [million £]',
+        x_labels = 'Total Co-Benefits [£ million]',
+        titles = [f"{cobenefit_display} Distribution"]
+        colors=['#2ecc71']
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+            ,colors = [cobenefit_colors[cobenefit]['line']]
+        )
+
+    else:
+        histogram_column = [cobenefit+'_std']
+        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
+        titles = [f"Normalised {cobenefit_display} Distribution"]
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+            ,colors = [cobenefit_colors[cobenefit]['line']]
+        )
+
+with tab2:   
+    # Prepare data for time series
+    year_cols = [str(year) for year in range(2025, 2051)]
+    cobenefit = cobenefit
+    fig_diet = create_cobenefit_timeline(
+        l2data_time=l2data_time,
+        cobenefit_name=cobenefit,
+        display_name=cobenefit_display,
+        line_color=cobenefit_colors[cobenefit]['line'],
+        fill_color=cobenefit_colors[cobenefit]['fill'],
+        # line_color='#2ecc71',
+        # fill_color='rgba(46, 204, 113, 0.3)',
+        year_cols=year_cols
+    )
+    
+    st.plotly_chart(fig_diet, use_container_width=True)
+
+with st.expander('Explanation'):
+    st.markdown("""
+    * The Diet Change Co-Benefit consists of about £75/person 
+    * The projected annual co-benefit value from dietary changes spikes sharply between 2026 and 2027, reaching approximately £1.3 million. 
+    It then slightly decreases, stabilizing just below £1 million per year by 2050 
+    """)
+
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
+
+
+### DAMPNESS
+cobenefit = 'dampness'
+cobenefit_display = cobenefit.replace('_', ' ').title()
+
+st.markdown("---")
+st.markdown(f"## {cobenefit_display} Co-Benefits")
+
+st.markdown(
+    f"""
+    The reduction in dampness is a co-benefit resulting from decreased excess humidity in buildings,
+    which leads to lower incidence of mould, building damage, and microbial growth; all of which can result in health deficiencies.
+    """
+)
+
+tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
+
+with tab1:   
+    # Add toggle for normalized vs absolute
+    histogram_metric = st.radio(
+    "Select metric:",
+    ["Absolute (million £)", "Normalized (£/person)"],
+    horizontal=True
+    ,key=f"radio_{cobenefit}")
+
+    if histogram_metric == "Absolute (million £)":
+        histogram_column = [cobenefit]
+        histogram_label = 'Total Net-Zero Co-Benefits [million £]',
+        x_labels = 'Total Co-Benefits [£ million]',
+        titles = [f"{cobenefit_display} Distribution"]
+        colors=['#2ecc71']
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+            ,colors = [cobenefit_colors[cobenefit]['line']]
+        )
+
+    else:
+        histogram_column = [cobenefit+'_std']
+        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
+        titles = [f"Normalised {cobenefit_display} Distribution"]
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+            ,colors = [cobenefit_colors[cobenefit]['line']]
+        )
+
+    with tab2:   
+        # Prepare data for time series
+        year_cols = [str(year) for year in range(2025, 2051)]
+        cobenefit = cobenefit
+        fig_diet = create_cobenefit_timeline(
+            l2data_time=l2data_time,
+            cobenefit_name=cobenefit,
+            display_name=cobenefit_display,
+            line_color=cobenefit_colors[cobenefit]['line'],
+            fill_color=cobenefit_colors[cobenefit]['fill'],
+            # line_color='#2ecc71',
+            # fill_color='rgba(46, 204, 113, 0.3)',
+            year_cols=year_cols
+        )
+        
+        st.plotly_chart(fig_diet, use_container_width=True)
+
+with st.expander('Explanation'):
+    st.markdown("""
+    * The Dampness reduction Co-Benefit consists of about £3-£13/person 
+    * The projected annual value shows an initial rise followed by a sharp spike around 2036 to approximately £0.16 million, 
+    before increasing steadily to its highest value of nearly £0.2 million/year by 2050.
+    """)
+
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
+
+
+### EXCESS HEAT
+cobenefit = 'excess_heat'
+cobenefit_display = cobenefit.replace('_', ' ').title()
+
+st.markdown("---")
+st.markdown(f"## {cobenefit_display} Co-Benefits")
+
+st.markdown(
+    f"""
+    Excess heat co-benefit represents the avoided costs of poor health and NHS costs resulting from individuals 
+    living in homes with dangerously high internal temperatures.
+    """
+)
+
+tab1, tab2 = st.tabs(["📊 DISTRIBUTION", "📈 TIME SERIES"])
+
+with tab1: 
+    # Add toggle for normalized vs absolute
+    histogram_metric = st.radio(
+    "Select metric:",
+    ["Absolute (million £)", "Normalized (£/person)"],
+    horizontal=True
+    ,key=f"radio_{cobenefit}")
+
+    if histogram_metric == "Absolute (million £)":
+        histogram_column = [cobenefit]
+        histogram_label = 'Total Net-Zero Co-Benefits [million £]',
+        x_labels = 'Total Co-Benefits [£ million]',
+        titles = [f"{cobenefit_display} Distribution"]
+        colors=['#2ecc71']
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+            ,colors = [cobenefit_colors[cobenefit]['line']],
+            scale_factor = 1000  # Convert millions to thousands
+            ,unit_multiplier_label = 'Total Co-Benefits [£ thousands]'  # This completely replaces x_labels
+        )
+
+    else:
+        histogram_column = [cobenefit+'_std']
+        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        x_labels = 'Normalised Net-Zero Co-benefits [£/person]',
+        titles = [f"Normalised {cobenefit_display} Distribution"]
+        histogram_totals(
+            num_cols = 1, 
+            columns_to_plot = histogram_column,
+            x_labels = x_labels,
+            titles = titles
+            ,colors = [cobenefit_colors[cobenefit]['line']]
+        )
+
+    with tab2:    
+        # Prepare data for time series
+        year_cols = [str(year) for year in range(2025, 2051)]
+        cobenefit = cobenefit
+        fig_diet = create_cobenefit_timeline(
+            l2data_time=l2data_time,
+            cobenefit_name=cobenefit,
+            display_name=cobenefit_display,
+            line_color=cobenefit_colors[cobenefit]['line'],
+            fill_color=cobenefit_colors[cobenefit]['fill'],
+            year_cols=year_cols,
+            scale_factor=1000,  # Convert to thousands
+            unit_multiplier_label='Co-benefit Value (£ Thousands)'
+        )
+        
+        st.plotly_chart(fig_diet, use_container_width=True)
+
+with st.expander('Explanation'):
+    st.markdown("""
+    * The Excess Heat Co-Benefit value appears really modest for Cardiff overall
+    """)
+
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
+

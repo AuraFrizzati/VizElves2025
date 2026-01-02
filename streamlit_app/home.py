@@ -17,21 +17,23 @@ with st.expander('About this Data Viz'):
                 **SOME TEXT** [emphasise the importance of explaining net zero 
              cobenefits to population]
                 """)
-    # iris_image = Image.open("imgs/iris_species.png")
-    # st.image(iris_image)
-
-
+    
 st.header("Audience")
 st.markdown("""
-            **SOME TEXT** [emphasise the importance of explaining net zero 
-            cobenefits to population]
+            We believe this dashboard could support policy-makers working on planning and implementing Environmental Net-Zero policies in Cardiff
             """)
 
+st.markdown("## Index")
+st.markdown(
+    """
+- [Cardiff Overview](./Cardiff_Overview): In this page we used the provided demographic data to illustrate the diversity in how Cardiff residents 
+    live and the potential "green rewards" available to different areas. We also explored the total co-benefits expected by Cardiff by implementing Net-Zero green initiatives.
+- [Co-Benefits Analysis](./Co-Benefits_Analysis): This section focuses on the expected value generated in Cardiff through the Net Zero transition. 
+   We analysed each available co-benefit subcategory, exploring both the distribution of data by neighbourhood and the overall projections through 2050
+- [Social Deprivation Analysis](./Social_Deprivation_Analysis)
+- [Data Quality](./Data_Quality)
+- [Definitions & Methods](./Definitions_and_Methods)
+- [Credits](./Credits)
+    """
+)
 
-st.header("TLDR")
-st.markdown("""
-            **SOME TEXT** [emphasise the importance of explaining net zero 
-            cobenefits to population]
-            """)
-
-# load Welsh data

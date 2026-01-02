@@ -11,20 +11,6 @@ st.write(
 Streamlit. Enjoy!"""
 )
 
-st.markdown("## Index")
-st.markdown(
-    """
-- [Summary View](./Summary_View)
-- [Time Lines](./Timelines)
-- [Social Deprivation](./Social_Deprivation)
-- [Maps](./4_map)
-- [Map v2](./mapv2)
-- [Conclusions](./Conclusions)
-- [Data Quality](./Data_Quality)
-- [Definitions](./Definitions)
-- [Credits](./Credits)
-    """
-)
 
 st.markdown(
     f"""
@@ -34,12 +20,11 @@ st.markdown(
     """
 )
 
-with st.expander('Note on the use of the term "Neighbourhood" in this dashboard'):
-    st.markdown(
-        """
-        In the text and visuals of this dashbaord we used the layman term "neighbourhood" in place of the 
-        more technical term "Lower-layer Super Output Area" (LSOA), the geographical unit provided in the data.
-        LSOA subdivisions have been designed by the Office of National Statistics (ONS)
-        to be of similar scale, typically housing 1,000-3,000 residents or 400-1,200 households. 
-        """
-        )
+st.markdown(
+    f"""
+    * Current Net Zero models inadvertently favor low-density, affluent areas. If we do not intervene, climate action will act as a wealth-transfer mechanism, rewarding those who already live in comfortable, suburban environments while bypassing the urban heart of the city
+    * Use the term "Climate Justice" or "Just Transition." These are "power words" in the current policy landscape
+    * **The data shows these rewards are currently concentrated; the vast majority of neighbourhoods see very little benefit, 
+        while a tiny few see gains of up to £17 million**.
+    """
+)

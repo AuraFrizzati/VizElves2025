@@ -3,6 +3,8 @@ import pandas as pd
 import plotly.express as px
 
 st.set_page_config(page_title="Data Quality", page_icon=":bar_chart:")
+st.sidebar.header("Data Quality")
+st.markdown("# Data Quality")
 
 l2data_totals = pd.read_csv("data/l2data_totals.csv")
 l2data = pd.read_csv("data/lsoa_cardiff_wimd.csv")
@@ -56,12 +58,12 @@ percentage_zeros = missing_by_cobenefit[zeros_cols].div(missing_by_cobenefit['to
 percentage_zeros.columns = [col.replace('zeros_', '') for col in percentage_zeros.columns]
 
 # Zero Values table
-st.subheader("Percentages of zero values by Co-Benefit Type and Year")
+st.subheader("Percentages of Zero Values by Co-Benefit Type and Year")
 st.markdown(
     """
     The data for some of the Net-Zero Co-Benefits 
     (Congestion, Noise, Road Repairs and Road Safety) 
-    appears highly incomplete, therefore we decided to exclude them from 
+    appears highly incomplete (equal to zero), therefore we decided to exclude them from 
     our analyses and visualisations
     """
 )

@@ -6,7 +6,7 @@ import pydeck as pdk
 import json
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-from utils import histogram_totals, Top3_Bottom3_LSOAs, bottom_line_message, choropleth_map, create_cobenefit_timeline, cobenefit_colors
+from utils import histogram_totals, Top3_Bottom3_LSOAs, bottom_line_message, choropleth_map, create_cobenefit_timeline, cobenefit_colors, style_expanders
 
 st.set_page_config(page_title="Summary View", page_icon=":bar_chart:")
 
@@ -27,26 +27,8 @@ cardiff_gdf = cardiff_gdf.merge(
     how="left"
 )
 
-
-    
-# # Initialize session state for navigation
-# if 'section' not in st.session_state:
-#     st.session_state.section = "Cardiff Overview"
-
-# # Create sidebar buttons
-# st.sidebar.header("Navigate to:")
-
-# if st.sidebar.button("Cardiff Overview", use_container_width=True):
-#     st.session_state.section = "Cardiff Overview"
-
-# if st.sidebar.button("Co-Benefits Categories", use_container_width=True):
-#     st.session_state.section = "Co-Benefits Categories"
-
-
-# # Use session state to determine which section to show
-# section = st.session_state.section
-
-# if section == "Cardiff Overview":
+# Add CSS styling for expanders
+style_expanders()
 
 st.markdown("# Cardiff Overview")
 st.sidebar.header("Cardiff Overview")
@@ -63,12 +45,36 @@ min_tot_cobenefit = round(min(l2data_totals['sum']),2)
 
 st.markdown(
     f"""
-    Cardiff is home to {cardiff_pop_size:,} residents and {cardiff_n_households:,} households, distributed in {cardiff_num_lsoas}  neighbourhoods. 
-    In this page we tried to use the demographics data to illustrate the diversity in how Cardiff residents 
-    live and the potential "green rewards" available to different areas. We also explored at a high level the co-benefits data available (Level 2)
+    In this page we used the provided **demographic data** to illustrate the diversity in how Cardiff residents 
+    live and the potential 'green rewards' available to different areas. We also explored the total co-benefits expected by Cardiff by implementing Net-Zero green initiatives.
     """
 )
 
+# key findings
+bottom_line_message(
+    "<b>Key Findings:</b>"
+    "<ul style='margin: 10px 0; padding-left: 5px;'>"
+    f"<li><b>Cardiff</b> is home to <b>{cardiff_pop_size:,} residents</b> and <b>{cardiff_n_households:,} households</b>, distributed in <b>{cardiff_num_lsoas} neighbourhoods</b></li>"
+    "<li><b>Co-benefit distribution is currently uneven</b>, with affluent suburbs like Cyncoed capturing the highest gains</li>"
+    "<li>Dense urban centers like Cathays 12 rank last (218th)</li>"
+    "<li>Areas like Adamsdown 2 supporting nearly 5,000 residents are excluded from top benefit tiers</li>"
+    "</ul>",
+    bg_color="#fff3cd",
+    border_color="#ffc107",
+    text_color="#856404"
+)
+
+
+# Navigation links to sections
+st.markdown('<div id="top"></div>', unsafe_allow_html=True)
+st.markdown("""
+### Quick Navigation
+- [Population distribution](#population-distribution)
+- [Households distribution](#households-distribution)
+- [Average Household Size](#average-household-size)
+- [Total Net-Zero Co-Benefits](#total-net-zero-co-benefits)
+- [Maps of Demographics and Net Zero Co-Benefits](#maps-of-demographics-and-net-zero-co-benefits)
+""")
 
 
 ### HISTOGRAMS
@@ -85,7 +91,7 @@ with col1:
     This chart shows the distribution of population across Cardiff's neighbourhoods. 
     - Most neighbourhoods cluster around 1,400-1,800 residents
     - The number of people per neighbourhood ranges from {min_pop_size:,} residents (Grangetown 13) to {max_pop_size:,} residents (Adamsdown 2). 
-    This variation reflects Cardiff's diverse urban landscape
+    This variation reflects Cardiff's diverse urban landscape.
     """)
 
 with col2:
@@ -107,6 +113,7 @@ with st.expander('Click to explore the neighbourhoods with the highest and lowes
         Top3_Bottom3_LSOAs(value_col='population'), 
         hide_index=True)
 
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 
 ########################################    
 # Cardiff households/LSOA distribution
@@ -148,6 +155,7 @@ with st.expander('Click to explore the neighbourhoods with the largest and small
         Top3_Bottom3_LSOAs(value_col='households'), 
         hide_index=True)
 
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 
 ########################################  
 # Cardiff average household size/LSOA distribution
@@ -157,13 +165,13 @@ with col1:
     st.markdown(" ")
     st.markdown(" ")
     st.markdown(" ")
-    st.markdown("### Average Household's Size")
+    st.markdown("### Average Household Size")
     st.markdown(f"""
     This chart shows the distribution of average household size across neighbourhoods.
     - Most Cardiff homes have 2 to 3 residents, though a small number of 
     neighbourhoods stand out with much larger households. 
-    - The average home size ranges from {min_average_household_size:,} residents/household (Adamsdown 2)
-    to {max_average_household_size:,} residents/household (Grangetown 13)
+    - The average home size ranges from {min_average_household_size:,} residents/household (Grangetown 13)
+    to {max_average_household_size:,} residents/household (Adamsdown 2)
 
     """)
 
@@ -187,7 +195,9 @@ with col2:
 with st.expander('Expand to explore the neighbourhoods with the largest and smallest Average Household Size'):
     st.dataframe(
         Top3_Bottom3_LSOAs(value_col='average_household_size'), 
-        hide_index=True)
+         hide_index=True)
+
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 
 ########################################  
 # Cardiff Total Net-Zero Co-Benefits/LSOA distribution
@@ -215,20 +225,18 @@ with col1:
         st.markdown(f"""
         This chart shows the distribution of overall Total Net-Zero Co-Benefits across neighbourhoods. 
         
-        - It is a measure of the financial value of the "Green Dividend", the extra perks like health improvements and energy savings.
-        - The Total Net-Zero Co-Benefits value ranges from a loss of {min_val:,} million £ (Cyncoed 1)
-        to a gain of {max_val:,} million £ (Cathays 12)
-        - **The data shows these rewards are currently concentrated; the vast majority of neighbourhoods see very little benefit, 
-        while a tiny few see gains of up to £17 million**.
+        - It is a measure of the financial value of the "Green Dividend", which includes benefits such as healthier living conditions and energy savings.
+        - The Total Net-Zero Co-Benefits value ranges from a loss of {min_val:,} million £ (Cathays 12)
+        to a gain of {max_val:,} million £ (Cyncoed 1)
         """)
     else:
         histogram_column = 'sum_std'
-        histogram_label = 'Normalized Net-Zero Co-Benefits [£/person]'
+        histogram_label = 'Normalised Net-Zero Co-Benefits [£/person]'
         min_val = round(min(l2data_totals['sum_std']), 2)
         max_val = round(max(l2data_totals['sum_std']), 2)
         
         st.markdown(f"""
-        This chart shows the distribution of **normalized** Net-Zero Co-Benefits per person across neighbourhoods.
+        This chart shows the distribution of **normalised** Net-Zero Co-Benefits per person across neighbourhoods.
         
         - This normalised view shows the value of the benefit per resident, independent of neighbourhood size
         - The normalised co-benefits per resident range from {min_val:,} £/person (Cathays 12) to {max_val:,} £/person (Cyncoed 1).
@@ -246,40 +254,32 @@ with col2:
         colors=colors
     )
 
+if histogram_metric == "Absolute (million £)":
+    with st.expander('Expand to explore the neighbourhoods with the largest and smallest Net-Zero Co-benefits'):
+        st.dataframe(
+            Top3_Bottom3_LSOAs(value_col='sum'), 
+            hide_index=True)
 
-with st.expander('Expand to explore the neighbourhoods with the largest and smallest Net-Zero Co-benefits'):
-    st.dataframe(
-        Top3_Bottom3_LSOAs(value_col='sum'), 
-        hide_index=True)
-    
-with st.expander('Expand to explore the neighbourhoods with the largest and smallest Normalised Net-Zero Co-benefits'):
-    st.dataframe(
-        Top3_Bottom3_LSOAs(value_col='sum_std'), 
-        hide_index=True)
+else:    
+    with st.expander('Expand to explore the neighbourhoods with the largest and smallest Normalised Net-Zero Co-benefits'):
+        st.dataframe(
+            Top3_Bottom3_LSOAs(value_col='sum_std'), 
+            hide_index=True)
 
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 
-# Example with different colors
-bottom_line_message(
-    "Co-benefit distribution is currently uneven, with affluent suburbs like Cyncoed capturing the highest " \
-    "gains while dense urban centers like Cathays 12 rank last (218th). Similarly, despite supporting nearly 5,000 residents, " \
-    "areas like Adamsdown 2 are excluded from top benefit tiers, suggesting current Net Zero models inadvertently " \
-    "favour low-density areas over high-occupancy urban households." \
-    ,bg_color="#fff3cd",      # Light yellow
-    border_color="#ffc107",  # Gold
-    text_color="#856404"     # Dark yellow/brown
-)
 
 ########################################  
 # Maps
 
 st.markdown("---")
-st.markdown("### Mapping the Net Zero Transition in Cardiff")
+st.markdown("### Maps of Demographics and Net Zero Co-Benefits")
 
 st.markdown(
     """
     These maps visualize the relationship between Cardiff's demographic landscape and the projected economic 
-    "green rewards" of Net Zero policies. By comparing population density with co-benefit distribution across 218 neighborhoods, 
-    we can identify whether current pathways equitably serve high-density urban centers or primarily benefit lower-density 
+    "green rewards" of Net Zero policies (overall from 2025 to 2050). By comparing population density with co-benefit distribution across 218 neighborhoods, 
+    it is possible to identify whether current pathways equitably serve high-density urban centers or primarily benefit lower-density 
     suburban areas.
     """
 )
@@ -366,3 +366,4 @@ with col2:
         #,colour_low= (230, 0, 0)
         )
 
+st.markdown('[Back to Top](#top)', unsafe_allow_html=True)

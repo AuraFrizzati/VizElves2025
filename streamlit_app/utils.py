@@ -8,18 +8,6 @@ import pydeck as pdk
 import json
 
 
-# Co-benefit color dictionary for uniform styling across the dashboard
-# cobenefit_colors = {
-#     'diet_change': {'line': '#2ecc71', 'fill': 'rgba(46, 204, 113, 0.3)'},
-#     'physical_activity': {'line': '#27ae60', 'fill': 'rgba(39, 174, 96, 0.3)'},
-#     'air_quality': {'line': '#58d68d', 'fill': 'rgba(88, 214, 141, 0.3)'},
-#     'dampness': {'line': '#3498db', 'fill': 'rgba(52, 152, 219, 0.3)'},
-#     'excess_cold': {'line': '#2980b9', 'fill': 'rgba(41, 128, 185, 0.3)'},
-#     'excess_heat': {'line': '#85c1e9', 'fill': 'rgba(133, 193, 233, 0.3)'},
-#     'hassle_costs': {'line': '#e74c3c', 'fill': 'rgba(231, 76, 60, 0.3)'},
-#     'total': {'line': '#000000', 'fill': 'rgba(0, 0, 0, 0.3)'}
-# }
-
 cobenefit_colors = {
     'diet_change': {'line': '#009988', 'fill': 'rgba(0, 153, 136, 0.3)'}, #
     'physical_activity': {'line': '#EE7733', 'fill': 'rgba(238, 119, 51, 0.3)'}, #
@@ -294,7 +282,22 @@ def highlight_top_bottom(row):
     else:
         return [''] * len(row)
 
-def Top3_Bottom3_LSOAs(data=None, value_col=None):
+def Top3_Bottom3_LSOAs(data=None, value_col=None, value_col_display_name=None, 
+                       round_decimals=2, include_quintile=False):
+    """
+    Get top 3 and bottom 3 LSOAs based on a value column.
+    
+    Parameters:
+    - data: DataFrame to use (if None, uses l2data_totals from CSV)
+    - value_col: Column name to sort by
+    - value_col_display_name: Optional display name for the value column (if None, uses value_col)
+    - round_decimals: Number of decimal places to round values (default: 2)
+    - include_quintile: Whether to include WIMD quintile column (default: False)
+  
+    Returns:
+    - Styled DataFrame with highlighted rows
+    """
+
     if data is None:
         data = pd.read_csv("data/l2data_totals.csv")
 
@@ -302,27 +305,52 @@ def Top3_Bottom3_LSOAs(data=None, value_col=None):
     data_sorted = data.sort_values(value_col, ascending=False).reset_index(drop=True)
     data_sorted['position'] = data_sorted.index + 1  # 1-indexed position
     
+    # Define base columns to include
+    base_columns = ['LSOA name (Eng)', value_col, 'position']
+    if include_quintile:
+        base_columns.insert(1, 'WIMD 2025 overall quintile')
+    
     # Get top 3
-    top3_LSOAs = data_sorted.head(3)[['LSOA name (Eng)', value_col, 'position']].copy()
+    top3_LSOAs = data_sorted.head(3)[base_columns].copy()
     top3_LSOAs['Rank'] = [f'Highest: rank {pos}' for pos in top3_LSOAs['position']]
 
     
     # Get bottom 3
-    bottom3_LSOAs = data_sorted.tail(3)[['LSOA name (Eng)', value_col, 'position']].copy()
+    bottom3_LSOAs = data_sorted.tail(3)[base_columns].copy()
     bottom3_LSOAs['Rank'] = [f'Lowest: rank {pos}' for pos in bottom3_LSOAs['position']]
     
     # Drop position column and concat
     top3_LSOAs = top3_LSOAs.drop('position', axis=1)
     bottom3_LSOAs = bottom3_LSOAs.drop('position', axis=1)
-    
     NetZeroSum_TopBottom = pd.concat([top3_LSOAs, bottom3_LSOAs])
-    NetZeroSum_TopBottom.rename(columns={'LSOA name (Eng)': 'Neighbourhood'},inplace=True)
-    styled_df = NetZeroSum_TopBottom.style.apply(highlight_top_bottom, axis=1)
+
+    # Round the value column
+    NetZeroSum_TopBottom[value_col] = NetZeroSum_TopBottom[value_col].round(round_decimals)
+
+    # Rename columns
+    column_renames = {'LSOA name (Eng)': 'Neighbourhood'}
+    if include_quintile:
+        column_renames['WIMD 2025 overall quintile'] = 'WIMD Quintile'
+    if value_col_display_name:
+        column_renames[value_col] = value_col_display_name
+    
+    NetZeroSum_TopBottom.rename(columns=column_renames, inplace=True)
+    
+    # Get the display name for styling
+    display_col = value_col_display_name if value_col_display_name else value_col
+    
+    # Apply styling with formatting
+    styled_df = NetZeroSum_TopBottom.style\
+        .apply(highlight_top_bottom, axis=1)\
+        .format({display_col: f'{{:.{round_decimals}f}}'})
+    
     return(styled_df)
 
 
 def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None, 
-                     colors=None, colorscales=None, titles = None,x_range = None):
+                     colors=None, colorscales=None, titles = None,x_range = None
+                    ,scale_factor=1, unit_multiplier_label=None
+                     ):
     """
     Create histogram subplots for given columns.
     
@@ -333,6 +361,9 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None,
     - x_labels: list of x-axis labels
     - colors: list of colors for bars
     - colorscales: list of colorscale names for colored bars
+    - scale_factor: multiply values by this factor (e.g., 1000 for thousands)
+    - unit_multiplier_label : custom label for y-axis (e.g., "Co-benefit Value (£ Thousands)")
+  
     """
     
     if data is None:
@@ -345,6 +376,10 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None,
     if x_labels is None:
         x_labels = [col.replace("_", " ").capitalize() for col in columns_to_plot]
     
+    # Overwrite with unit multiplier label if provided, otherwise use default labels
+    if unit_multiplier_label:
+        x_labels = [unit_multiplier_label for _ in x_labels]
+
     # Default colors if not provided
     if colors is None:
         colors = px.colors.qualitative.Plotly[:len(columns_to_plot)]
@@ -360,10 +395,13 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None,
         row = i // num_cols + 1
         col_pos = i % num_cols + 1
 
+        # Scale the data
+        scaled_data = data[col] * scale_factor
+
         # Check if this subplot should use a colorscale
         if colorscales is not None and i < len(colorscales) and colorscales[i] is not None:
             # Get unique values and their counts for colored bars
-            value_counts = data[col].value_counts().sort_index()
+            value_counts = scaled_data.value_counts().sort_index()
             
             fig.add_trace(
                 go.Bar(
@@ -385,7 +423,8 @@ def histogram_totals(num_cols, columns_to_plot, data=None, x_labels=None,
             # Use regular histogram with solid color
             fig.add_trace(
                 go.Histogram(
-                    x=data[col], 
+                    #x=data[col], 
+                    x=scaled_data, 
                     name=col, 
                     showlegend=False,
                     marker=dict(
@@ -491,7 +530,9 @@ def deprivation_quintiles_boxplots_totals(
     
     st.plotly_chart(fig, use_container_width=True)
 
-def create_cobenefit_timeline(l2data_time, cobenefit_name, display_name, line_color, fill_color, year_cols):
+def create_cobenefit_timeline(l2data_time, cobenefit_name, display_name, 
+                              line_color, fill_color, year_cols ,scale_factor=1, unit_multiplier_label=None
+                              ):
     """
     Create a timeline chart for a specific co-benefit.
     
@@ -509,6 +550,10 @@ def create_cobenefit_timeline(l2data_time, cobenefit_name, display_name, line_co
         The color for the area fill with opacity (e.g., 'rgba(46, 204, 113, 0.3)')
     year_cols : list
         List of year column names as strings
+    scale_factor : float
+        Multiply values by this factor (e.g., 1000 for thousands)
+    unit_multiplier_label : str, optional
+        Custom label for y-axis (e.g., "Co-benefit Value (£ Thousands)")
     
     Returns:
     --------
@@ -518,12 +563,22 @@ def create_cobenefit_timeline(l2data_time, cobenefit_name, display_name, line_co
     # Filter for the specific co-benefit and sum across all LSOAs for each year
     cobenefit_time = l2data_time[l2data_time['co-benefit_type'] == cobenefit_name][year_cols].sum()
     
+    # Scale the values
+    scaled_values = cobenefit_time.values * scale_factor
+    
+    # Determine y-axis label
+    if unit_multiplier_label:
+        yaxis_title = unit_multiplier_label
+    else:
+        yaxis_title = "Co-benefit Value (£ Million)"
+    
     # Create the figure
     fig = go.Figure()
     
     fig.add_trace(go.Scatter(
         x=year_cols,
-        y=cobenefit_time.values,
+        #y=cobenefit_time.values,
+        y=scaled_values,
         name=display_name,
         mode='lines+markers',
         line=dict(width=2, color=line_color),
@@ -542,8 +597,9 @@ def create_cobenefit_timeline(l2data_time, cobenefit_name, display_name, line_co
             x=0.5,
             xanchor='center',
             font=dict(size=20, color='black', family='Arial')
-        ),        xaxis_title="Year",
-        yaxis_title="Co-benefit Value (£ Million)",
+        ),        
+        xaxis_title="Year",
+        yaxis_title=yaxis_title,
         height=400,
         template="plotly_white",
         hovermode='x'
@@ -684,7 +740,7 @@ def display_quintile_test_results(test_results, value_col_name=None):
     if value_col_name is None:
         value_col_name = "Co-benefit value"
     
-    st.markdown("### 📊 Statistical Analysis")
+    st.markdown("### Statistical Analysis")
     
     # ANOVA results
     anova = test_results['anova_result']
@@ -740,3 +796,27 @@ def display_quintile_test_results(test_results, value_col_name=None):
                     st.write("- " + pair)
             else:
                 st.write("No significant pairwise differences found (all p-values ≥ 0.05).")
+
+
+def style_expanders():
+    st.markdown("""
+        <style>
+        div[data-testid="stExpander"] details summary {
+            background-color: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: 600;
+            color: #856404;
+        }
+        
+        div[data-testid="stExpander"] details summary:hover {
+            background-color: #ffe8a1;
+            border-color: #e0a800;
+        }
+        
+        div[data-testid="stExpander"] details summary svg {
+            color: #ffc107;
+        }
+        </style>
+        """, unsafe_allow_html=True)
