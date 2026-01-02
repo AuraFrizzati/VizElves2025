@@ -4,12 +4,12 @@ from utils import bottom_line_message
 
 # streamlit page config
 st.set_page_config(
-    page_title="Net Zero Co-Benefits in Wales",  # the page title shown in the browser tab
+    page_title="Net Zero Co-Benefits in Cardiff",  # the page title shown in the browser tab
     page_icon=":bar_chart:",  # the page favicon shown in the browser tab
     layout="wide",  # page layout : use the entire screen
 )
 # page title
-st.title("Net Zero Co-Benefits in Wales :deciduous_tree:")
+st.title("Net Zero Co-Benefits in Cardiff :deciduous_tree:")
 
 st.markdown(
     f"""
