@@ -346,14 +346,14 @@ with tab2:
     )
     display_quintile_test_results(test_results, value_col_name="Total Co-benefits per person")
 
-with st.expander('Click to explore the neighbourhoods with the highest and lowest Air Quality Co-Benefits (normalised)'):
-    st.dataframe(
-        Top3_Bottom3_LSOAs(
-            value_col='air_quality_std'
-            ,value_col_display_name = "Air Quality Co-Benefits [£/person]"
-            ,include_quintile=True
-            ), 
-        hide_index=True)
+# with st.expander('Click to explore the neighbourhoods with the highest and lowest Air Quality Co-Benefits (normalised)'):
+#     st.dataframe(
+#         Top3_Bottom3_LSOAs(
+#             value_col='air_quality_std'
+#             ,value_col_display_name = "Air Quality Co-Benefits [£/person]"
+#             ,include_quintile=True
+#             ), 
+#         hide_index=True)
 
 st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 ########
@@ -410,14 +410,14 @@ with tab2:
     )
     display_quintile_test_results(test_results, value_col_name="Total Co-benefits per person")
 
-with st.expander('Click to explore the neighbourhoods with the highest and lowest Diet Change Co-Benefits (normalised)'):
-    st.dataframe(
-        Top3_Bottom3_LSOAs(
-            value_col='diet_change_std'
-            ,value_col_display_name = "Diet Change Co-Benefits [£/person]"
-            ,include_quintile=True
-            ), 
-        hide_index=True)
+# with st.expander('Click to explore the neighbourhoods with the highest and lowest Diet Change Co-Benefits (normalised)'):
+#     st.dataframe(
+#         Top3_Bottom3_LSOAs(
+#             value_col='diet_change_std'
+#             ,value_col_display_name = "Diet Change Co-Benefits [£/person]"
+#             ,include_quintile=True
+#             ), 
+#         hide_index=True)
 
 st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 ########
@@ -475,14 +475,14 @@ with tab2:
     )
     display_quintile_test_results(test_results, value_col_name="Total Co-benefits per person")
 
-with st.expander('Click to explore the neighbourhoods with the highest and lowest Hassle Costs (normalised)'):
-    st.dataframe(
-        Top3_Bottom3_LSOAs(
-            value_col='hassle_costs_std'
-            ,value_col_display_name = "Hassle Costs [£/person]"
-            ,include_quintile=True
-            ), 
-        hide_index=True)
+# with st.expander('Click to explore the neighbourhoods with the highest and lowest Hassle Costs (normalised)'):
+#     st.dataframe(
+#         Top3_Bottom3_LSOAs(
+#             value_col='hassle_costs_std'
+#             ,value_col_display_name = "Hassle Costs [£/person]"
+#             ,include_quintile=True
+#             ), 
+#         hide_index=True)
 
 st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 
