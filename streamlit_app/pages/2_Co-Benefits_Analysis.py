@@ -8,9 +8,9 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from utils import histogram_totals, Top3_Bottom3_LSOAs, bottom_line_message, choropleth_map, create_cobenefit_timeline, cobenefit_colors
 
-st.set_page_config(page_title="Co-Benefits Analysis", page_icon=":bar_chart:")
-st.sidebar.header("Co-Benefits Analysis")
-st.markdown("# Co-Benefits Analysis")
+st.set_page_config(page_title="Co-Benefits Analysis", page_icon=":mag:")
+st.sidebar.header("Co-Benefits Analysis :mag:")
+st.markdown("# Co-Benefits Analysis :mag:")
 
 st.markdown("""This section focusses on the expected value generated in Cardiff through the Net Zero transition. We analysed each available
             co-benefit subcategory, exploring both the distribution of data by neighbourhood and the overall projections through 2050""")

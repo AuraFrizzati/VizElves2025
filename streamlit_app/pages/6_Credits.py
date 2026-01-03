@@ -1,9 +1,9 @@
 import streamlit as st
 
-st.set_page_config(page_title="Credits", page_icon="📈")
+st.set_page_config(page_title="Credits", page_icon=":space_invader:")
 
-st.markdown("# Credits")
-st.sidebar.header("Credits")
+st.markdown("# Credits :space_invader:")
+st.sidebar.header("Credits :space_invader:")
 
 ## The Challenge
 st.markdown("## Challenge")

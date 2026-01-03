@@ -7,9 +7,9 @@ import geopandas as gpd
 from utils import histogram_totals, deprivation_quintiles_boxplots_totals, test_quintile_differences, display_quintile_test_results,choropleth_map, cobenefit_colors, bottom_line_message, Top3_Bottom3_LSOAs, style_expanders
 
 
-st.set_page_config(page_title="Social Deprivation Analysis", page_icon=":bar_chart:")
-st.sidebar.header("Social Deprivation Analysis")
-st.markdown("# Social Deprivation Analysis")
+st.set_page_config(page_title="Social Deprivation Analysis", page_icon=":houses:")
+st.sidebar.header("Social Deprivation Analysis :houses:")
+st.markdown("# Social Deprivation Analysis :houses:")
 
 # Add CSS styling for expanders
 style_expanders()
@@ -46,13 +46,13 @@ st.markdown(
 bottom_line_message(
     "<b>Key Findings:</b>"
     "<ul style='margin: 10px 0; padding-left: 5px;'>"
-    "<li><b>Disproportionate Gains in Most Affluent Areas</b>: The statistical analysis of the total Net Zero co-benefits confirms the" \
-    " trend where the most affluent neighbourhoods (Quintile 5) capture significantly higher overall value (median of £2,420/person)</li>"
-    "<li><b>Dominance of Physical Activity Trends</b>: This pattern is primarily driven by physical activity benefits, " \
-    "which follow the same distribution and constitute the largest proportion of the total co-benefit data (the most affluent areas benefits the most).</li>"
-    "<li><b>Targeted Benefits for Dampness Reduction</b>: The Damp (reduction) co-benefit is the only category that reverses the general trend, with the highest health gains concentrated in Quintile 1. This indicates that the most deprived neighbourhoods stand to benefit the most from this specific intervention."
+    "<li><b>Disproportionate Gains in Most Affluent Areas</b>: The statistical analysis confirms the" \
+    " trend where the most affluent neighbourhoods earn the highest gain in Net-Zero Cobenefits (median of £2,420/person versus a median of £430/person in the most deprived areas)</li>"
+    "<li><b>Dominance of Physical Activity Gains</b>: Physical Activity is the leading driver of total co-benefits, " \
+    "and, as expected, its distribution is currently skewed toward more affluent neighbourhoods, highlighting an opportunity to improve equity</li>"
+    "<li><b>Targeted Benefits for Dampness Reduction</b>: The Damp (reduction) Co-Benefit is the only category that reverses the general trend, with the highest gains concentrated in the most deprived neighbourhoods"
     "<li><b>Uniformity of Hassle Costs</b>: In contrast to the health and economic rewards, the hassle costs associated with " \
-    "longer travel times are found to be equally distributed to everyone across all neighbourhoods, regardless of their social deprivation level.</li>"
+    "longer travel times are found to be equally distributed to everyone across all neighbourhoods, regardless of their social deprivation level</li>"
     "</ul>",
     bg_color="#fff3cd",
     border_color="#ffc107",

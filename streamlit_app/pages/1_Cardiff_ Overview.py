@@ -8,7 +8,7 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from utils import histogram_totals, Top3_Bottom3_LSOAs, bottom_line_message, choropleth_map, create_cobenefit_timeline, cobenefit_colors, style_expanders
 
-st.set_page_config(page_title="Cardiff Overview", page_icon=":bar_chart:")
+st.set_page_config(page_title="Cardiff Overview", page_icon=":wales:")
 
 l2data_totals = pd.read_csv("data/l2data_totals.csv")
 
@@ -30,8 +30,8 @@ cardiff_gdf = cardiff_gdf.merge(
 # Add CSS styling for expanders
 style_expanders()
 
-st.markdown("# Cardiff Overview")
-st.sidebar.header("Cardiff Overview")
+st.markdown("# Cardiff Overview 🏴󠁧󠁢󠁷󠁬󠁳󠁿")
+st.sidebar.header("Cardiff Overview :wales:")
 
 cardiff_num_lsoas = l2data_totals['LSOA code'].nunique()
 cardiff_pop_size = l2data_totals['population'].sum()
@@ -46,7 +46,7 @@ min_tot_cobenefit = round(min(l2data_totals['sum']),2)
 st.markdown(
     f"""
     In this page we used the provided **demographic data** to illustrate the diversity in how Cardiff residents 
-    live and the potential 'green rewards' available to different areas. We also explored the total co-benefits expected by Cardiff by implementing Net-Zero green initiatives.
+    live and the potential total 'green rewards' (Net Zero Co-Benefits) available to different areas.
     """
 )
 

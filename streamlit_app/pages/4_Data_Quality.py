@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-st.set_page_config(page_title="Data Quality", page_icon=":bar_chart:")
-st.sidebar.header("Data Quality")
-st.markdown("# Data Quality")
+st.set_page_config(page_title="Data Quality", page_icon=":white_check_mark:")
+st.sidebar.header("Data Quality :white_check_mark:")
+st.markdown("# Data Quality :white_check_mark:")
 
 l2data_totals = pd.read_csv("data/l2data_totals.csv")
 l2data = pd.read_csv("data/lsoa_cardiff_wimd.csv")
