@@ -6,3 +6,4 @@ streamlit_app/__pycache__/*.pyc
 data/Level_2.xlsx
 *.pyc
 streamlit_app/__pycache__/utils.cpython-311.pyc
+python_code/archive/
