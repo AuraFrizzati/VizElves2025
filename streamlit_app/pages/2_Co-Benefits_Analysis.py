@@ -219,12 +219,12 @@ This interactive time chart shows how different co-benefit categories are projec
 over the 25-year period from 2025 to 2050 across all Cardiff neighbourhoods.
 """)
 
-with st.expander('How to read the time series chart'):
+with st.expander('How to read the stacked time series chart'):
     st.markdown("""
-    * The black line shows the "Net Total Benefit", the final value after subtracting costs from benefits.
-    * Net impact starts slightly negative (-£0.5M) in 2025 as initial "Hassle Costs" outweigh early gains, but it successfully "breaks even" by 2026.
-    * The **"Hassle" Drag**: Bars below the zero line represent the friction of shifting to green habits; these costs act as a weight, pulling the net total significantly below gross benefits.
-    * Accelerating Growth: While health gains from **Physical Activity** and **Air Quality** climb steadily, Hassle Costs remain relatively flat. This stability allows the net benefit to accelerate, reaching £31.7M per year by 2050.
+    * The black line shows the **Net Total Benefit**, the final value after subtracting the negative Hassle Costs from all the other positive Net Zero Co-Benefits
+    * Net impact starts slightly negative (-£0.5M) in 2025 as initial Hassle Costs outweigh early gains, but it successfully breaks even by 2026
+    * The **Hassle Cost**: the grey bars below the zero line represent the friction of shifting to green habits (specifically the increased journey times). These costs act as a weight, pulling the net total significantly below gross benefits
+    * Accelerating Growth: While health gains from **Physical Activity** and **Air Quality** climb steadily, **Hassle Costs** remain relatively **flat**. This stability allows the net benefit to accelerate, reaching £31.7M per year by 2050
     """)
 
 # Prepare data for time series line chart
@@ -240,20 +240,37 @@ if 'sum' in cobenefit_sums.index:
 # Create the figure
 fig = go.Figure()
 
-# Add stacked bar traces for all co-benefit types except 'Total'
-for cobenefit_type in cobenefit_sums.index:
-    if cobenefit_type != 'Total':
-        fig.add_trace(go.Bar(
-            x=year_cols,
-            y=cobenefit_sums.loc[cobenefit_type],
-            name=cobenefit_type.replace('_', ' ').title(),
-            marker=dict(color=cobenefit_colors[cobenefit_type]['line']),  # Set bar color from cobenefit_colors
-            opacity=0.7,  # Add transparency
-            hovertemplate='<b>%{fullData.name}</b><br>' +
-                            'Year: %{x}<br>' +
-                            'Value: £%{y:.2f}M<br>' +
-                            '<extra></extra>'
-        ))
+# Separate positive and negative co-benefits
+positive_cobenefits = [cb for cb in cobenefit_sums.index if cb != 'Total' and cobenefit_sums.loc[cb].min() >= 0]
+negative_cobenefits = [cb for cb in cobenefit_sums.index if cb != 'Total' and cobenefit_sums.loc[cb].min() < 0]
+
+# Add stacked bar traces for positive co-benefit types only
+for cobenefit_type in positive_cobenefits:
+    fig.add_trace(go.Bar(
+        x=year_cols,
+        y=cobenefit_sums.loc[cobenefit_type],
+        name=cobenefit_type.replace('_', ' ').title(),
+        marker=dict(color=cobenefit_colors[cobenefit_type]['line']),
+        opacity=0.7,
+        hovertemplate='<b>%{fullData.name}</b><br>' +
+                        'Year: %{x}<br>' +
+                        'Value: £%{y:.2f}M<br>' +
+                        '<extra></extra>'
+    ))
+
+# Add separate (non-stacked) bar traces for negative co-benefits (hassle costs)
+for cobenefit_type in negative_cobenefits:
+    fig.add_trace(go.Bar(
+        x=year_cols,
+        y=cobenefit_sums.loc[cobenefit_type],
+        name=cobenefit_type.replace('_', ' ').title(),
+        marker=dict(color=cobenefit_colors[cobenefit_type]['line']),
+        opacity=0.7,
+        hovertemplate='<b>%{fullData.name}</b><br>' +
+                        'Year: %{x}<br>' +
+                        'Value: £%{y:.2f}M<br>' +
+                        '<extra></extra>'
+    ))
 
 # Add Total as a line trace (if it exists)
 if 'Total' in cobenefit_sums.index:
@@ -270,13 +287,13 @@ if 'Total' in cobenefit_sums.index:
     fig.add_trace(go.Scatter(
         x=year_cols,
         y=cobenefit_sums.loc['Total'],
-        name='Total',
+        name='Net Total Benefits',
         mode='lines+markers+text',
         line=dict(width=3, color='black'),
         marker=dict(size=6, color='black'),
         text=text_labels,
         textposition='top center',
-        textfont=dict(size=12, color='black'),
+        textfont=dict(size=14, color='black', family='Arial Black'),  # Changed font family to Arial Black for bold
         hovertemplate='<b>Total</b><br>' +
                         'Year: %{x}<br>' +
                         'Value: £%{y:.2f}M<br>' +
@@ -288,7 +305,7 @@ fig.update_layout(
     xaxis_title="Year",
     yaxis_title="Co-benefit Value (£ Million)",
     hovermode='x unified',
-    barmode='stack',
+    barmode='relative',  # Changed from 'stack' to 'relative'
     legend=dict(
         title="Co-benefit Type",
         orientation="v",
