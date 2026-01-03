@@ -6,7 +6,7 @@ import pydeck as pdk
 import json
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-from utils import histogram_totals, Top3_Bottom3_LSOAs, bottom_line_message, choropleth_map, create_cobenefit_timeline, cobenefit_colors
+from utils import histogram_totals, Top3_Bottom3_LSOAs, bottom_line_message, choropleth_map, create_cobenefit_timeline, cobenefit_colors, style_expanders
 
 st.set_page_config(page_title="Co-Benefits Analysis", page_icon=":mag:")
 st.sidebar.header("Co-Benefits Analysis :mag:")
@@ -18,6 +18,9 @@ st.markdown("""This section focusses on the expected value generated in Cardiff 
 l2data_totals = pd.read_csv("data/l2data_totals.csv")
 
 l2data_time= pd.read_csv("data/lsoa_cardiff_wimd.csv")
+
+# Add CSS styling for expanders
+style_expanders()
 
 # List the columns you want to sum
 cobenefit_columns = [
@@ -216,7 +219,7 @@ This interactive time chart shows how different co-benefit categories are projec
 over the 25-year period from 2025 to 2050 across all Cardiff neighbourhoods.
 """)
 
-with st.expander('Explanation'):
+with st.expander('How to read the time series chart'):
     st.markdown("""
     * The black line shows the "Net Total Benefit", the final value after subtracting costs from benefits.
     * Net impact starts slightly negative (-£0.5M) in 2025 as initial "Hassle Costs" outweigh early gains, but it successfully "breaks even" by 2026.

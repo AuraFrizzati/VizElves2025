@@ -108,7 +108,11 @@ with col2:
 
 with st.expander('Click to explore the neighbourhoods with the highest and lowest Population Size'):
     st.dataframe(
-        Top3_Bottom3_LSOAs(value_col='population'), 
+        Top3_Bottom3_LSOAs(
+            value_col='population'
+            ,value_col_display_name = "Population Size"
+            ,round_decimals=0)
+            , 
         hide_index=True)
 
 st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
@@ -150,7 +154,9 @@ with col2:
 
 with st.expander('Click to explore the neighbourhoods with the largest and smallest Numbers of Households'):
     st.dataframe(
-        Top3_Bottom3_LSOAs(value_col='households'), 
+        Top3_Bottom3_LSOAs(value_col='households'
+            ,value_col_display_name = "Number of Households"
+            ,round_decimals=0), 
         hide_index=True)
 
 st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
@@ -192,7 +198,9 @@ with col2:
 
 with st.expander('Expand to explore the neighbourhoods with the largest and smallest Average Household Size'):
     st.dataframe(
-        Top3_Bottom3_LSOAs(value_col='average_household_size'), 
+        Top3_Bottom3_LSOAs(
+            value_col='average_household_size'
+            ,value_col_display_name = "Average Household Size"), 
          hide_index=True)
 
 st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
@@ -206,6 +214,7 @@ with col1:
     st.markdown(" ")
     st.markdown(" ")
     st.markdown("### Total Net-Zero Co-Benefits")
+    st.markdown("***Use the toggle below to select how to visualise the metric***")
     
     # Add toggle for normalised vs absolute
     histogram_metric = st.radio(
@@ -255,13 +264,15 @@ with col2:
 if histogram_metric == "Absolute (million £)":
     with st.expander('Expand to explore the neighbourhoods with the largest and smallest Net-Zero Co-benefits'):
         st.dataframe(
-            Top3_Bottom3_LSOAs(value_col='sum'), 
-            hide_index=True)
+            Top3_Bottom3_LSOAs(value_col='sum'
+                               ,value_col_display_name = "Tot Net-Zero Co-Benefits [million £]")
+            ,hide_index=True)
 
 else:    
     with st.expander('Expand to explore the neighbourhoods with the largest and smallest Normalised Net-Zero Co-benefits'):
         st.dataframe(
-            Top3_Bottom3_LSOAs(value_col='sum_std'), 
+            Top3_Bottom3_LSOAs(value_col='sum_std'
+                               ,value_col_display_name = "Tot Net-Zero Co-Benefits [£/person]"), 
             hide_index=True)
 
 st.markdown('[Back to Top](#top)', unsafe_allow_html=True)

@@ -46,7 +46,7 @@ st.markdown(
     * **Statistical Analysis of Social Deprivation**: We conducted a one-way Analysis of Variance (ANOVA) to determine if 
     co-benefits vary significantly across WIMD quintiles. For results reaching statistical significance (p < 0.05), 
     we applied post-hoc pairwise comparisons to identify exactly which deprivation groups differed from one another
-    * **Colour blind friendly palette**:  For the co-benefits type we used [Paul Tol's QualVibrant palette](https://sronpersonalpages.nl/~pault/#sec:qualitative) 
+    * **Colour blind friendly palette**:  We chose the categories' colours using [Paul Tol's colour schemes](https://sronpersonalpages.nl/~pault/#sec:qualitative) 
     * The dashbord was developed using Python programming language and [Streamlit](https://streamlit.io/)
     * All the code and necessary data is available on **GitHub**: https://github.com/AuraFrizzati/VizElves2025.git 
     """
