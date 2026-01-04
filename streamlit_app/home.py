@@ -4,12 +4,12 @@ from utils import bottom_line_message
 
 # streamlit page config
 st.set_page_config(
-    page_title="Net Zero Co-Benefits in Cardiff",  # the page title shown in the browser tab
+    page_title="A Net-Zero Co-Benefits Atlas for Cardiff",  # the page title shown in the browser tab
     page_icon=":wales:",  # the page favicon shown in the browser tab
     layout="wide",  # page layout : use the entire screen
 )
 # page title
-st.title("Net Zero Co-Benefits in Cardiff :deciduous_tree: 🏴󠁧󠁢󠁷󠁬󠁳󠁿")
+st.title("A Net-Zero Co-Benefits Atlas for Cardiff :deciduous_tree: 🏴󠁧󠁢󠁷󠁬󠁳󠁿")
 
 st.markdown(
     f"""
@@ -28,7 +28,7 @@ bottom_line_message(
     "<ul style='margin: 10px 0; padding-left: 5px;'>"
     "<li><b>Total Economic Impact</b>: Cardiff is projected to see <b>£472.93 million in total Co-Benefits through 2050</b> driven by the <b>Net Zero transition</b></li>"
     "<li><b>Primary Value Driver</b>: <b>increased Physical Activity</b> is the single largest Co-Benefit, expected to scale to <b>£25 million/year city-wide by 2050</b></li>"
-    "<li><b>Health & Environment:</b> <b>Air quality</b> and <b>dietary changes</b> offer 'universal' rewards. They will provide a combined baseline of over £780/person across nearly all neighbourhoods</li>"
+    "<li><b>Health & Environment:</b> <b>Air quality</b> and <b>dietary changes</b> offer 'equally distributed' rewards. They will provide a combined baseline of over £780/person across nearly all neighbourhoods</li>"
     "<li><b>Equity Gap</b>: the geographical distribution of Net-Zero Co-Benefits is currently uneven, with <b>the most affluent areas being rewarded with the highest gains</b> (median £2,420/person versus a median of £430/person in the most deprived areas)</li>" \
     "<li><b>Hassle Costs</b>: these are due to <b>increased journey times</b> and appear <b>equally distributed across all neighbourhoods</b> </li>"
     "<li><b>Targeted Opportunity</b>: <b>Dampness reduction</b> is the only Net Zero Co-Benefit category where the <b>most deprived neighbourhoods see the highest relative gains</b></li>"
@@ -56,7 +56,7 @@ st.markdown(
 st.markdown("### Audience")
 st.markdown("""
            * This dashboard could support **Cardiff policy-makers** working on planning and implementing Environmental Net-Zero policies
-           * It can also be used by **Cardiff citizens** curious to know more about the impact of net-zero policies in their local area
+           * It can also be used by **Cardiff residents** curious to know more about the impact of net-zero policies in their local area
             """)
 
 

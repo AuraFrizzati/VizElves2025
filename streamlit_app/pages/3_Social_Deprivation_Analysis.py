@@ -259,7 +259,18 @@ st.markdown('[Back to Top](#top)', unsafe_allow_html=True)
 ########
 
 st.markdown("---")
+st.markdown("## Boxplots")
 
+with st.expander('How to read a boxplot graph'):
+    st.markdown("""
+                A boxplot helps us visualise the distribution of benefits across the various neighbourhoods that make up each Deprivation Quintile group. 
+                Think of each box as a summary of all the individual local areas within that specific Quintile group, showing how their experiences vary.
+
+                * The Middle Line (the median): it represents the 'typical' neighbourhood in that group. If you lined up all the neighbourhoods from lowest to highest benefit, this is the one right in the middle
+                * The Box (the middle 50%): it shows where the 'bulk' of the neighbourhoods sit. If the box is short, it means most areas are getting a very similar amount of benefit/cost. If the box is tall, it means there is a huge variety in the rewards those neighbourhoods receive
+                * The 'Whiskers'(the lines reaching out): they show the full range, from the neighbourhood getting the least benefit to the one getting the most, within each Deprivation Quintile group
+                * The Dots (outliers): these are 'unusual' cases, neighbourhoods that are getting significantly more or less than the rest of their group
+                """)
 st.markdown("### Total Net-Zero Co-Benefits")
 st.markdown(
     """
