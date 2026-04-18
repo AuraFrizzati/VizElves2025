@@ -279,7 +279,7 @@ if 'Total' in cobenefit_sums.index:
     text_labels = []
     for i, year in enumerate(year_cols):
         if i % 5 == 0 or i == len(year_cols) - 1:  # Show every 5th year and the last year
-            text_labels.append(f'£{cobenefit_sums.loc["Total"][i]:.1f}M')
+            text_labels.append(f'£{cobenefit_sums.loc["Total"].iloc[i]:.1f}M') 
         else:
             text_labels.append('')  # Empty string for years we don't want to label
 
